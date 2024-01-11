@@ -51,8 +51,11 @@ ALLOWED_HOSTS: List[str] = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "apps.shop",
     "authentication",
+    "drf_spectacular",
     "rest_framework",
+    "knox",
     "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -66,6 +69,30 @@ if DEBUG_TOOLBAR_ENABLED:
     INSTALLED_APPS += ["debug_toolbar"]
 
 AUTH_USER_MODEL = "authentication.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+    "PAGE_SIZE": 100,
+}
+
+REST_KNOX = {
+    "AUTH_HEADER_PREFIX": "Bearer",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Extreme UK Deals API",
+    "DESCRIPTION": "API for Extreme UK Deals",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    'SCHEMA_COERCE_PATH_PK_SUFFIX': True,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayRequestDuration": True,
+    },
+}
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",

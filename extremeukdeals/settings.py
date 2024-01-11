@@ -12,11 +12,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import logging
 import os
-from pathlib import Path
-import django_stubs_ext
 import re
-
+from pathlib import Path
 from typing import List
+
+import django_stubs_ext
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,8 +37,6 @@ SMTP_ENCRYPTION_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", "0")))
 DEBUG_TOOLBAR_ENABLED = bool(int(os.environ.get("DEBUG_TOOLBAR_ENABLED", "0")))
-
-ALLOWED_HOSTS = []
 
 if DEBUG:
     # will output to your console
@@ -194,7 +192,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     re.compile(r"^(https?://)?([^.]+\.)*localhost:3000$"),
     re.compile(r"^(https?://)?([^.]+\.)*localhost:3002$"),
     re.compile(r"^(http|https)://([a-zA-Z0-9]+\.)*extremeukdeals\.co\.uk$"),
-    "https://703e-81-143-207-6.ngrok-free.app"
+    "https://703e-81-143-207-6.ngrok-free.app",
 ]
 
 CORS_ALLOW_HEADERS = [

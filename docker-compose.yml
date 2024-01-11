@@ -1,0 +1,88 @@
+services:
+  extremeukdeals-backend:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-backend
+    command: /start
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+  
+  # extremeukdeals-frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/dev/extremeukdeals/frontend/Dockerfile
+  #   image: extremeukdeals-frontend
+  #   volumes:
+  #     - .:/opt/extremeukdeals
+  #   env_file:
+  #     - ./.env/.dev-frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - extremeukdeals-backend
+
+  extremeukdeals-db:
+    image: postgres:14.4
+    volumes:
+      - extremeukdeals_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env/.dev
+    ports:
+      - "5433:5432"
+  extremeukdeals-redis:
+    image: redis:7.0.4
+    expose:
+      - "6379"
+  extremeukdeals-celery_worker:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-celeryworker
+    command: /start-celeryworker
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.dev
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+  extremeukdeals-celery_beat:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-celerybeat
+    command: /start-celerybeat
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.dev
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+  extremeukdeals-flower:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-flower
+    command: /start-flower
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.dev
+    ports:
+      - "5557:5555"
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+
+
+volumes:
+  extremeukdeals_postgres_data:

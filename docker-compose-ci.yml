@@ -1,0 +1,135 @@
+services:
+  extremeukdeals-backend:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-backend
+    command: /start
+    volumes:
+      - .:/opt/extremeukdeals
+    environment:
+      - SQL_ENGINE=${SQL_ENGINE}
+      - SQL_DATABASE=${SQL_DATABASE}
+      - SQL_USER=${SQL_USER}
+      - SQL_PASSWORD=${SQL_PASSWORD}
+      - SQL_HOST=${SQL_HOST}
+      - SQL_PORT=${SQL_PORT}
+      - SECRET_KEY=${SECRET_KEY}
+      - SMTP_ENCRYPTION_KEY=${SMTP_ENCRYPTION_KEY}
+      - IMGUR_CLIENT_ID=${IMGUR_CLIENT_ID}
+      - IMGUR_API_KEY=${IMGUR_API_KEY}
+      - CELERY_BROKER=${CELERY_BROKER}
+      - CELERY_BACKEND=${CELERY_BACKEND}
+      - GOOGLE_ANALYTICS_4_ID=${GOOGLE_ANALYTICS_4_ID}
+      - DEBUG=${DEBUG}
+      - GOOGLE_ANALYTICS_4_ENABLED=${GOOGLE_ANALYTICS_4_ENABLED}
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+  extremeukdeals-frontend:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/frontend/Dockerfile
+    image: extremeukdeals-frontend
+    volumes:
+      - .:/opt/extremeukdeals
+    environment:
+      - REACT_APP_EXTREMEUKDEALS_API_URL=${REACT_APP_EXTREMEUKDEALS_API_URL}
+      - REACT_APP_MAIN_DOMAIN=${REACT_APP_MAIN_DOMAIN}
+    depends_on:
+      - extremeukdeals-backend
+  extremeukdeals-db:
+    image: postgres:14.4
+    volumes:
+      - extremeukdeals_postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${SQL_DATABASE}
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+  extremeukdeals-redis:
+    image: redis:7.0.4
+  extremeukdeals-celery_worker:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-celeryworker
+    command: /start-celeryworker
+    volumes:
+      - .:/opt/extremeukdeals
+    environment:
+      - SQL_ENGINE=${SQL_ENGINE}
+      - SQL_DATABASE=${SQL_DATABASE}
+      - SQL_USER=${SQL_USER}
+      - SQL_PASSWORD=${SQL_PASSWORD}
+      - SQL_HOST=${SQL_HOST}
+      - SQL_PORT=${SQL_PORT}
+      - SECRET_KEY=${SECRET_KEY}
+      - SMTP_ENCRYPTION_KEY=${SMTP_ENCRYPTION_KEY}
+      - IMGUR_CLIENT_ID=${IMGUR_CLIENT_ID}
+      - IMGUR_API_KEY=${IMGUR_API_KEY}
+      - CELERY_BROKER=${CELERY_BROKER}
+      - CELERY_BACKEND=${CELERY_BACKEND}
+      - GOOGLE_ANALYTICS_4_ID=${GOOGLE_ANALYTICS_4_ID}
+      - DEBUG=${DEBUG}
+      - GOOGLE_ANALYTICS_4_ENABLED=${GOOGLE_ANALYTICS_4_ENABLED}
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+  extremeukdeals-celery_beat:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-celerybeat
+    command: /start-celerybeat
+    volumes:
+      - .:/opt/extremeukdeals
+    environment:
+      - SQL_ENGINE=${SQL_ENGINE}
+      - SQL_DATABASE=${SQL_DATABASE}
+      - SQL_USER=${SQL_USER}
+      - SQL_PASSWORD=${SQL_PASSWORD}
+      - SQL_HOST=${SQL_HOST}
+      - SQL_PORT=${SQL_PORT}
+      - SECRET_KEY=${SECRET_KEY}
+      - SMTP_ENCRYPTION_KEY=${SMTP_ENCRYPTION_KEY}
+      - IMGUR_CLIENT_ID=${IMGUR_CLIENT_ID}
+      - IMGUR_API_KEY=${IMGUR_API_KEY}
+      - CELERY_BROKER=${CELERY_BROKER}
+      - CELERY_BACKEND=${CELERY_BACKEND}
+      - GOOGLE_ANALYTICS_4_ID=${GOOGLE_ANALYTICS_4_ID}
+      - DEBUG=${DEBUG}
+      - GOOGLE_ANALYTICS_4_ENABLED=${GOOGLE_ANALYTICS_4_ENABLED}
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+  extremeukdeals-flower:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-flower
+    command: /start-flower
+    volumes:
+      - .:/opt/extremeukdeals
+    environment:
+      - SQL_ENGINE=${SQL_ENGINE}
+      - SQL_DATABASE=${SQL_DATABASE}
+      - SQL_USER=${SQL_USER}
+      - SQL_PASSWORD=${SQL_PASSWORD}
+      - SQL_HOST=${SQL_HOST}
+      - SQL_PORT=${SQL_PORT}
+      - SECRET_KEY=${SECRET_KEY}
+      - SMTP_ENCRYPTION_KEY=${SMTP_ENCRYPTION_KEY}
+      - IMGUR_CLIENT_ID=${IMGUR_CLIENT_ID}
+      - IMGUR_API_KEY=${IMGUR_API_KEY}
+      - CELERY_BROKER=${CELERY_BROKER}
+      - CELERY_BACKEND=${CELERY_BACKEND}
+      - GOOGLE_ANALYTICS_4_ID=${GOOGLE_ANALYTICS_4_ID}
+      - DEBUG=${DEBUG}
+      - GOOGLE_ANALYTICS_4_ENABLED=${GOOGLE_ANALYTICS_4_ENABLED}
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+
+
+volumes:
+  extremeukdeals_postgres_data:

@@ -73,7 +73,7 @@ AUTH_USER_MODEL = "authentication.User"
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
     "PAGE_SIZE": 100,
 }
 
@@ -86,7 +86,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API for Extreme UK Deals",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
-    'SCHEMA_COERCE_PATH_PK_SUFFIX': True,
+    "SCHEMA_COERCE_PATH_PK_SUFFIX": True,
     "SWAGGER_UI_SETTINGS": {
         "deepLinking": True,
         "persistAuthorization": True,

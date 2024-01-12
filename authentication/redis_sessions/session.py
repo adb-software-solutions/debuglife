@@ -183,10 +183,7 @@ class SessionStore(SessionBase):
             if self.session_key is None:
                 return
             session_key = self.session_key
-        try:
-            self.server.delete(self.get_real_stored_key(session_key))
-        except:
-            pass
+        self.server.delete(self.get_real_stored_key(session_key))
 
     @classmethod
     def clear_expired(cls) -> None:

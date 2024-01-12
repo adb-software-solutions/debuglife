@@ -7,7 +7,7 @@ import re
 from lib.custom_check import non_py_rules
 from zulint.command import LinterConfig, add_default_linter_arguments
 from zulint.custom_rules import RuleList
-from zulint.linters import run_pyflakes
+from zulint.linters import run_command
 
 MYPY = False
 if MYPY:
@@ -146,15 +146,14 @@ def run():
         return 1 if failed else 0
 
     @linter_config.lint
-    def pyflakes():
-        # type: () -> int
-        suppress_patterns: List[Tuple[str, str]] = [
-            # Error patters in this list will be will not be reported by the linter.
-            # syntax: ('File Path', 'Error message')
-            # eg: ('path/to/file.py', 'imported but unused')
-        ]
-        failed = run_pyflakes(by_lang["py"], args, suppress_patterns)
-        return 1 if failed else 0
+    def flake8() -> int:
+        """Runs flake8"""
+        return run_command(
+            "flake8",
+            "blue",
+            ["flake8"],
+            suppress_line=lambda line: line.startswith("./static/"),
+        )
 
     linter_config.do_lint()
 

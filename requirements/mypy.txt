@@ -84,6 +84,10 @@ types-pyyaml==6.0.10 \
     --hash=sha256:18985a382c93fb12187daae6f57ce7787e3651cd590291c907d3e757919689ff \
     --hash=sha256:a1676caeb098096833fe2f1472e7ea8debf7663222964fa90545cfaafebf3385
     # via django-stubs
+types-requests==2.31.0.20240106 \
+    --hash=sha256:0e1c731c17f33618ec58e022b614a1a2ecc25f7dc86800b36ef341380402c612 \
+    --hash=sha256:da997b3b6a72cc08d09f4dba9802fdbabc89104b35fe24ee588e674037689354
+    # via -r requirements/mypy.in
 typing-extensions==4.7.1 \
     --hash=sha256:440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36 \
     --hash=sha256:b75ddc264f0ba5615db7ba217daeb99701ad295353c45f9e95963337ceeeffb2
@@ -91,3 +95,7 @@ typing-extensions==4.7.1 \
     #   django-stubs
     #   django-stubs-ext
     #   mypy
+urllib3==2.1.0 \
+    --hash=sha256:55901e917a5896a349ff771be919f8bd99aff50b79fe58fec595eb37bbc56bb3 \
+    --hash=sha256:df7aa8afb0148fa78488e7899b2c59b5f4ffcfa82e6c54ccb9dd37c1d7b52d54
+    # via types-requests

@@ -1,18 +1,6 @@
 from rest_framework import serializers
 
-from apps.shop.models import AffiliateProduct, AffiliateProgram, ProductCategory, ProductSubCategory
-
-
-class ProductCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductCategory
-        fields = "__all__"
-
-
-class ProductSubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductSubCategory
-        fields = "__all__"
+from apps.shop.models import AffiliateProduct, AffiliateProgram
 
 
 class AffiliateProgramSerializer(serializers.ModelSerializer):
@@ -25,3 +13,8 @@ class AffiliateProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = AffiliateProduct
         fields = "__all__"
+
+
+class PinterestBoardFeedSerializer(serializers.Serializer):
+    board_name = serializers.CharField(read_only=True)
+    feed_url = serializers.CharField(read_only=True)

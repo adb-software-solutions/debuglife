@@ -23,6 +23,8 @@ from django.urls import URLPattern, URLResolver, path
 from django.urls.conf import include
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
+from apps.shop.feeds import PinterestBoardFeed
+from apps.shop.views import AffiliateProductRedirectView
 from authentication.urls import urlpatterns as auth_urlpatterns
 from extremeukdeals.routers import urlpatterns as api_urlpatterns
 
@@ -40,6 +42,14 @@ urlpatterns: URLList = [
     ),
     path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("api/", include(api_urlpatterns)),
+    path(
+        "feeds/pinterest-board/<uuid:board_id>/", PinterestBoardFeed(), name="pinterest_board_feed"
+    ),
+    path(
+        "shop/products/<uuid:product_id>/rd/",
+        AffiliateProductRedirectView.as_view(),
+        name="affiliate_product_redirect",
+    ),
 ]
 
 if settings.DEBUG:

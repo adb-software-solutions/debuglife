@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from django.http import HttpRequest
 from django.views.generic import RedirectView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -29,6 +31,8 @@ class AffiliateProductViewSet(CustomModelViewSet):
 
 
 class PinterestBoardViewSet(ReadOnlyModelViewSet):
+    queryset = PinterestBoard.objects.all()
+
     def list(self, request: HttpRequest) -> Response:
         feed_urls = []
         for board in PinterestBoard.objects.all():
@@ -40,6 +44,17 @@ class PinterestBoardViewSet(ReadOnlyModelViewSet):
             )
 
         serializer = PinterestBoardFeedSerializer(feed_urls, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request: HttpRequest, pk: UUID) -> Response:
+        board = PinterestBoard.objects.get(id=pk)
+        feed_urls = {
+            "board_name": board.board_name,
+            "feed_url": board.build_feed_url(),
+        }
+
+        serializer = PinterestBoardFeedSerializer(feed_urls)
 
         return Response(serializer.data)
 

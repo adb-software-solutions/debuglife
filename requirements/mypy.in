@@ -7,7 +7,7 @@ mypy==1.5.1
 types-psycopg2==2.9.21.11
 types-requests==2.31.0.20240106
 
-https://github.com/andersk/django-stubs/archive/1220e01829ac773d31618e99ffcb1e65f0e5bba6.zip
-django-stubs-ext==4.2.2
+django-stubs==4.2.7
+django-stubs-ext==4.2.7
 
 types-Pillow==10.0.0.2

@@ -120,7 +120,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD: str = "email"
     USERNAME_FIELD: str = "email"
-    REQUIRED_FIELDS: list[str] = ["first_name", "last_name"]
+    REQUIRED_FIELDS = ["first_name", "last_name"]
 
     class Meta:
         verbose_name = _("user")

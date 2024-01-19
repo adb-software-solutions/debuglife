@@ -14,12 +14,13 @@ django==4.2.4 \
     # via
     #   django-stubs
     #   django-stubs-ext
-django-stubs @ https://github.com/andersk/django-stubs/archive/1220e01829ac773d31618e99ffcb1e65f0e5bba6.zip \
-    --hash=sha256:bb42d1cab6d3a069e15b50a177abc373eb67cb832e8acb6e9ed4c7cb10500a9d
+django-stubs==4.2.7 \
+    --hash=sha256:4cf4de258fa71adc6f2799e983091b9d46cfc67c6eebc68fe111218c9a62b3b8 \
+    --hash=sha256:8ccd2ff4ee5adf22b9e3b7b1a516d2e1c2191e9d94e672c35cc2bc3dd61e0f6b
     # via -r requirements/mypy.in
-django-stubs-ext==4.2.2 \
-    --hash=sha256:c69d1cc46f1c4c3b7894b685a5022c29b2a36c7cfb52e23762eaf357ebfc2c98 \
-    --hash=sha256:fdacc65a14d2d4b97334b58ff178a5853ec8c8c76cec406e417916ad67536ce4
+django-stubs-ext==4.2.7 \
+    --hash=sha256:45a5d102417a412e3606e3c358adb4744988a92b7b58ccf3fd64bddd5d04d14c \
+    --hash=sha256:519342ac0849cda1559746c9a563f03ff99f636b0ebe7c14b75e816a00dfddc3
     # via
     #   -r requirements/mypy.in
     #   django-stubs
@@ -51,9 +52,7 @@ mypy==1.5.1 \
     --hash=sha256:f6b0e77db9ff4fda74de7df13f30016a0a663928d669c9f2c057048ba44f09bb \
     --hash=sha256:f757063a83970d67c444f6e01d9550a7402322af3557ce7630d3c957386fa8f5 \
     --hash=sha256:ff0cedc84184115202475bbb46dd99f8dcb87fe24d5d0ddfc0fe6b8575c88d2f
-    # via
-    #   -r requirements/mypy.in
-    #   django-stubs
+    # via -r requirements/mypy.in
 mypy-extensions==1.0.0 \
     --hash=sha256:4392f6c0eb8a5668a69e23d168ffa70f0be9ccfd32b5cc2d26a34ae5b844552d \
     --hash=sha256:75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782

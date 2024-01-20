@@ -1,11 +1,9 @@
-from uuid import UUID
-
 from django.http import HttpRequest
 from django.views.generic import RedirectView
+from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from rest_framework import filters
 
 from apps.shop.models import AffiliateProduct, AffiliateProgram, PinterestBoard
 from apps.shop.serializers import (
@@ -27,7 +25,7 @@ class AffiliateProductViewSet(CustomModelViewSet):
     serializer_class = AffiliateProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['product_name', 'product_description', 'affiliate_link']
+    search_fields = ["product_name", "product_description", "affiliate_link"]
 
 
 ## Get a list of all the feeds created by the PinterestBoardFeed class.

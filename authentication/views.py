@@ -1,8 +1,6 @@
-from knox.views import LoginView as KnoxLoginView, LogoutView as KnoxLogoutView, LogoutAllView as KnoxLogoutAllView
-
-from rest_framework.authentication import SessionAuthentication
-
 from knox.serializers import UserSerializer
+from knox.views import LoginView as KnoxLoginView
+from rest_framework.authentication import SessionAuthentication
 
 
 class LoginView(KnoxLoginView):

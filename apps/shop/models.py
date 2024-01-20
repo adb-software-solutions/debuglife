@@ -9,7 +9,6 @@ from celery import shared_task
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 from PIL import Image
 
 logger = logging.getLogger(__name__)
@@ -93,7 +92,7 @@ class AffiliateProduct(models.Model):
         return settings.SITE_URL + reverse(
             "affiliate_product_redirect", kwargs={"product_id": self.id}
         )
-    
+
     class Meta:
         verbose_name = "Affiliate Product"
         verbose_name_plural = "Affiliate Products"

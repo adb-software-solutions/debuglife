@@ -5,12 +5,12 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: "https",
-                hostname: 'm.media-amazon.com',
-                port: '',
-                pathname: '/images/I/**',
-            }
-        ]
-    }
+                hostname: "m.media-amazon.com",
+                port: "",
+                pathname: "/images/I/**",
+            },
+        ],
+    },
 };
 
 module.exports = nextConfig;

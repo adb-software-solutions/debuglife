@@ -13,7 +13,7 @@ const navigation = [
 
 async function getProducts() {
     const res = await fetch(
-        "http://extremeukdeals-backend:8000/api/shop/affiliate_products/",    
+        "http://extremeukdeals-backend:8000/api/shop/affiliate_products/",
     );
     const products = await res.json();
     return products.results;
@@ -25,11 +25,11 @@ export default async function Home() {
     return (
         <div>
             <Navbar navigation={navigation} />
-            
+
             <HeroSectionComponent/>
 
             <LatestDealsSection products={products}/>
-            
+
             <FooterComponent navigation={footerNavigation} social={footerSocial}/>
         </div>
     );

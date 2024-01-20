@@ -9,6 +9,7 @@ from celery import shared_task
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from PIL import Image
 
 logger = logging.getLogger(__name__)
@@ -27,6 +28,8 @@ def update_image_metadata_task(pinterest_pin_id: UUID) -> None:
 class AffiliateProgram(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     program_name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return self.program_name
@@ -43,6 +46,8 @@ class AffiliateProduct(models.Model):
     pinterest_board = models.ForeignKey(
         "PinterestBoard", on_delete=models.CASCADE, blank=True, null=True
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return self.product_name
@@ -88,11 +93,18 @@ class AffiliateProduct(models.Model):
         return settings.SITE_URL + reverse(
             "affiliate_product_redirect", kwargs={"product_id": self.id}
         )
+    
+    class Meta:
+        verbose_name = "Affiliate Product"
+        verbose_name_plural = "Affiliate Products"
+        ordering = ["-created_at", "-updated_at"]
 
 
 class PinterestBoard(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     board_name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return self.board_name

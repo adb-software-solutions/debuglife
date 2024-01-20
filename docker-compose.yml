@@ -15,19 +15,19 @@ services:
       - extremeukdeals-db
       - extremeukdeals-redis
   
-  # extremeukdeals-frontend:
-  #   build:
-  #     context: .
-  #     dockerfile: ./compose/dev/extremeukdeals/frontend/Dockerfile
-  #   image: extremeukdeals-frontend
-  #   volumes:
-  #     - .:/opt/extremeukdeals
-  #   env_file:
-  #     - ./.env/.dev-frontend
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - extremeukdeals-backend
+  extremeukdeals-frontend:
+    build:
+      context: .
+      dockerfile: ./compose/dev/extremeukdeals/frontend/Dockerfile
+    image: extremeukdeals-frontend
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.dev-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - extremeukdeals-backend
 
   extremeukdeals-db:
     image: postgres:14.4

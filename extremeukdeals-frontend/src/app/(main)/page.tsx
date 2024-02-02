@@ -14,6 +14,9 @@ const navigation = [
 async function getProducts() {
     const res = await fetch(
         "http://extremeukdeals-backend:8000/api/shop/affiliate_products/",
+        {
+            cache: "no-cache",
+        }
     );
     const products = await res.json();
     return products.results;

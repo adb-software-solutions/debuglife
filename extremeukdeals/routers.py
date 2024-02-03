@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework_nested.routers import SimpleRouter
 
-from apps.shop.views import AffiliateProductViewSet, AffiliateProgramViewSet, PinterestBoardViewSet
+from apps.shop.views import AffiliateProductViewSet, AffiliateProgramViewSet, PinterestBoardViewSet, AffiliateCategoryViewSet
 
 router = SimpleRouter()
 router.register(r"shop/affiliate_programs", AffiliateProgramViewSet)
@@ -10,6 +10,13 @@ router.register(r"shop/affiliate_programs", AffiliateProgramViewSet)
 # POST /shop/affiliate_programs/ - create
 # GET /shop/affiliate_programs/<id>/ - retrieve
 # PUT /shop/affiliate_programs/<id>/ - update
+
+router.register(r"shop/affiliate_categories", AffiliateCategoryViewSet)
+## Generates:
+# GET /shop/affiliate_categories/ - list
+# POST /shop/affiliate_categories/ - create
+# GET /shop/affiliate_categories/<id>/ - retrieve
+# PUT /shop/affiliate_categories/<id>/ - update
 
 router.register(r"shop/affiliate_products", AffiliateProductViewSet)
 ## Generates:

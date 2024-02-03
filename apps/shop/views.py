@@ -4,14 +4,17 @@ from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from drf_spectacular.utils import extend_schema
 
-from apps.shop.models import AffiliateProduct, AffiliateProgram, PinterestBoard
+from apps.shop.models import AffiliateProduct, AffiliateCategory ,AffiliateProgram, PinterestBoard
 from apps.shop.serializers import (
     AffiliateProductSerializer,
+    AffiliateCategorySerializer,
     AffiliateProgramSerializer,
     PinterestBoardFeedSerializer,
 )
 from utils.viewsets import CustomModelViewSet
+from rest_framework.exceptions import NotFound
 
 
 class AffiliateProgramViewSet(CustomModelViewSet):
@@ -20,12 +23,88 @@ class AffiliateProgramViewSet(CustomModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
+class AffiliateCategoryViewSet(CustomModelViewSet):
+    queryset = AffiliateCategory.objects.all()
+    serializer_class = AffiliateCategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["category_name", "category_description", "amazon_category_id"]
+
+
 class AffiliateProductViewSet(CustomModelViewSet):
     queryset = AffiliateProduct.objects.all()
     serializer_class = AffiliateProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter]
     search_fields = ["product_name", "product_description", "affiliate_link"]
+
+
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import AffiliateCategory
+from .serializers import AffiliateCategorySerializer
+
+class AffiliateCategoryByAmazonID(APIView):
+    """This class retrieves an affiliate category by its Amazon category ID.
+
+    Args:
+        APIView (_type_): This is the APIView class.
+    """
+
+    def get_object(self, amazon_category_id):
+        try:
+            return AffiliateCategory.objects.get(amazon_category_id=amazon_category_id)
+        except AffiliateCategory.DoesNotExist:
+            raise Http404("No AffiliateCategory found with the specified amazon_category_id.")
+
+    @extend_schema(
+        responses={200: AffiliateCategorySerializer},
+        summary='Retrieve AffiliateCategory by Amazon Category ID',
+        description='Fetches an AffiliateCategory instance by its amazon_category_id.',
+        parameters=[{
+            'name': 'amazon_category_id',
+            'in': 'path',
+            'description': 'Amazon Category ID to fetch the affiliate category for',
+            'required': True,
+            'schema': {'type': 'string'},
+        }]
+    )
+    def get(self, request, amazon_category_id, format=None):
+        affiliate_category = self.get_object(amazon_category_id)
+        serializer = AffiliateCategorySerializer(affiliate_category)
+        return Response(serializer.data)
+
+
+class AffiliateProductByAmazonID(APIView):
+    """This class retrieves an affiliate product by its Amazon product ID.
+
+    Args:
+        APIView (_type_): This is the APIView class.
+    """
+
+    def get_object(self, amazon_product_id):
+        try:
+            return AffiliateProduct.objects.get(amazon_product_id=amazon_product_id)
+        except AffiliateProduct.DoesNotExist:
+            raise Http404("No AffiliateProduct found with the specified amazon_product_id.")
+
+    @extend_schema(
+        responses={200: AffiliateProductSerializer},
+        summary='Retrieve AffiliateProduct by Amazon Product ID',
+        description='Fetches an AffiliateProduct instance by its amazon_product_id.',
+        parameters=[{
+            'name': 'amazon_product_id',
+            'in': 'path',
+            'description': 'Amazon Product ID to fetch the affiliate product for',
+            'required': True,
+            'schema': {'type': 'string'},
+        }]
+    )
+    def get(self, request, amazon_product_id, format=None):
+        affiliate_product = self.get_object(amazon_product_id)
+        serializer = AffiliateProductSerializer(affiliate_product)
+        return Response(serializer.data)
 
 
 ## Get a list of all the feeds created by the PinterestBoardFeed class.

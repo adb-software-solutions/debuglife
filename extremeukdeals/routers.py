@@ -1,7 +1,12 @@
 from django.urls import include, path
 from rest_framework_nested.routers import SimpleRouter
 
-from apps.shop.views import AffiliateProductViewSet, AffiliateProgramViewSet, PinterestBoardViewSet, AffiliateCategoryViewSet
+from apps.shop.views import (
+    AffiliateCategoryViewSet,
+    AffiliateProductViewSet,
+    AffiliateProgramViewSet,
+    PinterestBoardViewSet,
+)
 
 router = SimpleRouter()
 router.register(r"shop/affiliate_programs", AffiliateProgramViewSet)

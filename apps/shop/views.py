@@ -1,20 +1,20 @@
-from django.http import HttpRequest
+from django.http import Http404, HttpRequest
 from django.views.generic import RedirectView
+from drf_spectacular.utils import extend_schema
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from drf_spectacular.utils import extend_schema
 
-from apps.shop.models import AffiliateProduct, AffiliateCategory ,AffiliateProgram, PinterestBoard
+from apps.shop.models import AffiliateCategory, AffiliateProduct, AffiliateProgram, PinterestBoard
 from apps.shop.serializers import (
-    AffiliateProductSerializer,
     AffiliateCategorySerializer,
+    AffiliateProductSerializer,
     AffiliateProgramSerializer,
     PinterestBoardFeedSerializer,
 )
 from utils.viewsets import CustomModelViewSet
-from rest_framework.exceptions import NotFound
 
 
 class AffiliateProgramViewSet(CustomModelViewSet):
@@ -39,12 +39,6 @@ class AffiliateProductViewSet(CustomModelViewSet):
     search_fields = ["product_name", "product_description", "affiliate_link"]
 
 
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .models import AffiliateCategory
-from .serializers import AffiliateCategorySerializer
-
 class AffiliateCategoryByAmazonID(APIView):
     """This class retrieves an affiliate category by its Amazon category ID.
 
@@ -52,7 +46,7 @@ class AffiliateCategoryByAmazonID(APIView):
         APIView (_type_): This is the APIView class.
     """
 
-    def get_object(self, amazon_category_id):
+    def get_object(self, amazon_category_id: str) -> AffiliateCategory:
         try:
             return AffiliateCategory.objects.get(amazon_category_id=amazon_category_id)
         except AffiliateCategory.DoesNotExist:
@@ -60,17 +54,19 @@ class AffiliateCategoryByAmazonID(APIView):
 
     @extend_schema(
         responses={200: AffiliateCategorySerializer},
-        summary='Retrieve AffiliateCategory by Amazon Category ID',
-        description='Fetches an AffiliateCategory instance by its amazon_category_id.',
-        parameters=[{
-            'name': 'amazon_category_id',
-            'in': 'path',
-            'description': 'Amazon Category ID to fetch the affiliate category for',
-            'required': True,
-            'schema': {'type': 'string'},
-        }]
+        summary="Retrieve AffiliateCategory by Amazon Category ID",
+        description="Fetches an AffiliateCategory instance by its amazon_category_id.",
+        parameters=[
+            {
+                "name": "amazon_category_id",
+                "in": "path",
+                "description": "Amazon Category ID to fetch the affiliate category for",
+                "required": True,
+                "schema": {"type": "string"},
+            }
+        ],
     )
-    def get(self, request, amazon_category_id, format=None):
+    def get(self, request: HttpRequest, amazon_category_id: str) -> Response:
         affiliate_category = self.get_object(amazon_category_id)
         serializer = AffiliateCategorySerializer(affiliate_category)
         return Response(serializer.data)
@@ -83,7 +79,7 @@ class AffiliateProductByAmazonID(APIView):
         APIView (_type_): This is the APIView class.
     """
 
-    def get_object(self, amazon_product_id):
+    def get_object(self, amazon_product_id: str) -> AffiliateProduct:
         try:
             return AffiliateProduct.objects.get(amazon_product_id=amazon_product_id)
         except AffiliateProduct.DoesNotExist:
@@ -91,17 +87,19 @@ class AffiliateProductByAmazonID(APIView):
 
     @extend_schema(
         responses={200: AffiliateProductSerializer},
-        summary='Retrieve AffiliateProduct by Amazon Product ID',
-        description='Fetches an AffiliateProduct instance by its amazon_product_id.',
-        parameters=[{
-            'name': 'amazon_product_id',
-            'in': 'path',
-            'description': 'Amazon Product ID to fetch the affiliate product for',
-            'required': True,
-            'schema': {'type': 'string'},
-        }]
+        summary="Retrieve AffiliateProduct by Amazon Product ID",
+        description="Fetches an AffiliateProduct instance by its amazon_product_id.",
+        parameters=[
+            {
+                "name": "amazon_product_id",
+                "in": "path",
+                "description": "Amazon Product ID to fetch the affiliate product for",
+                "required": True,
+                "schema": {"type": "string"},
+            }
+        ],
     )
-    def get(self, request, amazon_product_id, format=None):
+    def get(self, request: HttpRequest, amazon_product_id: str) -> Response:
         affiliate_product = self.get_object(amazon_product_id)
         serializer = AffiliateProductSerializer(affiliate_product)
         return Response(serializer.data)

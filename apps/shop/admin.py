@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from .models import AffiliateProduct, AffiliateProgram, AffiliateCategory, PinterestBoard, PinterestPin
+from .models import (
+    AffiliateCategory,
+    AffiliateProduct,
+    AffiliateProgram,
+    PinterestBoard,
+    PinterestPin,
+)
 
 
 class AffiliateProgramAdmin(admin.ModelAdmin[AffiliateProgram]):
@@ -24,6 +30,7 @@ class AffiliateProductAdmin(admin.ModelAdmin[AffiliateProduct]):
 class AffiliateCategoryAdmin(admin.ModelAdmin[AffiliateCategory]):
     list_display = ("category_name", "amazon_category_id")
     ordering = ("category_name",)
+
 
 class PinterestBoardAdmin(admin.ModelAdmin[PinterestBoard]):
     list_display = ("board_name", "id")

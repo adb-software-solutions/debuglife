@@ -24,7 +24,11 @@ from django.urls.conf import include
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 from apps.shop.feeds import PinterestBoardFeed
-from apps.shop.views import AffiliateProductRedirectView, AffiliateCategoryByAmazonID, AffiliateProductByAmazonID
+from apps.shop.views import (
+    AffiliateCategoryByAmazonID,
+    AffiliateProductByAmazonID,
+    AffiliateProductRedirectView,
+)
 from authentication.urls import urlpatterns as auth_urlpatterns
 from extremeukdeals.routers import urlpatterns as api_urlpatterns
 
@@ -42,8 +46,16 @@ urlpatterns: URLList = [
     ),
     path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("api/", include(api_urlpatterns)),
-    path('api/shop/affiliate_categories/by_amazon_id/<str:amazon_category_id>/', AffiliateCategoryByAmazonID.as_view(), name='affiliate-category-by-amazon-id'),
-    path('api/shop/affiliate_products/by_amazon_id/<str:amazon_product_id>/', AffiliateProductByAmazonID.as_view(), name='affiliate-product-by-amazon-id'),
+    path(
+        "api/shop/affiliate_categories/by_amazon_id/<str:amazon_category_id>/",
+        AffiliateCategoryByAmazonID.as_view(),
+        name="affiliate-category-by-amazon-id",
+    ),
+    path(
+        "api/shop/affiliate_products/by_amazon_id/<str:amazon_product_id>/",
+        AffiliateProductByAmazonID.as_view(),
+        name="affiliate-product-by-amazon-id",
+    ),
     path(
         "feeds/pinterest-board/<uuid:board_id>/", PinterestBoardFeed(), name="pinterest_board_feed"
     ),

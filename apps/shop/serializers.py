@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.shop.models import AffiliateProduct, AffiliateProgram, AffiliateCategory
+from apps.shop.models import AffiliateCategory, AffiliateProduct, AffiliateProgram
 
 
 class AffiliateProgramSerializer(serializers.ModelSerializer):

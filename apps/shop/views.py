@@ -56,15 +56,6 @@ class AffiliateCategoryByAmazonID(APIView):
         responses={200: AffiliateCategorySerializer},
         summary="Retrieve AffiliateCategory by Amazon Category ID",
         description="Fetches an AffiliateCategory instance by its amazon_category_id.",
-        parameters=[
-            {
-                "name": "amazon_category_id",
-                "in": "path",
-                "description": "Amazon Category ID to fetch the affiliate category for",
-                "required": True,
-                "schema": {"type": "string"},
-            }
-        ],
     )
     def get(self, request: HttpRequest, amazon_category_id: str) -> Response:
         affiliate_category = self.get_object(amazon_category_id)
@@ -89,15 +80,6 @@ class AffiliateProductByAmazonID(APIView):
         responses={200: AffiliateProductSerializer},
         summary="Retrieve AffiliateProduct by Amazon Product ID",
         description="Fetches an AffiliateProduct instance by its amazon_product_id.",
-        parameters=[
-            {
-                "name": "amazon_product_id",
-                "in": "path",
-                "description": "Amazon Product ID to fetch the affiliate product for",
-                "required": True,
-                "schema": {"type": "string"},
-            }
-        ],
     )
     def get(self, request: HttpRequest, amazon_product_id: str) -> Response:
         affiliate_product = self.get_object(amazon_product_id)

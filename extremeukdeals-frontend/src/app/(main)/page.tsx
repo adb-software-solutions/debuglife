@@ -32,7 +32,9 @@ async function getProducts() {
     const res = await fetch(
         getApiUrl("/api/shop/affiliate_products"),
         {
-            cache: "no-cache",
+            next: {
+                revalidate: 600,
+            }
         },
     );
     const products = await res.json();

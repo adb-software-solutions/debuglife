@@ -22,8 +22,6 @@ services:
     image: epicbargainsanddeals-frontend
     volumes:
       - .:/opt/epicbargainsanddeals
-    env_file:
-      - ./.env/.dev-frontend
     ports:
       - "3000:3000"
     depends_on:

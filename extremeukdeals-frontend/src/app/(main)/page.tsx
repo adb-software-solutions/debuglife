@@ -3,6 +3,7 @@ import FooterComponent from "@/components/common/frontend/footer/Footer";
 import HeroSectionComponent from "@/components/frontend/home/HeroSection";
 import LatestDealsSection from "@/components/frontend/home/LatestDealsSection";
 import {footerNavigation, footerSocial} from "@/fixtures/footerData";
+import { extremeukdeals_api_url, extremeukdeals_server_api_url } from "@/config/appSettings";
 
 const navigation = [
     {title: "Home", href: "/", current: true},
@@ -15,10 +16,10 @@ function getBaseUrl() {
     // Check if running on the server
     if (typeof window === "undefined") {
         // Running on server - use Docker container name
-        return "http://extremeukdeals-backend:8000";
+        return extremeukdeals_server_api_url;
     } else {
         // Running on client - use specific domain
-        return "https://extremeukdeals.com";
+        return extremeukdeals_api_url;
     }
 }
 

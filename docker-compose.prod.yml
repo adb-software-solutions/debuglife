@@ -1,0 +1,156 @@
+services:
+  extremeukdeals-backend:
+    build:
+      context: .
+      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-backend
+    command: /start
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.prod
+    ports:
+      - "8000:8000"
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+    networks:
+      - extremeukdeals-network
+  
+  extremeukdeals-frontend:
+    build:
+      context: .
+      dockerfile: ./compose/production/extremeukdeals/frontend/Dockerfile
+    image: extremeukdeals-frontend
+    env_file:
+      - ./.env/.prod-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - extremeukdeals-backend
+    networks:
+      - extremeukdeals-network
+
+  extremeukdeals-db:
+    image: postgres:14.4
+    volumes:
+      - extremeukdeals_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env/.prod
+    ports:
+      - "5434:5432"
+    networks:
+      - extremeukdeals-network
+
+  extremeukdeals-redis:
+    image: redis:7.0.4
+    networks:
+      - extremeukdeals-network
+
+  extremeukdeals-celery_worker_1:
+    build:
+      context: .
+      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-celeryworker
+    command: /start-celeryworker
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.prod
+    environment:
+      - CELERY_QUEUE=initialise_ebay
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+    networks:
+      - extremeukdeals-network
+
+  extremeukdeals-celery_worker_2:
+    build:
+      context: .
+      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-celeryworker
+    command: /start-celeryworker
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.prod
+    environment:
+      - CELERY_QUEUE=ebay
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+    networks:
+      - extremeukdeals-network
+
+  extremeukdeals-celery_worker_3:
+    build:
+      context: .
+      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-celeryworker
+    command: /start-celeryworker
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.prod
+    environment:
+      - CELERY_QUEUE=email
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+    networks:
+      - extremeukdeals-network
+
+  extremeukdeals-celery_beat:
+    build:
+      context: .
+      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-celerybeat
+    command: /start-celerybeat
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.prod
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+    networks:
+      - extremeukdeals-network
+
+  extremeukdeals-flower:
+    build:
+      context: .
+      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
+    image: extremeukdeals-flower
+    command: /start-flower
+    volumes:
+      - .:/opt/extremeukdeals
+    env_file:
+      - ./.env/.prod
+    ports:
+      - "5558:5555"
+    depends_on:
+      - extremeukdeals-db
+      - extremeukdeals-redis
+  
+  extremeukdeals-nginx:
+    build:
+      context: .
+      dockerfile: ./compose/production/extremeukdeals/nginx/Dockerfile
+    image: extremeukdeals-nginx
+    volumes:
+      - .:/opt/extremeukdeals
+    ports:
+      - "8084:80"
+    depends_on:
+      - extremeukdeals-backend
+      - extremeukdeals-frontend
+    networks:
+      - extremeukdeals-network
+
+networks:
+  extremeukdeals-network:
+    driver: bridge
+
+volumes:
+  extremeukdeals_postgres_data:

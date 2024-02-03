@@ -16,6 +16,18 @@ services:
       - extremeukdeals-redis
     networks:
       - extremeukdeals-network
+  
+  extremeukdeals-frontend:
+    build:
+      context: .
+      dockerfile: ./compose/production/extremeukdeals/frontend/Dockerfile
+    image: extremeukdeals-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - extremeukdeals-backend
+    networks:
+      - extremeukdeals-network
 
   extremeukdeals-db:
     image: postgres:14.4
@@ -130,6 +142,7 @@ services:
       - "8084:80"
     depends_on:
       - extremeukdeals-backend
+      - extremeukdeals-frontend
     networks:
       - extremeukdeals-network
 

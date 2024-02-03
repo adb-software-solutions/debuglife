@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import logging
 import os
-import re
 from pathlib import Path
 from typing import List
 
@@ -190,6 +189,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -214,12 +215,19 @@ CELERY_RESULT_SERIALIZER = "json"
 
 # CORS
 
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    re.compile(r"^(https?://)?([^.]+\.)*localhost:3000$"),
-    re.compile(r"^(https?://)?([^.]+\.)*localhost:3002$"),
-    re.compile(r"^(http|https)://([a-zA-Z0-9]+\.)*extremeukdeals\.co\.uk$"),
-    "https://703e-81-143-207-6.ngrok-free.app",
+CORS_ALLOWED_ORIGINS = [
+    "https://extremeukdeals.com",
+    "https://www.extremeukdeals.com",
 ]
+
+if DEBUG:
+    CORS_ALLOWED_ORIGINS += [
+        "http://localhost:3000",
+    ]
+
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 CORS_ALLOW_HEADERS = [
     "accept",

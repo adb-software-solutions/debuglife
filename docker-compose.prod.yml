@@ -130,7 +130,6 @@ services:
       - "8084:80"
     depends_on:
       - extremeukdeals-backend
-      - extremeukdeals-frontend
     networks:
       - extremeukdeals-network
 

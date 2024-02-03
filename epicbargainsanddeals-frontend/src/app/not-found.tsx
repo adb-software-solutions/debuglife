@@ -15,7 +15,7 @@ export default function NotFound() {
                 <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col justify-center px-6 lg:px-8">
                     <div className="flex flex-shrink-0 justify-center">
                         <Link href="/" className="inline-flex">
-                            <span className="sr-only">Extreme UK Deals</span>
+                            <span className="sr-only">Epic Bargains And Deals</span>
                             <Image
                                 className="h-12 w-auto"
                                 src="/logo.svg"

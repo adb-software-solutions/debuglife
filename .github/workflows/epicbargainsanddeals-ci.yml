@@ -1,4 +1,4 @@
-name: Extreme UK Deals CI
+name: Epic Bargains And Deals CI
 
 on:
   push:

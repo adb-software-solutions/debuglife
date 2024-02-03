@@ -4,10 +4,10 @@ import {Providers} from "./providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "Extreme UK Deals",
+    title: "Epic Bargains And Deals",
     description:
-        "Extreme UK Deals is a website that helps you find the best deals on Amazon UK, and other retailers.",
-    authors: [{name: "Extreme UK Deals"}],
+        "Epic Bargains And Deals is a website that helps you find the best deals on Amazon UK, and other retailers.",
+    authors: [{name: "Epic Bargains And Deals"}],
     manifest: "site.webmanifest",
     icons: {
         icon: [
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
             sizes: "180x180",
         },
     },
-    applicationName: "Extreme UK Deals",
+    applicationName: "Epic Bargains And Deals",
     appleWebApp: {
-        title: "Extreme UK Deals",
+        title: "Epic Bargains And Deals",
     },
 };
 

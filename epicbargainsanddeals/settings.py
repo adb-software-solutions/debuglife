@@ -80,8 +80,8 @@ REST_FRAMEWORK = {
 REST_KNOX = {"AUTH_HEADER_PREFIX": "Bearer", "TOKEN_TTL": None}
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Extreme UK Deals API",
-    "DESCRIPTION": "API for Extreme UK Deals",
+    "TITLE": "Epic Bargains And Deals API",
+    "DESCRIPTION": "API for Epic Bargains And Deals",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SCHEMA_COERCE_PATH_PK_SUFFIX": True,

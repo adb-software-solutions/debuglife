@@ -27,13 +27,13 @@ const NavBar: React.FC<NavBarProps> = ({navigation}) => {
             >
                 <div className="flex lg:flex-1">
                     <Link href="#" className="-m-1.5 p-1.5">
-                        <span className="sr-only">Extreme UK Deals</span>
+                        <span className="sr-only">Epic Bargains & Deals</span>
                         <Image
                             className="h-10 w-auto"
                             src="/logo.svg"
                             alt=""
-                            width={32}
-                            height={32}
+                            width={50}
+                            height={50}
                         />
                     </Link>
                 </div>
@@ -71,7 +71,7 @@ const NavBar: React.FC<NavBarProps> = ({navigation}) => {
                 <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
                     <div className="flex items-center justify-between">
                         <Link href="#" className="-m-1.5 p-1.5">
-                            <span className="sr-only">Extreme UK Deals</span>
+                            <span className="sr-only">Epic Bargains And Deals</span>
                             <Image
                                 className="h-8 w-auto"
                                 src="/logo.svg"

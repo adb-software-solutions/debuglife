@@ -1,0 +1,112 @@
+name: Extreme UK Deals CI
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["*"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.head_ref || github.run_id }}"
+  cancel-in-progress: true
+
+jobs:
+  run-tests-and-linters:
+    runs-on: ubuntu-latest
+    name: "Run Django Test Suite and Linters"
+
+    if: ${{ (github.repository == 'epicbargainsanddeals/epicbargainsanddeals' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
+
+    env:
+      SQL_ENGINE: ${{ vars.epicbargainsanddeals_SQL_ENGINE }}
+      SQL_DATABASE: ${{ vars.epicbargainsanddeals_SQL_DATABASE }}
+      SQL_USER: ${{ vars.epicbargainsanddeals_SQL_USER }}
+      SQL_PASSWORD: ${{ secrets.epicbargainsanddeals_DEV_SQL_PASSWORD }}
+      SQL_HOST: ${{ vars.epicbargainsanddeals_SQL_HOST }}
+      SQL_PORT: ${{ vars.epicbargainsanddeals_SQL_PORT }}
+      SECRET_KEY: ${{ secrets.epicbargainsanddeals_DEV_SECRET_KEY }}
+      SMTP_ENCRYPTION_KEY: ${{ secrets.epicbargainsanddeals_DEV_SMTP_ENCRYPTION_KEY }}
+      IMGUR_CLIENT_ID: ${{ secrets.epicbargainsanddeals_IMGUR_CLIENT_ID }}
+      IMGUR_API_KEY: ${{ secrets.epicbargainsanddeals_IMGUR_API_KEY }}
+      CELERY_BROKER: ${{ vars.epicbargainsanddeals_CELERY_BROKER }}
+      CELERY_BACKEND: ${{ vars.epicbargainsanddeals_CELERY_BACKEND }}
+      GOOGLE_ANALYTICS_4_ID: ${{ secrets.epicbargainsanddeals_GOOGLE_ANALYTICS_4_ID }}
+      DEBUG: 1
+      GOOGLE_ANALYTICS_4_ENABLED: 1
+      REACT_APP_epicbargainsanddeals_API_URL: ${{ vars.REACT_APP_epicbargainsanddeals_API_URL }}
+  
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Run tests
+        uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: "docker-compose-ci.yml"
+          test-container: epicbargainsanddeals-backend
+          test-command: "coverage run ./manage.py test -v 2"
+      
+      - name: Generate coverage file.
+        uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: "docker-compose-ci.yml"
+          test-container: epicbargainsanddeals-backend
+          test-command: "coverage xml"
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "19.4.0"
+      
+      - name: Install python dependencies
+        run: pip install -r requirements/dev.txt
+      
+      - name: Install node dependencies
+        run: | 
+          npm install
+          cd epicbargainsanddeals-frontend
+          npm install
+          cd ..
+          cd epicbargainsanddeals-documentation
+          npm install
+          cd ..
+
+      - name: Install shell dependencies
+        run: |
+          tools/setup/install-shellcheck
+          tools/setup/install-shfmt
+
+      - name: Run linters
+        run: tools/lint
+      
+      - name: Upload coverage to Codecov
+        if: ${{ github.repository == 'epicbargainsanddeals/epicbargainsanddeals' && github.event_name == 'push' }}
+        uses: codecov/codecov-action@v3
+        with:
+         token: ${{ secrets.CODECOV_TOKEN }}
+         files: ./coverage.xml
+         flags: unittests
+         fail_ci_if_error: true
+    
+  sync-to-gitlab:
+    runs-on: ubuntu-latest
+    name: "Sync GitHub repository to GitLab"
+    needs: run-tests-and-linters
+
+    if: ${{ (github.repository == 'epicbargainsanddeals/epicbargainsanddeals' && github.event_name == 'push') }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Sync Repository
+        uses: adambirds/sync-github-to-gitlab-action@v1.1.0
+        with:
+          destination_repository: git@gitlab.com:epicbargainsanddeals/epicbargainsanddeals.git
+          destination_branch_name: main
+          destination_ssh_key: ${{ secrets.GITLAB_SSH_KEY }}

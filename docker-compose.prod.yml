@@ -1,154 +1,154 @@
 services:
-  extremeukdeals-backend:
+  epicbargainsanddeals-backend:
     build:
       context: .
-      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-backend
+      dockerfile: ./compose/production/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-backend
     command: /start
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.prod
     ports:
       - "8000:8000"
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
     networks:
-      - extremeukdeals-network
+      - epicbargainsanddeals-network
   
-  extremeukdeals-frontend:
+  epicbargainsanddeals-frontend:
     build:
       context: .
-      dockerfile: ./compose/production/extremeukdeals/frontend/Dockerfile
-    image: extremeukdeals-frontend
+      dockerfile: ./compose/production/epicbargainsanddeals/frontend/Dockerfile
+    image: epicbargainsanddeals-frontend
     ports:
       - "3000:3000"
     depends_on:
-      - extremeukdeals-backend
+      - epicbargainsanddeals-backend
     networks:
-      - extremeukdeals-network
+      - epicbargainsanddeals-network
 
-  extremeukdeals-db:
+  epicbargainsanddeals-db:
     image: postgres:14.4
     volumes:
-      - extremeukdeals_postgres_data:/var/lib/postgresql/data
+      - epicbargainsanddeals_postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.env/.prod
     ports:
       - "5434:5432"
     networks:
-      - extremeukdeals-network
+      - epicbargainsanddeals-network
 
-  extremeukdeals-redis:
+  epicbargainsanddeals-redis:
     image: redis:7.0.4
     networks:
-      - extremeukdeals-network
+      - epicbargainsanddeals-network
 
-  extremeukdeals-celery_worker_1:
+  epicbargainsanddeals-celery_worker_1:
     build:
       context: .
-      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-celeryworker
+      dockerfile: ./compose/production/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-celeryworker
     command: /start-celeryworker
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.prod
     environment:
       - CELERY_QUEUE=initialise_ebay
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
     networks:
-      - extremeukdeals-network
+      - epicbargainsanddeals-network
 
-  extremeukdeals-celery_worker_2:
+  epicbargainsanddeals-celery_worker_2:
     build:
       context: .
-      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-celeryworker
+      dockerfile: ./compose/production/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-celeryworker
     command: /start-celeryworker
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.prod
     environment:
       - CELERY_QUEUE=ebay
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
     networks:
-      - extremeukdeals-network
+      - epicbargainsanddeals-network
 
-  extremeukdeals-celery_worker_3:
+  epicbargainsanddeals-celery_worker_3:
     build:
       context: .
-      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-celeryworker
+      dockerfile: ./compose/production/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-celeryworker
     command: /start-celeryworker
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.prod
     environment:
       - CELERY_QUEUE=email
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
     networks:
-      - extremeukdeals-network
+      - epicbargainsanddeals-network
 
-  extremeukdeals-celery_beat:
+  epicbargainsanddeals-celery_beat:
     build:
       context: .
-      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-celerybeat
+      dockerfile: ./compose/production/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-celerybeat
     command: /start-celerybeat
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.prod
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
     networks:
-      - extremeukdeals-network
+      - epicbargainsanddeals-network
 
-  extremeukdeals-flower:
+  epicbargainsanddeals-flower:
     build:
       context: .
-      dockerfile: ./compose/production/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-flower
+      dockerfile: ./compose/production/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-flower
     command: /start-flower
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.prod
     ports:
       - "5558:5555"
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
   
-  extremeukdeals-nginx:
+  epicbargainsanddeals-nginx:
     build:
       context: .
-      dockerfile: ./compose/production/extremeukdeals/nginx/Dockerfile
-    image: extremeukdeals-nginx
+      dockerfile: ./compose/production/epicbargainsanddeals/nginx/Dockerfile
+    image: epicbargainsanddeals-nginx
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     ports:
       - "8084:80"
     depends_on:
-      - extremeukdeals-backend
-      - extremeukdeals-frontend
+      - epicbargainsanddeals-backend
+      - epicbargainsanddeals-frontend
     networks:
-      - extremeukdeals-network
+      - epicbargainsanddeals-network
 
 networks:
-  extremeukdeals-network:
+  epicbargainsanddeals-network:
     driver: bridge
 
 volumes:
-  extremeukdeals_postgres_data:
+  epicbargainsanddeals_postgres_data:

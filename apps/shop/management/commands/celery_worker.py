@@ -8,7 +8,7 @@ from django.utils import autoreload
 
 def restart_celery() -> None:
     subprocess.call(shlex.split('pkill -f "celery worker"'))
-    subprocess.call(shlex.split("celery -A extremeukdeals worker -l INFO"))
+    subprocess.call(shlex.split("celery -A epicbargainsanddeals worker -l INFO"))
 
 
 class Command(BaseCommand):

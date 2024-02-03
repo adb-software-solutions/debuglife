@@ -1,88 +1,88 @@
 services:
-  extremeukdeals-backend:
+  epicbargainsanddeals-backend:
     build:
       context: .
-      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-backend
+      dockerfile: ./compose/dev/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-backend
     command: /start
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.dev
     ports:
       - "8000:8000"
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
   
-  extremeukdeals-frontend:
+  epicbargainsanddeals-frontend:
     build:
       context: .
-      dockerfile: ./compose/dev/extremeukdeals/frontend/Dockerfile
-    image: extremeukdeals-frontend
+      dockerfile: ./compose/dev/epicbargainsanddeals/frontend/Dockerfile
+    image: epicbargainsanddeals-frontend
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.dev-frontend
     ports:
       - "3000:3000"
     depends_on:
-      - extremeukdeals-backend
+      - epicbargainsanddeals-backend
 
-  extremeukdeals-db:
+  epicbargainsanddeals-db:
     image: postgres:14.4
     volumes:
-      - extremeukdeals_postgres_data:/var/lib/postgresql/data
+      - epicbargainsanddeals_postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.env/.dev
     ports:
       - "5433:5432"
-  extremeukdeals-redis:
+  epicbargainsanddeals-redis:
     image: redis:7.0.4
     expose:
       - "6379"
-  extremeukdeals-celery_worker:
+  epicbargainsanddeals-celery_worker:
     build:
       context: .
-      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-celeryworker
+      dockerfile: ./compose/dev/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-celeryworker
     command: /start-celeryworker
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.dev
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
-  extremeukdeals-celery_beat:
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
+  epicbargainsanddeals-celery_beat:
     build:
       context: .
-      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-celerybeat
+      dockerfile: ./compose/dev/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-celerybeat
     command: /start-celerybeat
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.dev
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
-  extremeukdeals-flower:
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
+  epicbargainsanddeals-flower:
     build:
       context: .
-      dockerfile: ./compose/dev/extremeukdeals/backend/Dockerfile
-    image: extremeukdeals-flower
+      dockerfile: ./compose/dev/epicbargainsanddeals/backend/Dockerfile
+    image: epicbargainsanddeals-flower
     command: /start-flower
     volumes:
-      - .:/opt/extremeukdeals
+      - .:/opt/epicbargainsanddeals
     env_file:
       - ./.env/.dev
     ports:
       - "5557:5555"
     depends_on:
-      - extremeukdeals-db
-      - extremeukdeals-redis
+      - epicbargainsanddeals-db
+      - epicbargainsanddeals-redis
 
 
 volumes:
-  extremeukdeals_postgres_data:
+  epicbargainsanddeals_postgres_data:

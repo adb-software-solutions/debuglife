@@ -38,7 +38,7 @@ class AffiliateCategory(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     amazon_category_id = models.CharField(max_length=255, blank=True, null=True)
     category_name = models.CharField(max_length=255)
-    category_description = models.TextField()
+    category_description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -48,6 +48,7 @@ class AffiliateCategory(models.Model):
 
 class AffiliateProduct(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    amazon_product_id = models.CharField(max_length=255, blank=True, null=True)
     product_name = models.CharField(max_length=255)
     product_description = models.TextField()
     product_image = models.URLField(blank=True, null=True)

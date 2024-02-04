@@ -177,3 +177,5 @@ _old/
 test.js
 schema.json
 .eslintcache
+
+!src/lib/

@@ -116,6 +116,8 @@ class AffiliateProduct(models.Model):
         """
         amazon_base_url = "https://www.amazon.co.uk/dp/"
         self.affiliate_link = f"{amazon_base_url}{self.amazon_product_id}?tag={settings.AMAZON_AFFILIATE_TAG}"
+        print(f"Generated affiliate link for {self.product_name}")
+        print(self.affiliate_link)
         self.save()
 
     class Meta:

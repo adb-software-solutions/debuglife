@@ -47,7 +47,7 @@ export default async function FooterComponent({
                 <div className="mt-16 border-t border-gray-900/10 pt-8 sm:mt-20 md:flex md:items-center md:justify-between lg:mt-10">
                     <FooterSocialComponent social={social} />
                     <p className="mt-8 text-xs leading-5 text-gray-500 md:order-1 md:mt-0 text-center md:text-start md:pr-8">
-                        &copy; {currentYear} SellerDesk Ltd. All rights reserved. eBay is a trademark of eBay, Inc. This application uses the eBay API but is not endorsed or certified by eBay, Inc.
+                        &copy; {currentYear} Epic Bargains And Deals Ltd is a company registered in  England and Wales (Company No. 15460370) 49 Sandringham Road, Manchester, M28 1LX | All rights reserved.
                     </p>
                     <p className="mt-8 text-xs leading-5 text-gray-500 md:order-2 md:mt-0 text-center md:text-start md:pr-8">
                         This website uses affiliate links. We may earn a commission if you make a purchase through these links, at no additional cost to you.

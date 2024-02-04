@@ -35,23 +35,23 @@ export const footerNavigation = [
 
 export const footerSocial = [
     {
-        name: "Twitter",
-        href: "https://twitter.com/sellerdeskapp",
-        icon: "twitter-solid",
+        name: "X",
+        href: "https://twitter.com/BargainsEpic",
+        icon: "x-solid",
     },
     {
         name: "Facebook",
-        href: "https://facebook.com/sellerdeskapp",
+        href: "https://www.facebook.com/epicbargainsanddeals",
         icon: "facebook-solid",
     },
     {
         name: "Instagram",
-        href: "https://instagram.com/sellerdeskapp",
+        href: "https://instagram.com/epicbargainsanddeals",
         icon: "instagram-solid",
     },
     {
-        name: "YouTube",
-        href: "https://youtube.com/sellerdeskapp",
-        icon: "youtube-solid",
+        name: "Pinterest",
+        href: "https://pinterest.com/epicbargainsanddeals",
+        icon: "pinterest-solid",
     },
 ];

@@ -75,7 +75,9 @@ class AffiliateProduct(models.Model):
             **kwargs: This is a list of keyword arguments.
         """
         super().save(*args, **kwargs)
-        self.generate_affiliate_link()
+
+        if not self.affiliate_link:
+            self.generate_affiliate_link()
 
         if self.pinterest_board:
             if not PinterestPin.objects.filter(

@@ -50,13 +50,13 @@ class AffiliateProduct(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     amazon_product_id = models.CharField(max_length=255, blank=True, null=True)
     product_name = models.CharField(max_length=255)
-    product_description = models.TextField()
+    product_description = models.TextField(blank=True, null=True)
     product_image = models.URLField(blank=True, null=True)
     product_price = models.DecimalField(max_digits=10, decimal_places=2)
     amazon_category = models.ForeignKey(
         AffiliateCategory, on_delete=models.CASCADE, blank=True, null=True
     )
-    affiliate_link = models.URLField()
+    affiliate_link = models.URLField(blank=True, null=True)
     affiliate_program = models.ForeignKey(AffiliateProgram, on_delete=models.CASCADE)
     pinterest_board = models.ForeignKey(
         "PinterestBoard", on_delete=models.CASCADE, blank=True, null=True

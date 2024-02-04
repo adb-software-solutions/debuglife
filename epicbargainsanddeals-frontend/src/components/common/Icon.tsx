@@ -1,5 +1,5 @@
 import React from 'react';
-import { SiGithub, SiFacebook, SiTwitter, SiInstagram, SiYoutube, SiX, SiLinkedin } from '@icons-pack/react-simple-icons';
+import { SiGithub, SiFacebook, SiTwitter, SiInstagram, SiYoutube, SiX, SiLinkedin, SiPinterest } from '@icons-pack/react-simple-icons';
 import { FiPackage } from "react-icons/fi";
 import { PencilSquareIcon, ServerStackIcon, ExclamationCircleIcon, Square3Stack3DIcon, LightBulbIcon, PaperClipIcon } from '@heroicons/react/24/solid';
 import {
@@ -45,6 +45,8 @@ export default async function Icon({ iconName, className }: IconProps) {
             return <SiInstagram className={combinedClass} />;
         case 'youtube-solid':
             return <SiYoutube className={combinedClass} />;
+        case 'pinterest-solid':
+            return <SiPinterest className={combinedClass} />;
         case 'x-solid':
             return <SiX className={combinedClass} />;
         case 'linkedin-solid':

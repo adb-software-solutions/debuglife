@@ -30,9 +30,7 @@ SECRET_KEY = os.environ.get(
     "SECRET_KEY", "django-insecure-fdg2(_6j#^s=!x*$-t#f1q6y9bu-k-4i$xrsnuv%xn@xe_r(r2"
 )
 
-SMTP_ENCRYPTION_KEY = os.environ.get(
-    "SMTP_ENCRYPTION_KEY", "I_DmQkoiAXfmF31CN_6L1o6raLaVIMjczZ-1LLElrGw="
-).encode()
+AMAZON_AFFILIATE_TAG = os.environ.get("AMAZON_AFFILIATE_TAG", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", "0")))
@@ -145,9 +143,6 @@ DATABASES = {
         "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
-
-GOOGLE_ANALYTICS_4_ID = os.environ.get("GOOGLE_ANALYTICS_4_ID", "")
-GOOGLE_ANALYTICS_4_ENABLED = bool(int(os.environ.get("GOOGLE_ANALYTICS_4_ENABLED", "0")))
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

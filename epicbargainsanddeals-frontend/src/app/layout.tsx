@@ -1,5 +1,7 @@
 import type {Metadata, Viewport} from "next";
 import {Providers} from "./providers";
+import { Suspense } from "react";
+import Analytics from "@/components/gtmComponent";
 
 import "./globals.css";
 
@@ -52,6 +54,9 @@ export default async function RootLayout({children}: {children: React.ReactNode}
                 <Providers>
                     {children}
                 </Providers>
+                <Suspense fallback={null}>
+                    <Analytics />
+                </Suspense>
             </body>
         </html>
     );

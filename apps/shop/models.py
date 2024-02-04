@@ -75,6 +75,8 @@ class AffiliateProduct(models.Model):
             **kwargs: This is a list of keyword arguments.
         """
         super().save(*args, **kwargs)
+        self.generate_affiliate_link()
+
         if self.pinterest_board:
             if not PinterestPin.objects.filter(
                 pin_name=self.product_name, pin_board=self.pinterest_board
@@ -108,6 +110,13 @@ class AffiliateProduct(models.Model):
         return settings.SITE_URL + reverse(
             "affiliate_product_redirect", kwargs={"product_id": self.id}
         )
+    
+    def generate_affiliate_link(self) -> None:
+        """This method generates the amazon affiliate link for the product.
+        """
+        amazon_base_url = "https://www.amazon.co.uk/dp/"
+        self.affiliate_link = f"{amazon_base_url}{self.amazon_product_id}?tag={settings.AMAZON_AFFILIATE_TAG}"
+        self.save()
 
     class Meta:
         verbose_name = "Affiliate Product"

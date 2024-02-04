@@ -14,7 +14,7 @@ const navigation = [
 
 async function getProducts() {
     const res = await fetch(
-        getApiUrl("/api/shop/affiliate_products"),
+        getApiUrl("/api/shop/affiliate_products?page_size=20"),
         {
             next: {
                 revalidate: 600,

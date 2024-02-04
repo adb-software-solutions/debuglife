@@ -3,7 +3,7 @@ import FooterComponent from "@/components/common/frontend/footer/Footer";
 import HeroSectionComponent from "@/components/frontend/home/HeroSection";
 import LatestDealsSection from "@/components/frontend/home/LatestDealsSection";
 import {footerNavigation, footerSocial} from "@/fixtures/footerData";
-import { epicbargainsanddeals_api_url, epicbargainsanddeals_server_api_url } from "@/config/appSettings";
+import {getApiUrl} from "@/lib/getApi";
 
 const navigation = [
     {title: "Home", href: "/", current: true},
@@ -11,23 +11,6 @@ const navigation = [
     {title: "Deal Categories", href: "/deal-categories", current: false},
     {title: "Community", href: "/community", current: false},
 ];
-
-function getBaseUrl() {
-    // Check if running on the server
-    if (typeof window === "undefined") {
-        // Running on server - use Docker container name
-        return epicbargainsanddeals_server_api_url;
-    } else {
-        // Running on client - use specific domain
-        return epicbargainsanddeals_api_url;
-    }
-}
-
-// Function to get the full API URL by appending the API path
-function getApiUrl(apiPath: string): string {
-    const baseUrl = getBaseUrl(); // Get the base URL dynamically
-    return `${baseUrl}${apiPath}`; // Construct the full API URL
-}
 
 async function getProducts() {
     const res = await fetch(

@@ -4,6 +4,7 @@ export const footerNavigation = [
         items: [
             {name: "Blog", href: "/blog"},
             {name: "About", href: "/about"},
+            {name: "FAQs", href: "/faqs"},
             {name: "Contact Support", href: "/contact"},
         ],
     },

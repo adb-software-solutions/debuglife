@@ -1,18 +1,10 @@
 export const footerNavigation = [
     {
-        title: "Product",
-        items: [
-            {name: "Features", href: "/features"},
-            {name: "Pricing", href: "/pricing"},
-            {name: "FAQs", href: "/faqs"},
-        ],
-    },
-    {
         title: "Company",
         items: [
             {name: "Blog", href: "/blog"},
             {name: "About", href: "/about"},
-            {name: "Affiliate Program", href: "/affiliate-program"},
+            {name: "Contact Support", href: "/contact"},
         ],
     },
     {
@@ -22,13 +14,6 @@ export const footerNavigation = [
             {name: "Privacy Policy", href: "/privacy"},
             {name: "Cookie Policy", href: "/cookie"},
             {name: "Affiliate Policy", href: "/affiliate-policy"},
-        ],
-    },
-    {
-        title: "Support",
-        items: [
-            {name: "Help Center", href: "/help"},
-            {name: "Contact Support", href: "/contact"},
         ],
     },
 ];

@@ -1,14 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import {
-    SiInstagram,
-    SiTwitter,
-    SiLinkedin,
-    SiGithub,
-} from "@icons-pack/react-simple-icons";
+import Icon from "@/components/common/Icon";
+import { footerSocial } from "@/fixtures/footerData";
+
+type SocialItem = {
+    name: string;
+    href: string;
+    icon: string;
+};
 
 export default function NotFound() {
+    const social: SocialItem[] = footerSocial;
+
     return (
         <>
             <div className="flex min-h-full flex-col bg-gray-900 pb-12 pt-16">
@@ -52,43 +56,21 @@ export default function NotFound() {
                 </main>
                 <footer className="mx-auto w-full max-w-7xl flex-shrink-0 px-6 lg:px-8">
                     <nav className="flex justify-center space-x-4">
-                        <a
-                            href="#"
+                        <Link
+                            href="/contact"
                             className="text-sm font-medium text-gray-500 hover:text-gray-600"
                         >
                             Contact Support
-                        </a>
+                        </Link>
                     </nav>
                     {/* Social Media Icons */}
                     <div className="mt-8 flex justify-center space-x-6">
-                        <a
-                            href="https://instagram.com/VastDesk"
-                            className="text-gray-400 hover:text-gray-500"
-                        >
-                            <span className="sr-only">Facebook</span>
-                            <SiInstagram className="h-6 w-6" />
-                        </a>
-                        <a
-                            href="https://twitter.com/VastDesk"
-                            className="text-gray-400 hover:text-gray-500"
-                        >
-                            <span className="sr-only">Twitter</span>
-                            <SiTwitter className="h-6 w-6" />
-                        </a>
-                        <a
-                            href="https://linkedin.com/company/VastDesk"
-                            className="text-gray-400 hover:text-gray-500"
-                        >
-                            <span className="sr-only">LinkedIn</span>
-                            <SiLinkedin className="h-6 w-6" />
-                        </a>
-                        <a
-                            href="https://github.com/VastDesk"
-                            className="text-gray-400 hover:text-gray-500"
-                        >
-                            <span className="sr-only">GitHub</span>
-                            <SiGithub className="h-6 w-6" />
-                        </a>
+                        {social.map((item) => (
+                            <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
+                            <span className="sr-only">{item.name}</span>
+                            <Icon iconName={item.icon} className="h-6 w-6" aria-hidden="true" />
+                            </a>
+                        ))}
                     </div>
                 </footer>
             </div>

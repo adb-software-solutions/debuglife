@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description:
         "Epic Bargains And Deals is a website that helps you find the best deals on Amazon UK, and other retailers.",
     authors: [{name: "Epic Bargains And Deals"}],
-    manifest: "site.webmanifest",
+    manifest: "/site.webmanifest",
     icons: {
         icon: [
             {

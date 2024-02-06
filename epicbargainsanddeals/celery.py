@@ -4,8 +4,6 @@ from typing import Any
 from celery import Celery
 from django.conf import settings
 
-from apps.shop.tasks import create_pinterest_pins_task
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "epicbargainsanddeals.settings")
 
 app = Celery("epicbargainsanddeals")

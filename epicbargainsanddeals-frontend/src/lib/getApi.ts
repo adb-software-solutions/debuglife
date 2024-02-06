@@ -3,8 +3,12 @@ import { epicbargainsanddeals_api_url, epicbargainsanddeals_server_api_url } fro
 export function getBaseUrl() {
     // Check if running on the server
     if (typeof window === "undefined") {
-        // Running on server - use Docker container name
-        return epicbargainsanddeals_server_api_url;
+        // Check if during build time
+        if (process.env.BUILD_ENV === "server") {
+            return epicbargainsanddeals_api_url;
+        } else {
+            return epicbargainsanddeals_server_api_url;
+        }
     } else {
         // Running on client - use specific domain
         return epicbargainsanddeals_api_url;

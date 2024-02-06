@@ -4,6 +4,8 @@ FROM node:21 as builder
 
 ENV NODE_ENV=development
 
+ARG NEXT_PUBLIC_BUILD_ENV=server
+
 # Set working directory
 
 WORKDIR /opt/epicbargainsanddeals/epicbargainsanddeals-frontend

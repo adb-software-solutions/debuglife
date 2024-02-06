@@ -20,8 +20,10 @@ class AffiliateProductAdmin(admin.ModelAdmin[AffiliateProduct]):
         "product_description",
         "product_image",
         "product_price",
+        "previous_price",
         "affiliate_link",
         "affiliate_program",
+        "amazon_category",
     )
     ordering = ("product_name", "product_price", "affiliate_program")
     sortable_by = ("product_name", "product_price", "affiliate_program")

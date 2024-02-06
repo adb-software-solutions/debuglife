@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getApiUrl } from "@/lib/getApi";
 
 async function fetchCategories() {
-    const url = getApiUrl(`/api/shop/affiliate_categories`);
+    const url = getApiUrl(`/shop-api/shop/affiliate_categories`);
     const response = await fetch(url, {
         method: "GET",
         headers: {

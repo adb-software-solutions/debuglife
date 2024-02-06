@@ -4,7 +4,7 @@ import { getApiUrl } from "@/lib/getApi";
 
 async function getProducts() {
     const res = await fetch(
-        getApiUrl("/api/shop/affiliate_products"),
+        getApiUrl("/shop-api/shop/affiliate_products"),
         {
             next: {
                 revalidate: 600,

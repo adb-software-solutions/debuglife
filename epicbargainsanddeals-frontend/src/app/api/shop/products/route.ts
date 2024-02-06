@@ -3,7 +3,7 @@ import { getApiUrl } from "@/lib/getApi";
 
 // Adjust the fetchProducts to support pagination
 async function fetchProducts(page: number = 1, limit: number = 20) {
-    const url = getApiUrl(`/api/shop/affiliate_products?page=${page}&page_size=${limit}`);
+    const url = getApiUrl(`/shop-api/shop/affiliate_products?page=${page}&page_size=${limit}`);
     const response = await fetch(url, {
         method: "GET",
         headers: {

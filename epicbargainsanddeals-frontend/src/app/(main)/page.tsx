@@ -14,7 +14,7 @@ export default function Home() {
 
     const fetchProducts = useCallback(async (page: number) => {
         // Adjust the API endpoint as necessary
-        const response = await fetch(`/eapi/shop/products?page=${page}`);
+        const response = await fetch(`/api/shop/products?page=${page}`);
         const data = await response.json();
         setProducts(prev => [...prev, ...data.results]);
         setHasMore(data.next !== null); // This assumes 'next' is a way your API indicates more data

@@ -11,7 +11,7 @@ import { useState } from "react";
 
 async function getProductsForCategory(id: string) {
     const res = await fetch(
-        getApiUrl(`/api/shop/affiliate_categories/${id}/affiliate_products/`),
+        getApiUrl(`/shop-api/shop/affiliate_categories/${id}/affiliate_products/`),
         {
             next: {
                 revalidate: 600,
@@ -25,7 +25,7 @@ async function getProductsForCategory(id: string) {
 async function getCategoryDetails(id: string) {
 
     const res = await fetch(
-        getApiUrl(`/api/shop/affiliate_categories/${id}`),
+        getApiUrl(`/shop-api/shop/affiliate_categories/${id}`),
         {
             next: {
                 revalidate: 600,

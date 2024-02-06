@@ -3,7 +3,7 @@ import { getApiUrl } from "@/lib/getApi";
 import { ProductType } from "@/types/product";
 
 async function fetchProducts(): Promise<{ results: ProductType[] }> {
-    const url = getApiUrl("/api/shop/affiliate_products");
+    const url = getApiUrl("/shop-api/shop/affiliate_products");
     const response = await fetch(url, {
         method: "GET",
         headers: {

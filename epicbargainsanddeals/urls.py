@@ -37,22 +37,22 @@ URLList = List[URL]
 
 urlpatterns: URLList = [
     path("admin/", admin.site.urls),
-    path("api/auth/", include(auth_urlpatterns)),
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("shop-api/auth/", include(auth_urlpatterns)),
+    path("shop-api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
-        "api/schema/swagger-ui/",
+        "shop-api/schema/swagger-ui/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
-    path("api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
-    path("api/", include(api_urlpatterns)),
+    path("shop-api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path("shop-api/", include(api_urlpatterns)),
     path(
-        "api/shop/affiliate_categories/by_amazon_id/<str:amazon_category_id>/",
+        "shop-api/shop/affiliate_categories/by_amazon_id/<str:amazon_category_id>/",
         AffiliateCategoryByAmazonID.as_view(),
         name="affiliate-category-by-amazon-id",
     ),
     path(
-        "api/shop/affiliate_products/by_amazon_id/<str:amazon_product_id>/",
+        "shop-api/shop/affiliate_products/by_amazon_id/<str:amazon_product_id>/",
         AffiliateProductByAmazonID.as_view(),
         name="affiliate-product-by-amazon-id",
     ),

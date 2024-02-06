@@ -4,7 +4,7 @@ export function getBaseUrl() {
     // Check if running on the server
     if (typeof window === "undefined") {
         // Check if during build time
-        if (process.env.BUILD_ENV === "server") {
+        if (process.env.NEXT_PUBLIC_BUILD_ENV === "server") {
             return epicbargainsanddeals_api_url;
         } else {
             return epicbargainsanddeals_server_api_url;

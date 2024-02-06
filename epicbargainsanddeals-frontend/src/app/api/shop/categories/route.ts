@@ -18,3 +18,5 @@ export async function GET(req: NextRequest) {
     const data = await fetchCategories();
     return NextResponse.json(data);
 }
+
+export const dynamic = "force-dynamic";

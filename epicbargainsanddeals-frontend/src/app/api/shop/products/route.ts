@@ -22,3 +22,5 @@ export async function GET(req: NextRequest) {
     const data = await fetchProducts(page, limit);
     return NextResponse.json(data);
 }
+
+export const dynamic = "force-dynamic";

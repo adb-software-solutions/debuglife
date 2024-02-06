@@ -51,6 +51,7 @@ ALLOWED_HOSTS: List[str] = ["*"]
 INSTALLED_APPS = [
     "apps.shop",
     "authentication",
+    "jet",
     "drf_spectacular",
     "rest_framework",
     "knox",
@@ -62,6 +63,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
+
+MIGRATION_MODULES = {
+    "jet": "apps.jet.migrations",
+}
 
 if DEBUG_TOOLBAR_ENABLED:
     INSTALLED_APPS += ["debug_toolbar"]

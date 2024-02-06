@@ -64,6 +64,8 @@ urlpatterns: URLList = [
         AffiliateProductRedirectView.as_view(),
         name="affiliate_product_redirect",
     ),
+    path("jet/", include("jet.urls", "jet")),
+    path("jet/dashboard/", include("jet.dashboard.urls", "jet-dashboard")),
 ]
 
 if settings.DEBUG:

@@ -32,10 +32,6 @@ attrs==23.2.0 \
     # via
     #   jsonschema
     #   referencing
-beautifulsoup4==4.12.2 \
-    --hash=sha256:492bbc69dca35d12daac71c4db1bfff0c876c00ef4a2ffacce226d4638eb72da \
-    --hash=sha256:bd2520ca0d9d7d12694a53d44ac482d181b4ec1888909b035a3dbf40d0f57d4a
-    # via -r requirements/common.in
 billiard==4.1.0 \
     --hash=sha256:0f50d6be051c6b2b75bfbc8bfd85af195c5739c281d3f5b86a5640c65563614a \
     --hash=sha256:1ad2eeae8e28053d729ba3373d34d9d6e210f6e4d8bf0a9c64f92bd053f1edf5
@@ -342,6 +338,7 @@ django==4.2.4 \
     #   -r requirements/common.in
     #   django-cors-headers
     #   django-debug-toolbar
+    #   django-jet-reboot
     #   django-rest-knox
     #   django-stubs
     #   django-stubs-ext
@@ -364,6 +361,9 @@ django-coverage-plugin==3.1.0 \
 django-debug-toolbar==4.2.0 \
     --hash=sha256:af99128c06e8e794479e65ab62cc6c7d1e74e1c19beb44dcbf9bad7a9c017327 \
     --hash=sha256:bc7fdaafafcdedefcc67a4a5ad9dac96efd6e41db15bc74d402a54a2ba4854dc
+    # via -r requirements/common.in
+django-jet-reboot==1.3.7 \
+    --hash=sha256:e1cc40606331539106cae58701bbaf76c0a4486bbe1aee6d85b2f20ce8ad3f71
     # via -r requirements/common.in
 django-rest-knox==4.2.0 \
     --hash=sha256:4595f1dc23d6e41af7939e5f2d8fdaf6ade0a74a656218e7b56683db5566fcc9 \
@@ -816,10 +816,6 @@ six==1.16.0 \
     #   bleach
     #   click-repl
     #   python-dateutil
-soupsieve==2.5 \
-    --hash=sha256:5663d5a7b3bfaeee0bc4372e7fc48f9cff4940b3eec54a6451cc5299f1097690 \
-    --hash=sha256:eaa337ff55a1579b6549dc679565eac1e3d000563bcb1c8ab0d0fefbc0c2cdc7
-    # via beautifulsoup4
 sqlparse==0.4.4 \
     --hash=sha256:5430a4fe2ac7d0f93e66f1efc6e1338a41884b7ddf2a350cedd20ccc4d9d28f3 \
     --hash=sha256:d446183e84b8349fa3061f0fe7f06ca94ba65b426946ffebe6e3e8295332420c

@@ -12,26 +12,29 @@ from .models import (
 class AffiliateProgramAdmin(admin.ModelAdmin[AffiliateProgram]):
     list_display = ("program_name",)
     ordering = ("program_name",)
+    search_fields = ("program_name",)
 
 
 class AffiliateProductAdmin(admin.ModelAdmin[AffiliateProduct]):
     list_display = (
         "product_name",
-        "product_description",
-        "product_image",
         "product_price",
         "previous_price",
-        "affiliate_link",
-        "affiliate_program",
         "amazon_category",
+        "affiliate_program",
+        "affiliate_link",
+        "product_image",
+        "updated_at",
     )
-    ordering = ("product_name", "product_price", "affiliate_program")
-    sortable_by = ("product_name", "product_price", "affiliate_program")
+    ordering = ("-updated_at",)
+    list_filter = ("affiliate_program", "amazon_category", "updated_at", "previous_price", "product_price")
+    search_fields = ("product_name", "product_description", "affiliate_link", "amazon_product_id")
 
 
 class AffiliateCategoryAdmin(admin.ModelAdmin[AffiliateCategory]):
     list_display = ("category_name", "amazon_category_id")
     ordering = ("category_name",)
+    search_fields = ("category_name", "amazon_category_id")
 
 
 class PinterestBoardAdmin(admin.ModelAdmin[PinterestBoard]):

@@ -38,6 +38,13 @@ class AffiliateProductViewSet(CustomModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ["product_name", "product_description", "affiliate_link"]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        affiliate_category_id = self.kwargs.get('affiliate_category_pk')
+        if affiliate_category_id:
+            queryset = queryset.filter(amazon_category_id=affiliate_category_id)
+        return queryset
+
 
 class AffiliateCategoryByAmazonID(APIView):
     """This class retrieves an affiliate category by its Amazon category ID.

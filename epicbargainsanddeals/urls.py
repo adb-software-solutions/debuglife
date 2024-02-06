@@ -56,6 +56,7 @@ urlpatterns: URLList = [
         AffiliateProductByAmazonID.as_view(),
         name="affiliate-product-by-amazon-id",
     ),
+
     path(
         "feeds/pinterest-board/<uuid:board_id>/", PinterestBoardFeed(), name="pinterest_board_feed"
     ),

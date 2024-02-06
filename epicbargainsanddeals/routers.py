@@ -1,5 +1,5 @@
 from django.urls import include, path
-from rest_framework_nested.routers import SimpleRouter
+from rest_framework_nested.routers import SimpleRouter, NestedSimpleRouter
 
 from apps.shop.views import (
     AffiliateCategoryViewSet,
@@ -23,6 +23,16 @@ router.register(r"shop/affiliate_categories", AffiliateCategoryViewSet)
 # GET /shop/affiliate_categories/<id>/ - retrieve
 # PUT /shop/affiliate_categories/<id>/ - update
 
+
+affiliate_categories_router = NestedSimpleRouter(router, r'shop/affiliate_categories', lookup='affiliate_category')
+affiliate_categories_router.register(r'affiliate_products', AffiliateProductViewSet, basename='affiliate_category-products')
+## Generates:
+# GET /shop/affiliate_categories/{pk}/affiliate_products/ - list
+# POST /shop/affiliate_categories/{pk}/affiliate_products/ - create
+# GET /shop/affiliate_categories/{pk}/affiliate_products/{id}/ - retrieve
+# PUT /shop/affiliate_categories/{pk}/affiliate_products/{id}/ - update
+
+
 router.register(r"shop/affiliate_products", AffiliateProductViewSet)
 ## Generates:
 # GET /shop/affiliate_products/ - list
@@ -38,4 +48,5 @@ router.register(r"feeds/pinterest_boards", PinterestBoardViewSet, basename="pint
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("", include(affiliate_categories_router.urls)),
 ]

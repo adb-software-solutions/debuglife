@@ -163,7 +163,7 @@ class AffiliateProduct(models.Model):
     class Meta:
         verbose_name = "Affiliate Product"
         verbose_name_plural = "Affiliate Products"
-        ordering = ["-created_at", "-updated_at"]
+        ordering = ["-updated_at"]
 
 
 class PinterestBoard(models.Model):

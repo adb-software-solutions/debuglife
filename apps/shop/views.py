@@ -39,7 +39,10 @@ class AffiliateProductViewSet(CustomModelViewSet):
     search_fields = ["product_name", "product_description", "affiliate_link"]
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        if self.request.method == "POST" or self.request.method == "PUT" or self.request.method == "PATCH":
+            queryset = AffiliateProduct.all_objects.all()
+        else:
+            queryset = AffiliateProduct.objects.all()
         affiliate_category_id = self.kwargs.get('affiliate_category_pk')
         if affiliate_category_id:
             queryset = queryset.filter(amazon_category_id=affiliate_category_id)

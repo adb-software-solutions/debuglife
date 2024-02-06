@@ -3,7 +3,6 @@ export const footerNavigation = [
         title: "Company",
         items: [
             {name: "Latest Deals", href: "/latest-deals"},
-            {name: "Popular Deals", href: "/popular-deals"},
             {name: "Deal Categories", href: "/deal-categories"},
             {name: "Contact Support", href: "/contact"},
         ],

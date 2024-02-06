@@ -1,25 +1,12 @@
+"use client";
+
 import { getApiUrl } from "@/lib/getApi";
 import { CategoryType } from "@/types/categories";
 import LatestDealsSection from "@/components/frontend/categories/LatestDealsSection";
 import HeroSectionComponent from "@/components/frontend/categories/HeroSection";
-
-export async function generateStaticParams() {
-    const res = await fetch(
-        getApiUrl("/api/shop/affiliate_categories"),
-        {
-            next: {
-                revalidate: 600,
-            }
-        },
-    );
-    const categories = await res.json();
-    return categories.results.map((category : CategoryType) => ({
-        params: {
-            id: category.id,
-        },
-    }));
-
-}
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useState } from "react";
 
 
 async function getProductsForCategory(id: string) {
@@ -36,6 +23,7 @@ async function getProductsForCategory(id: string) {
 }
 
 async function getCategoryDetails(id: string) {
+
     const res = await fetch(
         getApiUrl(`/api/shop/affiliate_categories/${id}`),
         {
@@ -48,13 +36,44 @@ async function getCategoryDetails(id: string) {
     return category;
 }
 
-export default async function CategoryPage({params}: {params: {id: string}}) {
-    const products = await getProductsForCategory(params.id);
-    const category = await getCategoryDetails(params.id);
+export default function CategoryPage() {
+    const { id } = useParams<{ id: string }>();
+    const router = useRouter();
+
+    const [products, setProducts] = useState([]);
+    const [category, setCategory] = useState<CategoryType | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const fetchedProducts = await getProductsForCategory(id);
+                const fetchedCategory = await getCategoryDetails(id);
+
+                if (fetchedCategory) {
+                    setCategory(fetchedCategory);
+                    setProducts(fetchedProducts);
+                } else {
+                    throw new Error('Category not found');
+                }
+            } catch (error) {
+                console.error(error);
+                router.push('/not-found');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [id, router]);
+
+    if (loading) {
+        return <div>Loading...</div>; // Or any other loading indicator
+    }
 
     return (
         <>
-            <HeroSectionComponent category_name={category.category_name} />
+            <HeroSectionComponent category_name={category?.category_name ?? ''} />
             <LatestDealsSection products={products} />
         </>
     );

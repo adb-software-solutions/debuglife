@@ -1,7 +1,7 @@
 import Image from "next/image";
 import {ProductPropsType} from "@/types/product";
 
-export default async function LatestDealsSection({products}: ProductPropsType) {
+export default function LatestDealsSection({products}: ProductPropsType) {
     return (
         <div className="bg-white">
             <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-8 lg:max-w-7xl lg:px-8">

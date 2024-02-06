@@ -10,9 +10,9 @@ export const footerNavigation = [
     {
         title: "Legal",
         items: [
-            {name: "Terms of Service", href: "/terms"},
-            {name: "Privacy Policy", href: "/privacy"},
-            {name: "Cookie Policy", href: "/cookie"},
+            {name: "Terms of Service", href: "/terms-of-service"},
+            {name: "Privacy Policy", href: "/privacy-policy"},
+            {name: "Cookie Policy", href: "/cookie-policy"},
             {name: "Affiliate Policy", href: "/affiliate-policy"},
         ],
     },

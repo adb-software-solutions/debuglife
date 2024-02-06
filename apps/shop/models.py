@@ -46,6 +46,20 @@ class AffiliateCategory(models.Model):
 
     def __str__(self) -> str:
         return self.category_name
+    
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """This method saves the affiliate category object to the database.
+
+        Args:
+            *args: This is a list of arguments.
+            **kwargs: This is a list of keyword arguments.
+        """
+        super().save(*args, **kwargs)
+        
+        if PinterestBoard.objects.filter(category=self).exists():
+            return
+        else:
+            PinterestBoard.objects.create(board_name=self.category_name, category=self)
 
 
 class AffiliateProductManager(models.Manager):
@@ -117,30 +131,6 @@ class AffiliateProduct(models.Model):
         if not self.affiliate_link:
             self.generate_affiliate_link()
 
-        if self.pinterest_board:
-            if not PinterestPin.objects.filter(
-                pin_name=self.product_name, pin_board=self.pinterest_board
-            ).exists():
-                PinterestPin.objects.create(
-                    pin_name=self.product_name,
-                    pin_description=self.product_description,
-                    pin_image=self.product_image,
-                    pin_price=self.product_price,
-                    pin_link=self.get_redirect_url(),
-                    pin_board=self.pinterest_board,
-                )
-            else:
-                pin = PinterestPin.objects.get(
-                    pin_name=self.product_name, pin_board=self.pinterest_board
-                )
-                pin.pin_name = self.product_name
-                pin.pin_description = self.product_description
-                pin.pin_image = self.product_image
-                pin.pin_price = self.product_price
-                pin.pin_link = self.get_redirect_url()
-                pin.pin_board = self.pinterest_board
-                pin.save()
-
     def get_redirect_url(self) -> str:
         """This method gets the redirect URL of the affiliate product.
 
@@ -171,6 +161,7 @@ class PinterestBoard(models.Model):
     board_name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    category = models.ForeignKey(AffiliateCategory, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.board_name

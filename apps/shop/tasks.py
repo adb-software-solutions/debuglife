@@ -1,28 +1,27 @@
-# from celery import shared_task
-# import requests
-# from bs4 import BeautifulSoup
-# import random
+from celery import shared_task
 
+from apps.shop.models import AffiliateProduct, PinterestBoard, PinterestPin
 
-# USER_AGENTS_JSON_LIST_URL = "https://jnrbsn.github.io/user-agents/user-agents.json"
+@shared_task()
+def create_pinterest_pins_task() -> None:
+    """Create Pinterest pins for the affiliate products.
+    """
 
-# @shared_task
-# def scrape_amazon_product(product_url: str) -> None:
-#     """Scrape the product details from the given Amazon product URL."""
-
-#     user_agents_list = requests.get(USER_AGENTS_JSON_LIST_URL).json()
-#     user_agent = random.choice(user_agents_list)
-
-#     headers = {
-#         "User-Agent": user_agent,
-#     }
-
-#     response = requests.get(product_url, headers=headers)
-
-#     soup = BeautifulSoup(response.content, "html.parser")
-
-#     title = soup.find(id="productTitle").get_text().strip()
-#     price = soup.select_one(selector="#corePrice_feature_div > div > div > span.a-price.aok-align-center > span.a-offscreen").get_text().strip()
-#     image_url = soup.find(id="landingImage")["src"]
-#     sub_category = soup.select_one(selector="#wayfinding-breadcrumbs_feature_div > ul > li:nth-child(3) > span > a").get_text().strip()
-#     category = soup.select_one(selector="#wayfinding-breadcrumbs_feature_div > ul > li:nth-child(4) > span > a").get_text().strip()
+    for product in AffiliateProduct.objects.all():
+        if not PinterestPin.objects.filter(product=product).exists():
+            if not PinterestBoard.objects.filter(category=product.amazon_category).exists():
+                pinterest_board = PinterestBoard.objects.create(
+                    board_name=product.amazon_category.category_name,
+                    category=product.amazon_category,
+                )
+            else:
+                pinterest_board = PinterestBoard.objects.get(category=product.amazon_category)
+            PinterestPin.objects.create(
+                pin_name=product.product_name,
+                pin_description=product.product_description,
+                pin_image=product.product_image,
+                pin_price=product.product_price,
+                pin_link=product.get_redirect_url(),
+                pin_board=pinterest_board,
+                product=product,
+            )

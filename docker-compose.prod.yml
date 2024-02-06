@@ -130,6 +130,8 @@ services:
     depends_on:
       - epicbargainsanddeals-db
       - epicbargainsanddeals-redis
+    networks:
+      - epicbargainsanddeals-network
   
   epicbargainsanddeals-nginx:
     build:

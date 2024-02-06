@@ -1,6 +1,14 @@
-import Icon from "@/components/common/Icon";
+"use client";
 
-export default async function HeroSectionComponent() {
+import SearchProducts from "./SearchProducts";
+import { ProductType } from "@/types/product";
+
+interface HeroSectionProps {
+    setProducts: (products: ProductType[]) => void;
+}
+
+export default function HeroSectionComponent( {setProducts}: HeroSectionProps ) {
+
     return (
         <>
             <div className="bg-brand py-5">
@@ -18,22 +26,7 @@ export default async function HeroSectionComponent() {
                             </h2>
                             <div className="flex justify-center">
                                 <div className="relative w-full max-w-md">
-                                    <form action="#" method="POST">
-                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                            <Icon
-                                                iconName="magnifying-glass-solid-20"
-                                                className="h-5 w-5 text-gray-400"
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                        <input
-                                            type="text"
-                                            name="search"
-                                            id="search"
-                                            className="focus:ring-brand focus:border-brand block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm"
-                                            placeholder="Search for deals"
-                                        />
-                                    </form>
+                                    <SearchProducts getSearchResults={(results) => setProducts(results)}/>
                                 </div>
                             </div>
                         </div>

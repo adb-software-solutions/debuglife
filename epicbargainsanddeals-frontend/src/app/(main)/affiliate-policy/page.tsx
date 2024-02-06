@@ -13,7 +13,7 @@ const navigation = [
     {title: "Contact", href: "/contact", current: false},
 ];
 
-export default async function AffiliatePolicyPage() {
+export default function AffiliatePolicyPage() {
     return (
         <div>
             <Navbar navigation={navigation} />

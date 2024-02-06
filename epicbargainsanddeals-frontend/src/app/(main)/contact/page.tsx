@@ -12,7 +12,7 @@ const navigation = [
     {title: "Contact", href: "/contact", current: true},
 ]
 
-export default async function ContactPage() {
+export default function ContactPage() {
     return (
         <div>
             <Navbar

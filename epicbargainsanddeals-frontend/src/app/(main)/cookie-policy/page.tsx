@@ -12,7 +12,7 @@ const navigation = [
     {title: "Contact", href: "/contact", current: false},
 ]
 
-export default async function CookiePolicyPage() {
+export default function CookiePolicyPage() {
     return (
         <div>
             <Navbar

@@ -1,47 +1,66 @@
-import Navbar from "@/components/common/frontend/NavBar";
-import FooterComponent from "@/components/common/frontend/footer/Footer";
-import HeroSectionComponent from "@/components/frontend/home/HeroSection";
-import LatestDealsSection from "@/components/frontend/home/LatestDealsSection";
-import {footerNavigation, footerSocial} from "@/fixtures/footerData";
-import {getApiUrl} from "@/lib/getApi";
+"use client";
 
-const navigation = [
-    {title: "Home", href: "/", current: true},
-    {title: "Recent Deals", href: "/recent-deals", current: false},
-    {title: "Deal Categories", href: "/deal-categories", current: false},
-    {title: "Community", href: "/community", current: false},
-];
+import { useState, useEffect, useRef, useCallback } from "react";
+import HeroSectionComponent from "@/components/frontend/home/HeroSection"; // Adjust the import path as necessary
+import LatestDealsSection from "@/components/frontend/home/LatestDealsSection"; // Adjust the import path as necessary
+import { ProductType } from "@/types/product"; // Assuming this is the correct import path
 
-async function getProducts() {
-    const res = await fetch(
-        getApiUrl("/api/shop/affiliate_products?page_size=20"),
-        {
-            next: {
-                revalidate: 600,
+export default function Home() {
+    const [products, setProducts] = useState<ProductType[]>([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [isSearching, setIsSearching] = useState(false);
+    const loader = useRef<HTMLDivElement>(null);
+
+    const fetchProducts = useCallback(async (page: number) => {
+        // Adjust the API endpoint as necessary
+        const response = await fetch(`/eapi/shop/products?page=${page}`);
+        const data = await response.json();
+        setProducts(prev => [...prev, ...data.results]);
+        setHasMore(data.next !== null); // This assumes 'next' is a way your API indicates more data
+    }, []);
+
+    // Function to handle search results
+    const handleSearchResults = useCallback((results: ProductType[]) => {
+        setProducts(results);
+        setPage(1);
+        setHasMore(false);
+        setIsSearching(true);
+    }, []);
+
+    // Intersection Observer setup
+    useEffect(() => {
+        if (isSearching) return; // Skip setting up the observer if in search mode
+
+        const observer = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
             }
-        },
-    );
-    const products = await res.json();
-    return products.results;
-}
+        }, {
+            root: null,
+            rootMargin: "20px",
+            threshold: 1.0,
+        });
 
-export default async function Home() {
-    const products = await getProducts();
+        if (loader.current) {
+            observer.observe(loader.current);
+        }
+
+        return () => observer.disconnect();
+    }, [hasMore, isSearching]); // Ensures effect is properly applied based on hasMore and isSearching states
+
+    // Fetching next page of products
+    useEffect(() => {
+        if (isSearching) return; // Skip fetching next page if in search mode
+
+        fetchProducts(page);
+    }, [page, fetchProducts, isSearching]); // Ensures fetching logic respects the current search state
 
     return (
         <div>
-            <Navbar navigation={navigation} />
-
-            <HeroSectionComponent />
-
+            <HeroSectionComponent setProducts={handleSearchResults} />
             <LatestDealsSection products={products} />
-
-            <FooterComponent
-                navigation={footerNavigation}
-                social={footerSocial}
-            />
+            {!isSearching && hasMore && <div ref={loader}>Loading more...</div>}
         </div>
     );
 }
-
-export const dynamic = 'force-dynamic';

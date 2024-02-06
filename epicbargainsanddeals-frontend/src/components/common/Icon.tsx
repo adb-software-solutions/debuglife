@@ -31,7 +31,7 @@ interface IconProps {
 
 
 
-export default async function Icon({ iconName, className }: IconProps) {
+export default function Icon({ iconName, className }: IconProps) {
     const combinedClass = `${className}`;
 
     switch (iconName) {

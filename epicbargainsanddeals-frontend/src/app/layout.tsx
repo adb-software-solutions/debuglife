@@ -2,6 +2,7 @@ import type {Metadata, Viewport} from "next";
 import {Providers} from "./providers";
 import { Suspense } from "react";
 import Analytics from "@/components/gtmComponent";
+import { GoogleAdsenseComponent } from "@/components/googleAdsenseComponent";
 
 import "./globals.css";
 
@@ -49,6 +50,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
             <head>
                 <meta httpEquiv="Permissions-Policy" content="picture-in-picture '*'"/>
                 <link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
+                <GoogleAdsenseComponent />
             </head>
             <body className="h-full bg-white">
                 <Providers>

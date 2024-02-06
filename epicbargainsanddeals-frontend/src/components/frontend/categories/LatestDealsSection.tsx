@@ -26,9 +26,9 @@ export default function LatestDealsSection({products}: ProductPropsType) {
                                 </h3>
                                 {/* Price and Previous Price Display */}
                                 <p className="text-lg font-semibold py-2 text-gray-900">
-                                    ${product.product_price}{" "}
+                                    £{product.product_price}{" "}
                                     <span className="text-sm font-normal text-gray-500 line-through">
-                                        ${product.previous_price}
+                                        £{product.previous_price}
                                     </span>
                                 </p>
                             </div>

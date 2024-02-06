@@ -1,6 +1,6 @@
 export const footerNavigation = [
     {
-        title: "Company",
+        title: "Deals",
         items: [
             {name: "Latest Deals", href: "/latest-deals"},
             {name: "Deal Categories", href: "/deal-categories"},

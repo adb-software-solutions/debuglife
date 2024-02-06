@@ -4,10 +4,9 @@ import { footerNavigation, footerSocial } from "@/fixtures/footerData"
 import { Suspense } from "react";
 
 const navigation = [
-    {title: "Home", href: "/", current: true},
+    {title: "Home", href: "/", current: false},
     {title: "Recent Deals", href: "/recent-deals", current: false},
     {title: "Deal Categories", href: "/deal-categories", current: false},
-    {title: "Community", href: "https://www.facebook.com/groups/epicbargainsanddeals/", current: false},
 ];
 
 export default async function MainLayout({children}: {children: React.ReactNode}) {

@@ -79,7 +79,7 @@ class AffiliateProductByAmazonID(APIView):
 
     def get_object(self, amazon_product_id: str) -> AffiliateProduct:
         try:
-            return AffiliateProduct.objects.get(amazon_product_id=amazon_product_id)
+            return AffiliateProduct.all_objects.get(amazon_product_id=amazon_product_id)
         except AffiliateProduct.DoesNotExist:
             raise Http404("No AffiliateProduct found with the specified amazon_product_id.")
 

@@ -1,4 +1,7 @@
+from typing import Any
 from django.contrib import admin
+from django.db.models.query import QuerySet
+from django.http.request import HttpRequest
 
 from .models import (
     AffiliateCategory,
@@ -16,6 +19,13 @@ class AffiliateProgramAdmin(admin.ModelAdmin[AffiliateProgram]):
 
 
 class AffiliateProductAdmin(admin.ModelAdmin[AffiliateProduct]):
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        qs = self.model.all_objects.get_queryset()
+        ordering = self.ordering or ()
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
+
     list_display = (
         "product_name",
         "product_price",

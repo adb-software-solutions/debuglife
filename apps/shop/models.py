@@ -8,6 +8,8 @@ import requests
 from celery import shared_task
 from django.conf import settings
 from django.db import models
+from django.db.models import F, ExpressionWrapper, DecimalField
+from django.db.models.functions import Coalesce
 from django.urls import reverse
 from PIL import Image
 
@@ -46,6 +48,38 @@ class AffiliateCategory(models.Model):
         return self.category_name
 
 
+class AffiliateProductManager(models.Manager):
+    """This class manages the affiliate products. Only products that have a prices greater than 0 are returned.
+       The drop in price should be at least 15% to be returned.
+
+    Args:
+        models (_type_): This is the models class.
+
+    Returns:
+        _type_: This returns the affiliate product manager.
+    """
+
+    def get_queryset(self) -> models.QuerySet:
+        """This method gets the queryset of the affiliate products.
+        """
+
+        # Calculate the drop in price percentage
+        price_drop_percentage = ExpressionWrapper(
+            (Coalesce(F('previous_price'), F('product_price')) - F('product_price')) / 
+            Coalesce(F('previous_price'), 1) * 100,
+            output_field=DecimalField()
+        )
+        
+        # Filter products with price greater than 0 and at least a 15% drop in price
+        return super().get_queryset().annotate(
+            price_drop=price_drop_percentage
+        ).filter(
+            product_price__gt=0,
+            previous_price__gt=0,
+            price_drop__gte=15
+        )
+
+
 class AffiliateProduct(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     amazon_product_id = models.CharField(max_length=255, blank=True, null=True)
@@ -64,6 +98,9 @@ class AffiliateProduct(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = AffiliateProductManager()
+    all_objects = models.Manager()
 
     def __str__(self) -> str:
         return self.product_name

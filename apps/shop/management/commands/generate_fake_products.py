@@ -34,7 +34,8 @@ class Command(BaseCommand):
             AffiliateProduct.objects.create(
                 product_name=f"Test Product {i}",
                 affiliate_link=f"https://www.amazon.com/dp/test-product-id-{i}?tag=testid-21",
-                product_price=100.00,
+                product_price=20.00,
+                previous_price=50.00,
                 amazon_category=affiliate_category,
                 affiliate_program=affiliate_program,
                 amazon_product_id=f"test-product-id-{i}",

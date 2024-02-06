@@ -53,6 +53,7 @@ class AffiliateProduct(models.Model):
     product_description = models.TextField(blank=True, null=True)
     product_image = models.URLField(blank=True, null=True)
     product_price = models.DecimalField(max_digits=10, decimal_places=2)
+    previous_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     amazon_category = models.ForeignKey(
         AffiliateCategory, on_delete=models.CASCADE, blank=True, null=True
     )

@@ -59,3 +59,5 @@ export default async function CategoryPage({params}: {params: {id: string}}) {
         </>
     );
 }
+
+export const dynamic = "force-dynamic";

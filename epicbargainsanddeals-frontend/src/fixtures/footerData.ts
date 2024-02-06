@@ -2,9 +2,9 @@ export const footerNavigation = [
     {
         title: "Company",
         items: [
-            {name: "Blog", href: "/blog"},
-            {name: "About", href: "/about"},
-            {name: "FAQs", href: "/faqs"},
+            {name: "Latest Deals", href: "/latest-deals"},
+            {name: "Popular Deals", href: "/popular-deals"},
+            {name: "Deal Categories", href: "/deal-categories"},
             {name: "Contact Support", href: "/contact"},
         ],
     },

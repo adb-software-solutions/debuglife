@@ -22,3 +22,4 @@ celery -A epicbargainsanddeals \
     --oauth2_key="${FLOWER_OAUTH2_KEY}" \
     --oauth2_secret="${FLOWER_OAUTH2_SECRET}" \
     --oauth2_redirect_uri="${FLOWER_OAUTH2_REDIRECT_URI}" \
+    --url_prefix="${FLOWER_URL_PREFIX}" \

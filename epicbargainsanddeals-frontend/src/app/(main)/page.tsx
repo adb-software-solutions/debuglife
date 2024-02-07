@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import HeroSectionComponent from "@/components/frontend/home/HeroSection"; // Adjust the import path as necessary
 import LatestDealsSection from "@/components/frontend/home/LatestDealsSection"; // Adjust the import path as necessary
 import { ProductType } from "@/types/product"; // Assuming this is the correct import path
+import Script from "next/script";
 
 export default function Home() {
     const [products, setProducts] = useState<ProductType[]>([]);
@@ -59,6 +60,12 @@ export default function Home() {
     return (
         <div>
             <HeroSectionComponent setProducts={handleSearchResults} />
+            <Script
+                async
+                data-cfasync="false"
+                src="//pl22433154.profitablegatecpm.com/9f8881d2e2497ad2779d1ae60bb07973/invoke.js"
+            />
+            <div id="container-9f8881d2e2497ad2779d1ae60bb07973"></div>
             <LatestDealsSection products={products} />
             {!isSearching && hasMore && <div ref={loader}>Loading more...</div>}
         </div>

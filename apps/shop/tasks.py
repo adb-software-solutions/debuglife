@@ -17,8 +17,8 @@ def create_pinterest_pins_task() -> None:
             else:
                 pinterest_board = PinterestBoard.objects.get(category=product.amazon_category)
             PinterestPin.objects.create(
-                pin_name=product.product_name,
-                pin_description=product.product_description,
+                pin_name=(product.product_name[:97] + "...") if len(product.product_name) > 100 else product.product_name,
+                pin_description=product.product_name,
                 pin_image=product.product_image,
                 pin_price=product.product_price,
                 pin_link=product.get_redirect_url(),

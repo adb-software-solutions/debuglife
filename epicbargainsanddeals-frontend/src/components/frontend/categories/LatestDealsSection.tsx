@@ -23,14 +23,7 @@ export default function LatestDealsSection({products}: ProductPropsType) {
                             <div className="relative mt-4">
                                 <h3 className="text-sm font-medium text-gray-900">
                                     {product.product_name}
-                                </h3>
-                                {/* Price and Previous Price Display */}
-                                <p className="text-lg font-semibold py-2 text-gray-900">
-                                    £{product.product_price}{" "}
-                                    <span className="text-sm font-normal text-gray-500 line-through">
-                                        £{product.previous_price}
-                                    </span>
-                                </p>
+                                </h3>     
                             </div>
                             <div className="mt-2">
                                 <a

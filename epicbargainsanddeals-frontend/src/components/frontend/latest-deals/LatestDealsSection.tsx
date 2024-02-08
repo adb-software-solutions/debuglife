@@ -30,7 +30,7 @@ export default async function LatestDealsSection({products}: ProductPropsType) {
                                     href={product.affiliate_link}
                                     className="bg-brand hover:bg-brand relative flex items-center justify-center rounded-md border border-transparent px-8 py-2 text-sm font-medium text-gray-900"
                                 >
-                                    Buy Now
+                                    Buy from Amazon
                                 </a>
                             </div>
                         </div>

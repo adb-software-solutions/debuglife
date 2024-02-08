@@ -8,5 +8,6 @@ from apps.shop.models import AffiliateProduct
 class Command(BaseCommand):
     def handle(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
         for product in AffiliateProduct.all_objects.all():
-            product.save()
+            product.generate_affiliate_link()
             print(f"Updated affiliate link for {product.product_name}")
+            product.save()

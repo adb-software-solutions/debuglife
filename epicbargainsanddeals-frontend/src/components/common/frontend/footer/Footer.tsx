@@ -50,7 +50,7 @@ export default async function FooterComponent({
                         &copy; {currentYear} Epic Bargains And Deals Ltd is a company registered in  England and Wales (Company No. 15460370) 49 Sandringham Road, Manchester, M28 1LX | All rights reserved.
                     </p>
                     <p className="mt-8 text-xs leading-5 text-gray-500 md:order-2 md:mt-0 text-center md:text-start md:pr-8">
-                        This website uses affiliate links. We may earn a commission if you make a purchase through these links, at no additional cost to you.
+                        This website uses affiliate links. We may earn a commission if you make a purchase through these links, at no additional cost to you. We are members of the Amazon Associates program and the Awin Affiliate network.
                     </p>
                 </div>
             </div>

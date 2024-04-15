@@ -16,12 +16,7 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 25
   - package-ecosystem: "npm"
-    directory: "/vastdesk-frontend/"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 25
-  - package-ecosystem: "npm"
-    directory: "/vastdesk-documentation/"
+    directory: "/epicbargainsanddeals-frontend/"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 25

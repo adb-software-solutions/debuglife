@@ -402,9 +402,9 @@ drf-nested-routers==0.93.5 \
     --hash=sha256:1407565abc7bada37c162c7e11bf214ae71625a17fdec6d9a47a17f4a3627d32 \
     --hash=sha256:9a6813554020134a02e62f8c2934b2047717f7da06f8b801752c521e43735c63
     # via -r requirements/common.in
-drf-spectacular==0.27.0 \
-    --hash=sha256:18d7ae74b2b5d533fd31f1c591ebaa5cce1447e0976ced927401e3163040dea9 \
-    --hash=sha256:6ab2d20674244e8c940c2883f744b43c34fc68c70ea3aefa802f574108c9699b
+drf-spectacular==0.27.2 \
+    --hash=sha256:a199492f2163c4101055075ebdbb037d59c6e0030692fc83a1a8c0fc65929981 \
+    --hash=sha256:b1c04bf8b2fbbeaf6f59414b4ea448c8787aba4d32f76055c3b13335cf7ec37b
     # via -r requirements/common.in
 flake8==7.0.0 \
     --hash=sha256:33f96621059e65eec474169085dc92bf26e7b2d47366b70be2f67ab80dc25132 \

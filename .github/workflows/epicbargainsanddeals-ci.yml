@@ -73,9 +73,6 @@ jobs:
           cd epicbargainsanddeals-frontend
           npm install
           cd ..
-          cd epicbargainsanddeals-documentation
-          npm install
-          cd ..
 
       - name: Install shell dependencies
         run: |
@@ -93,20 +90,3 @@ jobs:
          files: ./coverage.xml
          flags: unittests
          fail_ci_if_error: true
-    
-  sync-to-gitlab:
-    runs-on: ubuntu-latest
-    name: "Sync GitHub repository to GitLab"
-    needs: run-tests-and-linters
-
-    if: ${{ (github.repository == 'epicbargainsanddeals/epicbargainsanddeals' && github.event_name == 'push') }}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Sync Repository
-        uses: adambirds/sync-github-to-gitlab-action@v1.1.0
-        with:
-          destination_repository: git@gitlab.com:epicbargainsanddeals/epicbargainsanddeals.git
-          destination_branch_name: main
-          destination_ssh_key: ${{ secrets.GITLAB_SSH_KEY }}

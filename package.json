@@ -5,10 +5,10 @@
     "main": "index.js",
     "dependencies": {
         "docker-compose": "^0.24.8",
-        "eslint": "^8.0.0",
-        "next": "^14.2.1",
+        "eslint": "^8.57.0",
+        "next": "^14.2.3",
         "prettier": "^3.2.5",
-        "stylelint": "^16.3.1",
+        "stylelint": "^16.4.0",
         "svgo": "^3.2.0"
     },
     "scripts": {
@@ -26,7 +26,7 @@
     "homepage": "https://github.com/adbwebdesigns/epicbargainsanddeals#readme",
     "devDependencies": {
         "@babel/eslint-parser": "^7.24.1",
-        "@typescript-eslint/eslint-plugin": "^7.7.0",
+        "@typescript-eslint/eslint-plugin": "^7.7.1",
         "autoprefixer": "^10.4.19",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-formatjs": "^4.13.0",

@@ -856,9 +856,9 @@ tornado==6.4 \
     # via
     #   -r requirements/common.in
     #   flower
-types-pillow==10.2.0.20240423 \
-    --hash=sha256:696e68b9b6a58548fc307a8669830469237c5b11809ddf978ac77fafa79251cd \
-    --hash=sha256:bd12923093b96c91d523efcdb66967a307f1a843bcfaf2d5a529146c10a9ced3
+types-pillow==10.2.0.20240511 \
+    --hash=sha256:b2fcc27b8e15ae3741941e43b4f39eba6fce6bcb152af90bbb07b387d2585783 \
+    --hash=sha256:ef87a19ea0a02a89c784cbc1b99dfff6c00dd0d5796a8ac868cf7ec69c5f88ff
     # via -r requirements/mypy.in
 types-psycopg2==2.9.21.20240417 \
     --hash=sha256:05db256f4a459fb21a426b8e7fca0656c3539105ff0208eaf6bdaf406a387087 \

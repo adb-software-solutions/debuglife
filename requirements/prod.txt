@@ -283,9 +283,9 @@ djangorestframework==3.15.1 \
     #   django-rest-knox
     #   drf-nested-routers
     #   drf-spectacular
-drf-nested-routers==0.93.5 \
-    --hash=sha256:1407565abc7bada37c162c7e11bf214ae71625a17fdec6d9a47a17f4a3627d32 \
-    --hash=sha256:9a6813554020134a02e62f8c2934b2047717f7da06f8b801752c521e43735c63
+drf-nested-routers==0.94.1 \
+    --hash=sha256:2b846385ed95c9f17bf4242db3b264ac826b5af00dda6c737d3fe7cc7bf2c7db \
+    --hash=sha256:3a8ec45a025c0f39188ec1ec415244beb875a6f4db87911a1f5a606d09b68c9f
     # via -r requirements/common.in
 drf-spectacular==0.27.2 \
     --hash=sha256:a199492f2163c4101055075ebdbb037d59c6e0030692fc83a1a8c0fc65929981 \

@@ -27,7 +27,7 @@ pip-tools==7.4.1
 adamlint==1.0.0
 
 # For spell check linter
-codespell==2.2.6
+codespell==2.3.0
 
 # For code coverage
 

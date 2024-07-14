@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@apollo/client": "^3.10.8",
-        "@apollo/experimental-nextjs-app-support": "^0.10.1",
+        "@apollo/experimental-nextjs-app-support": "^0.11.2",
         "@headlessui/react": "^2.1.2",
         "@headlessui/tailwindcss": "^0.2.1",
         "@heroicons/react": "^2.1.5",

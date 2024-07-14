@@ -6,9 +6,9 @@
     "dependencies": {
         "docker-compose": "^0.24.8",
         "eslint": "^8.57.0",
-        "next": "^14.2.4",
-        "prettier": "^3.3.2",
-        "stylelint": "^16.6.1",
+        "next": "^14.2.5",
+        "prettier": "^3.3.3",
+        "stylelint": "^16.7.0",
         "svgo": "^3.3.2"
     },
     "scripts": {
@@ -25,17 +25,17 @@
     },
     "homepage": "https://github.com/adbwebdesigns/epicbargainsanddeals#readme",
     "devDependencies": {
-        "@babel/eslint-parser": "^7.24.7",
-        "@typescript-eslint/eslint-plugin": "^7.13.0",
+        "@babel/eslint-parser": "^7.24.8",
+        "@typescript-eslint/eslint-plugin": "^7.16.0",
         "autoprefixer": "^10.4.19",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-formatjs": "^4.13.3",
         "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-no-jquery": "^2.7.0",
         "eslint-plugin-unicorn": "^53.0.0",
-        "postcss": "^8.4.38",
+        "postcss": "^8.4.39",
         "prettier-plugin-tailwindcss": "^0.5.14",
-        "stylelint-config-standard": "^36.0.0",
+        "stylelint-config-standard": "^36.0.1",
         "tailwindcss": "^3.4.4"
     }
 }

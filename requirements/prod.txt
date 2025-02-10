@@ -322,8 +322,8 @@ markdown==3.3.4 \
     --hash=sha256:31b5b491868dcc87d6c24b7e3d19a0d730d59d3e46f4eea6430a321bed387a49 \
     --hash=sha256:96c3ba1261de2f7547b46a00ea8463832c921d3f9d6aba3f255a6f71386db20c
     # via martor
-martor==1.6.44 \
-    --hash=sha256:7324c941d0215603b8e037ec10e856fa4eaed0b006b6ae0ee2db648a3a7cb744
+martor==1.6.45 \
+    --hash=sha256:806c0048c1d61d9c718862bd6ac15cf5b21637de489702383a919d2fcdebe26c
     # via -r requirements/common.in
 packaging==23.0 \
     --hash=sha256:714ac14496c3e68c99c29b00845f7a2b85f3bb6f1078fd9f72fd20f0570002b2 \

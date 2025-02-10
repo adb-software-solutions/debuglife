@@ -632,6 +632,10 @@ sqlparse==0.5.1 \
     #   -r requirements/common.in
     #   django
     #   django-debug-toolbar
+tomli==1.1.0 \
+    --hash=sha256:33d7984738f8bb699c9b0a816eb646a8178a69eaa792d258486776a5d21b8ca5 \
+    --hash=sha256:f4a182048010e89cbec0ae4686b21f550a7f2903f665e34a6de58ec15424f919
+    # via -r requirements/common.in
 tornado==6.4.1 \
     --hash=sha256:163b0aafc8e23d8cdc3c9dfb24c5368af84a81e3364745ccb4427669bf84aec8 \
     --hash=sha256:25486eb223babe3eed4b8aecbac33b37e3dd6d776bc730ca14e1bf93888b979f \

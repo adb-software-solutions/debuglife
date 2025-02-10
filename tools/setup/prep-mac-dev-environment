@@ -35,6 +35,6 @@ npm install
 pip install -r requirements/dev.txt
 
 # Install npm dependencies for frontend
-cd epicbargainsanddeals-frontend/
+cd debuglife-frontend/
 npm install
 cd ..

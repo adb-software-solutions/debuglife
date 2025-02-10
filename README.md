@@ -1,6 +1,6 @@
 # Epic Bargains And Deals Website
 
-[![VastDesk CI](https://github.com/adb-web-designs/epicbargainsanddeals/actions/workflows/epicbargainsanddeals-ci.yml/badge.svg?branch=main&event=push)](https://github.com/adb-web-designs/epicbargainsanddeals/actions/workflows/epicbargainsanddeals-ci.yml)
+[![VastDesk CI](https://github.com/adb-web-designs/debuglife/actions/workflows/debuglife-ci.yml/badge.svg?branch=main&event=push)](https://github.com/adb-web-designs/debuglife/actions/workflows/debuglife-ci.yml)
 ![Mypy coverage](https://img.shields.io/badge/mypy-100%25-green.svg)
 [![code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)

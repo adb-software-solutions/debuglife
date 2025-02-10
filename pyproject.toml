@@ -12,4 +12,4 @@ plugins = ["mypy_django_plugin.main"]
 exclude = "apps/**/migrations/*.py"
 
 [tool.django-stubs]
-django_settings_module = "epicbargainsanddeals.settings"
+django_settings_module = "debuglife.settings"

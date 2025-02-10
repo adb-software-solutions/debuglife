@@ -1,12 +1,12 @@
 services:
-  epicbargainsanddeals-backend:
+  debuglife-backend:
     build:
       context: .
-      dockerfile: ./compose/dev/epicbargainsanddeals/backend/Dockerfile
-    image: epicbargainsanddeals-backend
+      dockerfile: ./compose/dev/debuglife/backend/Dockerfile
+    image: debuglife-backend
     command: /start
     volumes:
-      - .:/opt/epicbargainsanddeals
+      - .:/opt/debuglife
     environment:
       - SQL_ENGINE=${SQL_ENGINE}
       - SQL_DATABASE=${SQL_DATABASE}
@@ -24,38 +24,38 @@ services:
       - DEBUG=${DEBUG}
       - GOOGLE_ANALYTICS_4_ENABLED=${GOOGLE_ANALYTICS_4_ENABLED}
     depends_on:
-      - epicbargainsanddeals-db
-      - epicbargainsanddeals-redis
-  epicbargainsanddeals-frontend:
+      - debuglife-db
+      - debuglife-redis
+  debuglife-frontend:
     build:
       context: .
-      dockerfile: ./compose/dev/epicbargainsanddeals/frontend/Dockerfile
-    image: epicbargainsanddeals-frontend
+      dockerfile: ./compose/dev/debuglife/frontend/Dockerfile
+    image: debuglife-frontend
     volumes:
-      - .:/opt/epicbargainsanddeals
+      - .:/opt/debuglife
     environment:
-      - REACT_APP_epicbargainsanddeals_API_URL=${REACT_APP_epicbargainsanddeals_API_URL}
+      - REACT_APP_debuglife_API_URL=${REACT_APP_debuglife_API_URL}
       - REACT_APP_MAIN_DOMAIN=${REACT_APP_MAIN_DOMAIN}
     depends_on:
-      - epicbargainsanddeals-backend
-  epicbargainsanddeals-db:
+      - debuglife-backend
+  debuglife-db:
     image: postgres:14.4
     volumes:
-      - epicbargainsanddeals_postgres_data:/var/lib/postgresql/data
+      - debuglife_postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${SQL_DATABASE}
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
-  epicbargainsanddeals-redis:
+  debuglife-redis:
     image: redis:7.0.4
-  epicbargainsanddeals-celery_worker:
+  debuglife-celery_worker:
     build:
       context: .
-      dockerfile: ./compose/dev/epicbargainsanddeals/backend/Dockerfile
-    image: epicbargainsanddeals-celeryworker
+      dockerfile: ./compose/dev/debuglife/backend/Dockerfile
+    image: debuglife-celeryworker
     command: /start-celeryworker
     volumes:
-      - .:/opt/epicbargainsanddeals
+      - .:/opt/debuglife
     environment:
       - SQL_ENGINE=${SQL_ENGINE}
       - SQL_DATABASE=${SQL_DATABASE}
@@ -73,16 +73,16 @@ services:
       - DEBUG=${DEBUG}
       - GOOGLE_ANALYTICS_4_ENABLED=${GOOGLE_ANALYTICS_4_ENABLED}
     depends_on:
-      - epicbargainsanddeals-db
-      - epicbargainsanddeals-redis
-  epicbargainsanddeals-celery_beat:
+      - debuglife-db
+      - debuglife-redis
+  debuglife-celery_beat:
     build:
       context: .
-      dockerfile: ./compose/dev/epicbargainsanddeals/backend/Dockerfile
-    image: epicbargainsanddeals-celerybeat
+      dockerfile: ./compose/dev/debuglife/backend/Dockerfile
+    image: debuglife-celerybeat
     command: /start-celerybeat
     volumes:
-      - .:/opt/epicbargainsanddeals
+      - .:/opt/debuglife
     environment:
       - SQL_ENGINE=${SQL_ENGINE}
       - SQL_DATABASE=${SQL_DATABASE}
@@ -100,16 +100,16 @@ services:
       - DEBUG=${DEBUG}
       - GOOGLE_ANALYTICS_4_ENABLED=${GOOGLE_ANALYTICS_4_ENABLED}
     depends_on:
-      - epicbargainsanddeals-db
-      - epicbargainsanddeals-redis
-  epicbargainsanddeals-flower:
+      - debuglife-db
+      - debuglife-redis
+  debuglife-flower:
     build:
       context: .
-      dockerfile: ./compose/dev/epicbargainsanddeals/backend/Dockerfile
-    image: epicbargainsanddeals-flower
+      dockerfile: ./compose/dev/debuglife/backend/Dockerfile
+    image: debuglife-flower
     command: /start-flower
     volumes:
-      - .:/opt/epicbargainsanddeals
+      - .:/opt/debuglife
     environment:
       - SQL_ENGINE=${SQL_ENGINE}
       - SQL_DATABASE=${SQL_DATABASE}
@@ -127,9 +127,9 @@ services:
       - DEBUG=${DEBUG}
       - GOOGLE_ANALYTICS_4_ENABLED=${GOOGLE_ANALYTICS_4_ENABLED}
     depends_on:
-      - epicbargainsanddeals-db
-      - epicbargainsanddeals-redis
+      - debuglife-db
+      - debuglife-redis
 
 
 volumes:
-  epicbargainsanddeals_postgres_data:
+  debuglife_postgres_data:

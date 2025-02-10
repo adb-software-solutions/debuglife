@@ -1,5 +1,5 @@
 {
-    "name": "epicbargainsanddeals",
+    "name": "debuglife",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -16,14 +16,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/adbwebdesigns/epicbargainsanddeals.git"
+        "url": "git+https://github.com/adb-software-solutions/debuglife.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/adbwebdesigns/epicbargainsanddeals/issues"
+        "url": "https://github.com/adb-software-solutions/debuglife/issues"
     },
-    "homepage": "https://github.com/adbwebdesigns/epicbargainsanddeals#readme",
+    "homepage": "https://github.com/adb-software-solutions/debuglife#readme",
     "devDependencies": {
         "@babel/eslint-parser": "^7.26.8",
         "@typescript-eslint/eslint-plugin": "^8.24.0",
@@ -33,7 +33,7 @@
         "eslint-plugin-import": "^2.31.0",
         "eslint-plugin-no-jquery": "^3.1.0",
         "eslint-plugin-unicorn": "^56.0.1",
-        "postcss": "^8.5.1",
+        "postcss": "^8.5.2",
         "prettier-plugin-tailwindcss": "^0.6.11",
         "stylelint-config-standard": "^37.0.0",
         "tailwindcss": "^4.0.6"

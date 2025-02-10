@@ -16,7 +16,7 @@ updates:
       interval: "daily"
     open-pull-requests-limit: 25
   - package-ecosystem: "npm"
-    directory: "/epicbargainsanddeals-frontend/"
+    directory: "/debuglife-frontend/"
     schedule:
       interval: "daily"
     open-pull-requests-limit: 25

@@ -4,14 +4,14 @@ SECRET_KEY=randomlongsecretstring
 SMTP_ENCRYPTION_KEY=randomlongencryptionkey
 
 SQL_ENGINE=django.db.backends.postgresql
-SQL_DATABASE=epicbargainsanddeals
-SQL_USER=epicbargainsanddeals
+SQL_DATABASE=debuglife
+SQL_USER=debuglife
 SQL_PASSWORD=randomlongpostgrespassword
-SQL_HOST=epicbargainsanddeals-db
+SQL_HOST=debuglife-db
 SQL_PORT=5432
 
-POSTGRES_DB=epicbargainsanddeals
-POSTGRES_USER=epicbargainsanddeals
+POSTGRES_DB=debuglife
+POSTGRES_USER=debuglife
 POSTGRES_PASSWORD=randomlongpostgrespassword
 
 CELERY_BROKER=redis://redis:6379/0

@@ -1,6 +1,7 @@
 import React from 'react';
-import { SiGithub, SiFacebook, SiTwitter, SiInstagram, SiYoutube, SiX, SiLinkedin, SiPinterest } from '@icons-pack/react-simple-icons';
+import { SiGithub, SiFacebook, SiInstagram, SiYoutube, SiX, SiPinterest } from '@icons-pack/react-simple-icons';
 import { FiPackage } from "react-icons/fi";
+import { FaLinkedin } from 'react-icons/fa';
 import { PencilSquareIcon, ServerStackIcon, ExclamationCircleIcon, Square3Stack3DIcon, LightBulbIcon, PaperClipIcon } from '@heroicons/react/24/solid';
 import {
     Bars3Icon,
@@ -39,8 +40,6 @@ export default function Icon({ iconName, className }: IconProps) {
             return <SiGithub className={combinedClass} />;
         case 'facebook-solid':
             return <SiFacebook className={combinedClass} />;
-        case 'twitter-solid':
-            return <SiTwitter className={combinedClass} />;
         case 'instagram-solid':
             return <SiInstagram className={combinedClass} />;
         case 'youtube-solid':
@@ -50,7 +49,7 @@ export default function Icon({ iconName, className }: IconProps) {
         case 'x-solid':
             return <SiX className={combinedClass} />;
         case 'linkedin-solid':
-            return <SiLinkedin className={combinedClass} />;
+            return <FaLinkedin className={combinedClass} />;
         case 'pencil-square-solid':
             return <PencilSquareIcon className={combinedClass} />;
         case 'server-stack-solid':

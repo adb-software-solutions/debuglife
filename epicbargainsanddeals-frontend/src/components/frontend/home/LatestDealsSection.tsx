@@ -9,7 +9,7 @@ export default function LatestDealsSection({products}: ProductPropsType) {
                     {products.map((product) => (
                         <div
                             key={product.id}
-                            className="grid h-full grid-rows-[auto,1fr,auto]"
+                            className="grid h-full grid-rows-[auto_1fr_auto]"
                         >
                             <div className="relative h-72 w-full overflow-hidden rounded-lg">
                                 <Image

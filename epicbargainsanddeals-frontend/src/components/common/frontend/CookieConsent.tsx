@@ -44,13 +44,13 @@ export const CookieConsent = () => {
             <div className="mt-2 flex">
                 <button
                     onClick={acceptConsent}
-                    className="mr-2 rounded bg-white px-4 py-2 text-blue-500"
+                    className="mr-2 rounded-sm bg-white px-4 py-2 text-blue-500"
                 >
                     Accept
                 </button>
                 <button
                     onClick={declineConsent}
-                    className="rounded bg-white px-4 py-2 text-blue-500"
+                    className="rounded-sm bg-white px-4 py-2 text-blue-500"
                 >
                     Decline
                 </button>

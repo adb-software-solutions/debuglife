@@ -16,8 +16,8 @@ export default function NotFound() {
     return (
         <>
             <div className="flex min-h-full flex-col bg-gray-900 pb-12 pt-16">
-                <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col justify-center px-6 lg:px-8">
-                    <div className="flex flex-shrink-0 justify-center">
+                <main className="mx-auto flex w-full max-w-7xl grow flex-col justify-center px-6 lg:px-8">
+                    <div className="flex shrink-0 justify-center">
                         <Link href="/" className="inline-flex">
                             <span className="sr-only">Epic Bargains And Deals</span>
                             <Image
@@ -54,7 +54,7 @@ export default function NotFound() {
                         </div>
                     </div>
                 </main>
-                <footer className="mx-auto w-full max-w-7xl flex-shrink-0 px-6 lg:px-8">
+                <footer className="mx-auto w-full max-w-7xl shrink-0 px-6 lg:px-8">
                     <nav className="flex justify-center space-x-4">
                         <Link
                             href="/contact"

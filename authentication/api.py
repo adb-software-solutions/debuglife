@@ -14,6 +14,7 @@ from authentication.schema import (
     RequestPasswordResetInput,
     RequestPasswordResetResponse,
     ConfirmPasswordResetInput,
+    CurrentUserOut,
 )
 from authentication.tasks import send_reset_password_email
 
@@ -81,3 +82,19 @@ def confirm_password_reset(request, data: ConfirmPasswordResetInput):
             return RequestPasswordResetResponse(success=False, message="Invalid token or token expired.")
     except Exception:
         return RequestPasswordResetResponse(success=False, message="Error resetting password.")
+
+@auth_router.get("/me", response=CurrentUserOut, auth=django_auth)
+def get_current_user(request):
+    """
+    Return the current authenticated user's details.
+    This endpoint requires authentication.
+    """
+    user = request.user
+    return CurrentUserOut(
+        id=user.id,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        is_staff=user.is_staff,
+        is_superuser=user.is_superuser,
+    )

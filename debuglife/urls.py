@@ -1,72 +1,36 @@
-"""
-URL configuration for debuglife project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from typing import List, Union
-
+# debuglife/urls.py
+from django.contrib import admin
+from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
-from django.urls import URLPattern, URLResolver, path
-from django.urls.conf import include
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from ninja import NinjaAPI, Router
+from apps.blog.api import post_router as post_router
+from apps.blog.api import category_router as category_router
+from apps.blog.api import tag_router as tag_router
+from apps.blog.api import author_router as author_router
+from apps.blog.api import gallery_router as gallery_router
+from authentication.api import auth_router as auth_router
 
-from apps.shop.feeds import PinterestBoardFeed
-from apps.shop.views import (
-    AffiliateCategoryByAmazonID,
-    AffiliateProductByAmazonID,
-    AffiliateProductRedirectView,
+api = NinjaAPI(
+    title="DebugLife Blog API",
+    version="1.0",
+    description="API for the DebugLife Blog",
 )
-from authentication.urls import urlpatterns as auth_urlpatterns
-from debuglife.routers import urlpatterns as api_urlpatterns
 
-URL = Union[URLPattern, URLResolver]
-URLList = List[URL]
+blog_router = Router(tags=["Blog"])
+blog_router.add_router("/auth", auth_router)
+blog_router.add_router("/posts", post_router)
+blog_router.add_router("/categories", category_router)
+blog_router.add_router("/tags", tag_router)
+blog_router.add_router("/authors", author_router)
+blog_router.add_router("/gallery", gallery_router)
 
-urlpatterns: URLList = [
+api.add_router("/blog", blog_router)
+
+
+urlpatterns = [
     path("admin/", admin.site.urls),
-    path("shop-api/auth/", include(auth_urlpatterns)),
-    path("shop-api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path(
-        "shop-api/schema/swagger-ui/",
-        SpectacularSwaggerView.as_view(url_name="schema"),
-        name="swagger-ui",
-    ),
-    path("shop-api/schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
-    path("shop-api/", include(api_urlpatterns)),
-    path(
-        "shop-api/shop/affiliate_categories/by_amazon_id/<str:amazon_category_id>/",
-        AffiliateCategoryByAmazonID.as_view(),
-        name="affiliate-category-by-amazon-id",
-    ),
-    path(
-        "shop-api/shop/affiliate_products/by_amazon_id/<str:amazon_product_id>/",
-        AffiliateProductByAmazonID.as_view(),
-        name="affiliate-product-by-amazon-id",
-    ),
-
-    path(
-        "feeds/pinterest-board/<uuid:board_id>/", PinterestBoardFeed(), name="pinterest_board_feed"
-    ),
-    path(
-        "shop/products/<uuid:product_id>/rd/",
-        AffiliateProductRedirectView.as_view(),
-        name="affiliate_product_redirect",
-    ),
-    path("jet/", include("jet.urls", "jet")),
-    path("jet/dashboard/", include("jet.dashboard.urls", "jet-dashboard")),
+    path("api/", api.urls),
 ]
 
 if settings.DEBUG:

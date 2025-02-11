@@ -10,12 +10,7 @@ app = Celery("debuglife")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
-app.conf.beat_schedule = {
-    "create-pinterest-pins-task": {
-        "task": "apps.shop.tasks.create_pinterest_pins_task",
-        "schedule": 300,
-    },
-}
+app.conf.beat_schedule = {}
 
 @app.task(bind=True)
 def debug_task(self: Any) -> None:

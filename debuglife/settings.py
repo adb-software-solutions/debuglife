@@ -30,8 +30,6 @@ SECRET_KEY = os.environ.get(
     "SECRET_KEY", "django-insecure-fdg2(_6j#^s=!x*$-t#f1q6y9bu-k-4i$xrsnuv%xn@xe_r(r2"
 )
 
-AMAZON_AFFILIATE_TAG = os.environ.get("AMAZON_AFFILIATE_TAG", "")
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", "0")))
 DEBUG_TOOLBAR_ENABLED = bool(int(os.environ.get("DEBUG_TOOLBAR_ENABLED", "0")))
@@ -49,12 +47,8 @@ ALLOWED_HOSTS: List[str] = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    "apps.shop",
+    "apps.blog",
     "authentication",
-    "jet",
-    "drf_spectacular",
-    "rest_framework",
-    "knox",
     "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -64,36 +58,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
-MIGRATION_MODULES = {
-    "jet": "apps.jet.migrations",
-}
-
 if DEBUG_TOOLBAR_ENABLED:
     INSTALLED_APPS += ["debug_toolbar"]
 
 AUTH_USER_MODEL = "authentication.User"
 
-REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_PAGINATION_CLASS": "debuglife.pagination.CustomPageNumberPagination",
-    "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
-    "PAGE_SIZE": 100,
-}
-
 REST_KNOX = {"AUTH_HEADER_PREFIX": "Bearer", "TOKEN_TTL": None}
-
-SPECTACULAR_SETTINGS = {
-    "TITLE": "Epic Bargains And Deals API",
-    "DESCRIPTION": "API for Epic Bargains And Deals",
-    "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,
-    "SCHEMA_COERCE_PATH_PK_SUFFIX": True,
-    "SWAGGER_UI_SETTINGS": {
-        "deepLinking": True,
-        "persistAuthorization": True,
-        "displayRequestDuration": True,
-    },
-}
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -216,8 +186,8 @@ CELERY_RESULT_SERIALIZER = "json"
 # CORS
 
 CORS_ALLOWED_ORIGINS = [
-    "https://debuglife.co.uk",
-    "https://www.debuglife.co.uk",
+    "https://debuglife.dev",
+    "https://www.debuglife.dev",
 ]
 
 if DEBUG:

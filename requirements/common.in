@@ -10,12 +10,14 @@ Pillow==11.0.0
 python-dotenv==1.0.1
 django-cors-headers==4.7.0
 django-debug-toolbar==5.0.1
+django-unfold==0.47.0
 
 # Celery / Cache Dependencies
 
 celery==5.4.0
 redis==5.2.1
 flower==2.0.1
+django-redis==5.4.0
 
 # Other Dependencies
 tzdata==2025.1

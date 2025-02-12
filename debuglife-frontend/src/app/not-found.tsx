@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import Icon from "@/components/common/Icon";
+import Icon from "@/components/common/icon/Icon";
 import { footerSocial } from "@/fixtures/footerData";
 
 type SocialItem = {
@@ -22,7 +22,7 @@ export default function NotFound() {
                             <span className="sr-only">Epic Bargains And Deals</span>
                             <Image
                                 className="h-12 w-auto"
-                                src="/logo.svg"
+                                src="/images/logo.svg"
                                 alt=""
                                 height={40}
                                 width={150}

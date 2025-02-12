@@ -1,3 +1,4 @@
+# users/api.py (or authentication/api.py)
 from ninja import Router
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.tokens import default_token_generator
@@ -14,16 +15,16 @@ from authentication.schema import (
     RequestPasswordResetInput,
     RequestPasswordResetResponse,
     ConfirmPasswordResetInput,
-    CurrentUserOut,
+    CurrentUserResponse,
 )
-from authentication.tasks import send_reset_password_email
+from authentication.tasks import send_reset_password_email  # if you use Celery tasks
 
 User = get_user_model()
 auth_router = Router(tags=["Authentication"])
 
 @auth_router.post("/login", response=LoginResponse)
 def login_user(request, data: LoginInput):
-    user = authenticate(request, email=data.email, password=data.password)
+    user = authenticate(request, username=data.email, password=data.password)
     if user is not None:
         login(request, user)
         return LoginResponse(success=True, message="Logged in successfully.")
@@ -31,19 +32,11 @@ def login_user(request, data: LoginInput):
 
 @auth_router.post("/logout", response=LoginResponse, auth=django_auth)
 def logout_user(request):
-    """
-    Log out the current user. Requires the user to be authenticated.
-    """
     logout(request)
     return LoginResponse(success=True, message="Logged out successfully.")
 
-# Use django_auth so that Swagger (and runtime) enforce authentication.
 @auth_router.post("/reset-password", response=LoginResponse, auth=django_auth)
 def reset_password_logged_in(request, data: ResetPasswordLoggedInInput):
-    """
-    Reset the password for a logged-in user by verifying the old password.
-    This endpoint now requires authentication.
-    """
     user = request.user  # Guaranteed to be authenticated because of auth=django_auth
     if not user.check_password(data.old_password):
         return LoginResponse(success=False, message="Old password is incorrect.")
@@ -61,7 +54,7 @@ def request_password_reset(request, data: RequestPasswordResetInput):
         reset_link = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}"
         send_reset_password_email.delay(data.email, user.first_name, reset_link)
     except User.DoesNotExist:
-        # Always return success to avoid leaking user existence info.
+        # Always return success to avoid leaking information about user existence.
         pass
 
     return RequestPasswordResetResponse(
@@ -83,18 +76,29 @@ def confirm_password_reset(request, data: ConfirmPasswordResetInput):
     except Exception:
         return RequestPasswordResetResponse(success=False, message="Error resetting password.")
 
-@auth_router.get("/me", response=CurrentUserOut, auth=django_auth)
+# Updated /auth/me endpoint that includes author details if available.
+@auth_router.get("/me", response=CurrentUserResponse)
 def get_current_user(request):
-    """
-    Return the current authenticated user's details.
-    This endpoint requires authentication.
-    """
-    user = request.user
-    return CurrentUserOut(
-        id=user.id,
-        email=user.email,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        is_staff=user.is_staff,
-        is_superuser=user.is_superuser,
-    )
+    if request.user.is_authenticated:
+        author_data = None
+        # Check if the user has an associated author profile.
+        # (This assumes that your Author model is linked via a OneToOneField with related_name "author_profile".)
+        if hasattr(request.user, "author_profile") and request.user.author_profile:
+            author_profile = request.user.author_profile
+            # If an avatar image is available, use its URL.
+            avatar_url = request.build_absolute_uri(author_profile.avatar.url) if author_profile.avatar else None
+            author_data = {
+                "avatar": avatar_url,
+                "bio": author_profile.bio,
+            }
+        return {
+            "user": {
+                "id": request.user.id,
+                "email": request.user.email,
+                "first_name": request.user.first_name,
+                "last_name": request.user.last_name,
+                "is_staff": request.user.is_staff,
+                "author": author_data,
+            }
+        }
+    return {"user": None}

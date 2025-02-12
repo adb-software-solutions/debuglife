@@ -5,7 +5,6 @@ from uuid import UUID
 
 class AuthorOut(Schema):
     id: UUID
-    username: str
     full_name: Optional[str] = None
     bio: Optional[str] = None
     instagram: Optional[str] = None
@@ -71,8 +70,20 @@ class BlogOut(Schema):
 
 class BlogIn(Schema):
     title: str
+    slug: Optional[str] = None
     excerpt: Optional[str] = None
     content: str
-    category_id: int
-    tag_ids: List[int] = []
+    category_id: UUID
+    author_id: Optional[UUID] = None
+    tag_ids: List[UUID] = []
     published: bool = False
+
+class BlogPatch(Schema):
+    title: Optional[str] = None
+    slug: Optional[str] = None
+    excerpt: Optional[str] = None
+    content: Optional[str] = None
+    published: Optional[bool] = None
+    category_id: Optional[UUID] = None
+    tag_ids: Optional[List[UUID]] = None
+    author_id: Optional[UUID] = None

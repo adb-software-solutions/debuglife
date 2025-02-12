@@ -1,16 +1,20 @@
 import type {Metadata, Viewport} from "next";
 import {Providers} from "./providers";
 import { Suspense } from "react";
-import Analytics from "@/components/gtmComponent";
-import { GoogleAdsenseComponent } from "@/components/googleAdsenseComponent";
+import Analytics from "@/components/common/gtm/gtmComponent";
+import { GoogleAdsenseComponent } from "@/components/common/ads/googleAdsenseComponent";
+import { AuthProvider } from "@/context/AuthContext";
 
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "Epic Bargains And Deals",
+    title: "DebugLife",
     description:
-        "Epic Bargains And Deals is a website that helps you find the best deals on Amazon UK, and other retailers.",
-    authors: [{name: "Epic Bargains And Deals"}],
+        "DebugLife is a blog about software development, programming, and technology. Wr provide tutorials, tips, and tricks on various programming languages and technologies as well as reviews on all things tech.",
+    authors: [
+        {name: "DebugLife"},
+        {name: "Adam Birds"},
+    ],
     manifest: "/site.webmanifest",
     icons: {
         icon: [
@@ -34,9 +38,9 @@ export const metadata: Metadata = {
             sizes: "180x180",
         },
     },
-    applicationName: "Epic Bargains And Deals",
+    applicationName: "DebugLife",
     appleWebApp: {
-        title: "Epic Bargains And Deals",
+        title: "DebugLife",
     },
 };
 
@@ -52,9 +56,11 @@ export default async function RootLayout({children}: {children: React.ReactNode}
                 <link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
                 <GoogleAdsenseComponent />
             </head>
-            <body className="h-full bg-white">
+            <body className="h-full bg-white dark:bg-slate-900">
                 <Providers>
+                    <AuthProvider>
                     {children}
+                    </AuthProvider>
                 </Providers>
                 <Suspense fallback={null}>
                     <Analytics />

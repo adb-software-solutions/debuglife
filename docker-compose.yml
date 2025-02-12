@@ -13,7 +13,11 @@ services:
       - "8000:8000"
     depends_on:
       - debuglife-db
-      - debuglife-redis
+      - debuglife-redis-celery
+      - debuglife-redis-cache
+      - debuglife-redis-session
+    networks:
+      - debuglife-network
   
   debuglife-frontend:
     build:
@@ -26,6 +30,8 @@ services:
       - "3000:3000"
     depends_on:
       - debuglife-backend
+    networks:
+      - debuglife-network
 
   debuglife-db:
     image: postgres:14.4
@@ -35,10 +41,26 @@ services:
       - ./.env/.dev
     ports:
       - "5433:5432"
-  debuglife-redis:
+    networks:
+      - debuglife-network
+  debuglife-redis-celery:
     image: redis:7.0.4
     expose:
       - "6379"
+    networks:
+      - debuglife-network
+  debuglife-redis-cache:
+    image: redis:7.0.4
+    expose:
+      - "6379"
+    networks:
+      - debuglife-network
+  debuglife-redis-session:
+    image: redis:7.0.4
+    expose:
+      - "6379"
+    networks:
+      - debuglife-network
   debuglife-celery_worker:
     build:
       context: .
@@ -51,7 +73,11 @@ services:
       - ./.env/.dev
     depends_on:
       - debuglife-db
-      - debuglife-redis
+      - debuglife-redis-celery
+      - debuglife-redis-cache
+      - debuglife-redis-session
+    networks:
+      - debuglife-network
   debuglife-celery_beat:
     build:
       context: .
@@ -64,7 +90,11 @@ services:
       - ./.env/.dev
     depends_on:
       - debuglife-db
-      - debuglife-redis
+      - debuglife-redis-celery
+      - debuglife-redis-cache
+      - debuglife-redis-session
+    networks:
+      - debuglife-network
   debuglife-flower:
     build:
       context: .
@@ -79,8 +109,16 @@ services:
       - "5557:5555"
     depends_on:
       - debuglife-db
-      - debuglife-redis
+      - debuglife-redis-celery
+      - debuglife-redis-cache
+      - debuglife-redis-session
+    networks:
+      - debuglife-network
 
 
 volumes:
   debuglife_postgres_data:
+
+networks:
+  debuglife-network:
+    external: true

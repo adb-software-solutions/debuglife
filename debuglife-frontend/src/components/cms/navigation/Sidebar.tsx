@@ -7,13 +7,19 @@ import LogoComponent from "@/components/common/logo/LogoComponent";
 const Sidebar = () => {
     const pathname = usePathname();
 
-    // Helper function to compute class names using sky-300 for active/hover states.
-    const navItemClass = (href: string): string =>
-        `block p-2 rounded hover:bg-sky-100 dark:hover:bg-sky-800 ${
-            pathname.startsWith(href)
-                ? "bg-sky-300 text-slate-900"
-                : "text-gray-700 dark:text-slate-300"
-        }`;
+    // Helper function to compute class names.
+    // For the dashboard link, require an exact match.
+    const navItemClass = (href: string): string => {
+        if (href === "/dashboard") {
+            return pathname === href
+                ? "block p-2 rounded bg-sky-300 text-slate-900"
+                : "block p-2 rounded text-gray-700 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-800";
+        }
+        // For other links, use startsWith.
+        return pathname.startsWith(href)
+            ? "block p-2 rounded bg-sky-300 text-slate-900"
+            : "block p-2 rounded text-gray-700 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-800";
+    };
 
     return (
         <aside className="h-full w-64 border-r border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">

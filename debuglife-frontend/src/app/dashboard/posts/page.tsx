@@ -566,7 +566,7 @@ const PostsPage: React.FC = () => {
                                         post.slug
                                     )}
                                 </td>
-                                <td className="px-3 py-4 text-center text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
+                                <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     {editingPostId === post.id ? (
                                         <label className="relative inline-flex cursor-pointer items-center">
                                             {/* The hidden checkbox */}

@@ -10,6 +10,10 @@ from apps.blog.api import tag_router as tag_router
 from apps.blog.api import author_router as author_router
 from apps.blog.api import gallery_router as gallery_router
 from authentication.api import auth_router as auth_router
+from pydantic import ValidationError
+import logging
+
+logger = logging.getLogger(__name__)
 
 api = NinjaAPI(
     title="DebugLife Blog API",
@@ -17,15 +21,30 @@ api = NinjaAPI(
     description="API for the DebugLife Blog",
 )
 
+@api.exception_handler(ValidationError)
+def custom_validation_errors(request, exc):
+    # Log detailed information
+    logger.info(f"Validation error on {request.method} {request.path}")
+    logger.info(f"Request body: {request.body.decode('utf-8')}")
+    logger.info(f"Validation errors: {exc.errors}")
+
+    # Return the standard 422 response
+    return api.create_response(
+        request,
+        {"detail": exc.errors},
+        status=422,
+    )
+
+
 blog_router = Router(tags=["Blog"])
-blog_router.add_router("/auth", auth_router)
-blog_router.add_router("/posts", post_router)
-blog_router.add_router("/categories", category_router)
-blog_router.add_router("/tags", tag_router)
-blog_router.add_router("/authors", author_router)
-blog_router.add_router("/gallery", gallery_router)
+blog_router.add_router("/", post_router)
+blog_router.add_router("/", category_router)
+blog_router.add_router("/", tag_router)
+blog_router.add_router("/", author_router)
+blog_router.add_router("/", gallery_router)
 
 api.add_router("/blog", blog_router)
+api.add_router("/auth", auth_router)
 
 
 urlpatterns = [

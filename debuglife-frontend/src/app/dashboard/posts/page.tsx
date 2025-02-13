@@ -520,7 +520,7 @@ const PostsPage: React.FC = () => {
                             </th>
                             <th
                                 scope="col"
-                                className="relative py-3.5 pr-4 pl-3 sm:pr-6"
+                                className="sticky right-0 bg-gray-50 py-3.5 pr-4 pl-3 sm:pr-6 dark:bg-slate-700"
                             >
                                 <span className="sr-only">Actions</span>
                             </th>
@@ -532,7 +532,7 @@ const PostsPage: React.FC = () => {
                                 key={post.id}
                                 className="hover:bg-gray-50 dark:hover:bg-slate-600"
                             >
-                                <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-6 dark:text-gray-100">
+                                <td className="py-4 pr-3 pl-4 text-sm font-medium text-wrap whitespace-nowrap text-gray-900 sm:pl-6 dark:text-gray-100">
                                     {editingPostId === post.id ? (
                                         <input
                                             type="text"
@@ -549,7 +549,7 @@ const PostsPage: React.FC = () => {
                                         post.title
                                     )}
                                 </td>
-                                <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
+                                <td className="px-3 py-4 text-sm text-wrap whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     {editingPostId === post.id ? (
                                         <input
                                             type="text"
@@ -734,7 +734,7 @@ const PostsPage: React.FC = () => {
                                         post.updated_at,
                                     ).toLocaleDateString("en-GB")}
                                 </td>
-                                <td className="px-3 py-4 text-right text-sm font-medium whitespace-nowrap">
+                                <td className="ml-2 sticky right-0 px-3 py-4 text-right text-sm font-medium whitespace-nowrap bg-white dark:bg-slate-800">
                                     {editingPostId === post.id ? (
                                         <>
                                             <button

@@ -11,6 +11,7 @@ python-dotenv==1.0.1
 django-cors-headers==4.7.0
 django-debug-toolbar==5.0.1
 django-unfold==0.47.0
+spacy==3.8.3
 
 # Celery / Cache Dependencies
 

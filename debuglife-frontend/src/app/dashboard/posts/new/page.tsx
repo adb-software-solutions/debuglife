@@ -51,7 +51,7 @@ const NewPostPage: React.FC = () => {
   const [slug, setSlug] = useState("");
   const [isSlugEdited, setIsSlugEdited] = useState(false);
   const [excerpt, setExcerpt] = useState("");
-  const [content, setContent] = useState("# Hello, world!");
+  const [content, setContent] = useState("");
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState<string[]>([]);
@@ -116,7 +116,7 @@ const NewPostPage: React.FC = () => {
       title,
       slug,
       excerpt,
-      content, // content comes from our state updated by the editor and hidden input
+      content, // content is managed by our editor state
       published,
       category_id: category,
       tag_ids: tags,
@@ -140,11 +140,9 @@ const NewPostPage: React.FC = () => {
       if (res.ok) {
         router.push("/dashboard/posts");
       } else {
-        // Extract error message from response if available.
         const errorData = await res.json();
         setErrorMessage(
-          errorData.message ||
-            "Failed to create post. Please try again."
+          errorData.message || "Failed to create post. Please try again."
         );
       }
     } catch (error) {
@@ -161,18 +159,11 @@ const NewPostPage: React.FC = () => {
         Create New Post
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Hidden input to capture Milkdown content */}
-        <input
-          type="hidden"
-          id="markdownContent"
-          name="content"
-          value={content}
-          readOnly
-        />
+
         {/* Top Row: Post Details and Settings */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Card: Post Details */}
-          <div className="rounded-md bg-white p-6 shadow dark:bg-gray-800">
+          <div className="rounded-md bg-white p-6 shadow dark:bg-slate-800">
             <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">
               Post Details
             </h2>
@@ -190,7 +181,7 @@ const NewPostPage: React.FC = () => {
                     setSlug(slugify(e.target.value).slice(0, 100));
                   }
                 }}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-gray-800 dark:text-gray-300"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-slate-700 dark:text-gray-300"
                 required
               />
             </div>
@@ -206,7 +197,7 @@ const NewPostPage: React.FC = () => {
                   setSlug(e.target.value.slice(0, 100));
                   setIsSlugEdited(true);
                 }}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-gray-800 dark:text-gray-300"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-slate-700 dark:text-gray-300"
                 required
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -221,14 +212,14 @@ const NewPostPage: React.FC = () => {
               <textarea
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-gray-800 dark:text-gray-300"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-slate-700 dark:text-gray-300"
                 rows={3}
               />
             </div>
           </div>
 
           {/* Card: Settings */}
-          <div className="rounded-md bg-white p-6 shadow dark:bg-gray-800">
+          <div className="rounded-md bg-white p-6 shadow dark:bg-slate-800">
             <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">
               Settings
             </h2>
@@ -240,7 +231,7 @@ const NewPostPage: React.FC = () => {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-gray-800 dark:text-gray-300"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-slate-700 dark:text-gray-300"
                 required
               >
                 <option value="">Select Category</option>
@@ -311,23 +302,20 @@ const NewPostPage: React.FC = () => {
         </div>
 
         {/* Card: Content (Full Width) */}
-        <div className="rounded-md bg-white p-6 shadow dark:bg-gray-800">
+        <div className="rounded-md bg-white p-6 shadow dark:bg-slate-800">
           <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">
             Content
           </h2>
           <div
             id="milkdown-outer"
-            className="rounded-md border border-gray-300 shadow-sm focus-within:border-sky-300 focus-within:ring focus-within:ring-sky-200 dark:bg-gray-800"
+            className="rounded-md border border-gray-300 shadow-sm focus-within:border-sky-300 focus-within:ring focus-within:ring-sky-200 dark:bg-slate-700"
           >
-            <MarkdownEditor
-              markdown={content}
-              onChange={handleContentChange}
-            />
+            <MarkdownEditor markdown={content} setMarkdown={handleContentChange} />
           </div>
         </div>
 
         {/* Card: Media (Full Width) */}
-        <div className="rounded-md bg-white p-6 shadow dark:bg-gray-800">
+        <div className="rounded-md bg-white p-6 shadow dark:bg-slate-800">
           <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">
             Media
           </h2>
@@ -365,7 +353,7 @@ const NewPostPage: React.FC = () => {
         <div>
           <button
             type="submit"
-            className="w-full rounded-md bg-sky-300 px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-sky-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
+            className="w-full rounded-md bg-sky-300 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
           >
             Create Post
           </button>

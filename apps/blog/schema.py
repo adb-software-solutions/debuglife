@@ -47,6 +47,16 @@ class TagOut(Schema):
 class TagIn(Schema):
     name: str
 
+
+class GalleryImageIn(Schema):
+    alt_text: str
+    caption: Optional[str] = None
+
+
+class BlogSEOAnalysisIn(Schema):
+    seo_score: int
+    seo_analysis: Optional[Dict] = None
+
 class GalleryImageOut(Schema):
     id: UUID
     image: str  # URL to the image file

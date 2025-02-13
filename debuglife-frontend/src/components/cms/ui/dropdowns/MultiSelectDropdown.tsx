@@ -49,7 +49,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     const dropdown = isOpen && (
         <ul
             style={dropdownStyle}
-            className="z-50 rounded-md border border-gray-300 bg-white text-sm shadow-sm dark:border-gray-700 dark:bg-gray-800"
+            className="z-50 rounded-md border border-gray-300 bg-white text-sm shadow-sm dark:border-gray-700 dark:bg-slate-700"
         >
             {options
                 .filter((opt) => !selected.includes(opt.id))
@@ -71,7 +71,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     return (
             <div ref={containerRef} className="relative w-full">
                 <div
-                    className="flex w-full cursor-pointer flex-wrap items-center gap-1 mt-1 p-3 border rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-gray-800 dark:text-gray-300"
+                    className="flex w-full cursor-pointer flex-wrap items-center gap-1 mt-1 p-3 border rounded-md border-gray-300 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 dark:bg-slate-700 dark:text-gray-300"
                     onClick={toggleDropdown}
                 >
                     {selected.length === 0 && (

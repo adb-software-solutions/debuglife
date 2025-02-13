@@ -81,6 +81,10 @@ class Blog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # New SEO fields:
+    seo_score = models.IntegerField(default=0)
+    seo_analysis = models.JSONField(blank=True, null=True)
+
     class Meta:
         ordering = ['-created_at']
 

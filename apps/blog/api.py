@@ -1,4 +1,4 @@
-from ninja import Router, Query, Schema
+from ninja import Router, Query, Schema, Form, File, UploadedFile
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
 from uuid import UUID
@@ -202,14 +202,21 @@ def get_blog(request, post_id: UUID):
     return serialize_blog(blog)
 
 @post_router.post("/posts", response=BlogOut, auth=django_auth_superuser_or_staff)
-def create_blog(request, payload: BlogIn):
+def create_blog(request, payload: BlogIn, file: File[UploadedFile]):
+    logger.info(f"Blog Payload: {payload}")
+
+    # Look up the category using the UUID from the payload.
     category = get_object_or_404(Category, id=payload.category_id)
+
+    # Check for an existing blog with the same slug if provided.
     if payload.slug:
         blog = Blog.objects.filter(slug=payload.slug).first()
         if blog:
-            return {"detail": "A blog with this slug already exists."}    
+            return {"detail": "A blog with this slug already exists."}
     else:
         payload.slug = slugify(payload.title)
+
+    # Create the blog instance using the data from the payload.
     blog = Blog.objects.create(
         slug=payload.slug,
         title=payload.title,
@@ -218,6 +225,7 @@ def create_blog(request, payload: BlogIn):
         category=category,
         published=payload.published,
     )
+
     # Link the author if available.
     if request.user.is_authenticated:
         try:
@@ -225,10 +233,21 @@ def create_blog(request, payload: BlogIn):
         except Author.DoesNotExist:
             blog.author = None
     blog.save()
+
+    # Set tags if provided.
     if payload.tag_ids:
         tags = Tag.objects.filter(id__in=payload.tag_ids)
         blog.tags.set(tags)
+
+    # Handle the featured image from the file parameter.
+    if file:
+        blog.featured_image = file
+        blog.save()
+
     return serialize_blog(blog)
+
+
+
 
 @post_router.put("/posts/{post_id}", response=BlogOut, auth=django_auth_superuser_or_staff)
 def update_blog(request, post_id: UUID, payload: BlogIn):

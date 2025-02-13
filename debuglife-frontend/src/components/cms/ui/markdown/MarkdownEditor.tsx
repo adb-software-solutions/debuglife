@@ -1,58 +1,92 @@
-"use client";
-
-import type { FC } from 'react';
-import { Milkdown, useEditor } from '@milkdown/react';
-import { emoji } from '@milkdown/plugin-emoji';
-import { Crepe } from '@milkdown/crepe';
-import { listenerCtx } from '@milkdown/kit/plugin/listener';
-import { useEffect, useRef } from 'react';
+import type {FC} from "react";
+import {Milkdown, useEditor} from "@milkdown/react";
+import {emoji} from "@milkdown/plugin-emoji";
+import {Crepe} from "@milkdown/crepe";
+import {fetchWithCSRF} from "@/helpers/common/csrf";
+import {useRef, useEffect} from "react";
 
 interface MilkdownEditorProps {
-  markdown: string;
-  onChange: (markdown: string) => void;
+    markdown: string;
+    setMarkdown: (markdown: string) => void;
 }
 
-export const MilkdownEditor: FC<MilkdownEditorProps> = ({ markdown, onChange }) => {
-  const lastMarkdown = useRef(markdown);
+export const MilkdownEditor: FC<MilkdownEditorProps> = ({
+    markdown,
+    setMarkdown,
+}) => {
+    // Store the Crepe instance so we can manually destroy it later.
+    const editorInstance = useRef<Crepe | null>(null);
 
-  // Initialize the editor only once.
-  const editor = useEditor(
-    (root) => {
-      const instance = new Crepe({
-        root,
-        defaultValue: markdown,
-        features: {
-          [Crepe.Feature.Latex]: false,
-        },
-      });
-      // Initialize plugins and create the editor instance
-      instance.editor.use(emoji);
-      instance.create();
-      return instance;
-    },
-    []
-  );
+    useEditor((root) => {
+        const crepe = new Crepe({
+            root,
+            defaultValue: markdown,
+            features: {
+                [Crepe.Feature.Latex]: false,
+            },
+            featureConfigs: {
+                [Crepe.Feature.Placeholder]: {
+                    text: "Type something here...",
+                },
+                [Crepe.Feature.ImageBlock]: {
+                    onUpload: async (file: File) => {
+                        const formData = new FormData();
+                        formData.append("file", file);
 
-  useEffect(() => {
-    if (!editor) return;
-    const instance = editor.get();
-    if (!instance) return;
-    
-    // Listen for markdown updates.
-    instance.ctx.get(listenerCtx).markdownUpdated((ctx, currentMarkdown) => {
-      if (currentMarkdown !== lastMarkdown.current) {
-        lastMarkdown.current = currentMarkdown;
-        onChange(currentMarkdown);
-        // Optionally, update a hidden input so the editor's content is sent on form submission.
-        const hiddenInput = document.getElementById("markdownContent") as HTMLInputElement;
-        if (hiddenInput) {
-          hiddenInput.value = currentMarkdown;
-        }
-      }
-    });
-  }, [editor, onChange]);
+                        // Provide alt_text and caption in a JSON payload field
+                        const payload = {
+                            alt_text: "Uploaded image",
+                            caption: "Uploaded via Milkdown editor",
+                        };
+                        formData.append("payload", JSON.stringify(payload));
 
-  return <Milkdown />;
+                        const res = await fetchWithCSRF(
+                            `${process.env.NEXT_PUBLIC_API_URL}/api/blog/gallery`,
+                            {
+                                method: "POST",
+                                body: formData,
+                            },
+                        );
+
+                        if (!res.ok) {
+                            throw new Error("Image upload failed");
+                        }
+
+                        const data = await res.json();
+                        // Assuming the API returns an object with a URL field
+                        return data.image;
+                    },
+                },
+            },
+        });
+
+        crepe.editor.use(emoji);
+
+        crepe.on((listener) => {
+            listener.markdownUpdated((_, markdown, prevMarkdown) => {
+                if (markdown !== prevMarkdown) {
+                    console.log("Markdown updated", markdown);
+                    setMarkdown(markdown);
+                }
+            });
+        });
+
+        // Save the instance for cleanup.
+        editorInstance.current = crepe;
+        return crepe;
+    }, []);
+
+    // When the component unmounts, manually destroy the Crepe instance.
+    useEffect(() => {
+        return () => {
+            if (editorInstance.current) {
+                editorInstance.current.destroy();
+                editorInstance.current = null;
+            }
+        };
+    }, []);
+
+    return <Milkdown />;
 };
 
 export default MilkdownEditor;

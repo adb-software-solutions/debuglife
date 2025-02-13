@@ -71,7 +71,7 @@ class Blog(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(Author, on_delete=models.SET_NULL, null=True, blank=True, related_name='blogs')
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=100)
     excerpt = models.TextField(blank=True, null=True)
     content = models.TextField()  # Markdown content
     featured_image = models.ImageField(upload_to='blogs/featured/', blank=True, null=True)

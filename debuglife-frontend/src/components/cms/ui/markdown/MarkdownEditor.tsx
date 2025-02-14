@@ -65,7 +65,6 @@ export const MilkdownEditor: FC<MilkdownEditorProps> = ({
         crepe.on((listener) => {
             listener.markdownUpdated((_, markdown, prevMarkdown) => {
                 if (markdown !== prevMarkdown) {
-                    console.log("Markdown updated", markdown);
                     setMarkdown(markdown);
                 }
             });

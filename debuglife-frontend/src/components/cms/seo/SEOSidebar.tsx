@@ -69,8 +69,9 @@ const SEOSidebar: React.FC<{
   title: string;
   keyphrase: string;
   blogId?: string;
-}> = ({ content, title, keyphrase, blogId }) => {
-  const analysis: ContentAnalysisResult = useContentAnalysis({ content, title, keyphrase, blogId });
+  cornerstone?: boolean;
+}> = ({ content, title, keyphrase, blogId, cornerstone }) => {
+  const analysis: ContentAnalysisResult = useContentAnalysis({ content, title, keyphrase, blogId, cornerstone });
   const overallTrafficLight: TrafficLight =
     analysis.seoScore >= 80 ? "green" : analysis.seoScore >= 50 ? "amber" : "red";
 

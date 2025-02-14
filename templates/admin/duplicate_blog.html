@@ -1,0 +1,45 @@
+{% extends "unfold/layouts/base.html" %}
+{% load i18n static admin_urls unfold %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static 'admin/js/cancel.js' %}" async></script>
+    {{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="aligned border border-base-200 mb-8 rounded py-3 px-3 shadow-sm dark:border-base-800">
+    <h1 class="text-xl font-semibold mb-4">{{ title }}</h1>
+    <p class="mb-4">{% trans "Please specify how many duplicates to create for each selected blog:" %}</p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="action" value="duplicate_blog" />
+        {% for blog in blogs %}
+            <input type="hidden" name="{{ action_checkbox_name }}" value="{{ blog.pk }}" />
+        {% endfor %}
+        
+        {# Manually render the duplicates field #}
+        <div class="mb-4">
+            <label for="{{ form.duplicates.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {{ form.duplicates.label }}
+            </label>
+            <div class="mt-1">
+                {{ form.duplicates }}
+            </div>
+            {% if form.duplicates.help_text %}
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ form.duplicates.help_text }}</p>
+            {% endif %}
+        </div>
+
+        <div class="flex flex-col gap-4 md:flex-row md:justify-end">
+            {% component "unfold/components/button.html" with submit=1 name="apply" variant="default" class="px-4 py-2" %}
+                {% trans "Apply" %}
+            {% endcomponent %}
+            {% url opts|admin_urlname:"changelist" as changelist_url %}
+            <a href="{{ changelist_url }}" class="bg-red-600 cursor-pointer flex items-center justify-center font-medium h-9.5 ml-0 px-3 py-2 rounded text-white w-full lg:ml-auto lg:w-auto dark:bg-red-500/20 dark:text-red-500">
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

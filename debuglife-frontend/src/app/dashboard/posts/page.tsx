@@ -4,7 +4,7 @@ import React, {useState, useCallback, useMemo, useRef, useEffect} from "react";
 import {createPortal} from "react-dom";
 import {useSearchParams, useRouter} from "next/navigation";
 import useSWR from "swr";
-import {fetchWithCSRF} from "@/helpers/common/csrf"; // Import our custom fetch wrapper
+import {fetchWithCSRF} from "@/helpers/common/csrf";
 
 // --- Type Definitions ---
 interface Category {
@@ -51,13 +51,9 @@ interface PaginatedPostResponse {
 }
 
 // --- SWR Fetcher ---
-// Instead of using the default fetch, we now use fetchWithCSRF.
 const fetcher = (url: string) => fetchWithCSRF(url).then((res) => res.json());
 
-/**
- * A custom multi-select component that displays selected options as pills.
- * When clicked, it renders a dropdown using a portal so that it is not clipped.
- */
+// --- Custom MultiSelectDropdown Component ---
 interface MultiSelectDropdownProps {
     options: Tag[];
     selected: string[]; // Array of tag IDs.
@@ -152,7 +148,6 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 };
 
 // --- Field Mapping for Sorting ---
-// These are the actual model fields your backend sorts on.
 const fieldMapping: {[key: string]: string} = {
     title: "title",
     slug: "slug",
@@ -163,8 +158,7 @@ const fieldMapping: {[key: string]: string} = {
     updated_at: "updated_at",
 };
 
-// --- New Helper: updateQueryParams ---
-// This function accepts an object of key-value pairs and updates them all at once.
+// --- Helper: updateQueryParams ---
 const useUpdateQueryParams = () => {
     const router = useRouter();
     return useCallback(
@@ -195,7 +189,7 @@ const PostsPage: React.FC = () => {
     const publishedFilter = searchParams.get("published") || "";
     const categoryFilter = searchParams.get("category") || "";
     const authorFilter = searchParams.get("author") || "";
-    const tagFilters = searchParams.getAll("tags"); // array of tag IDs
+    const tagFilters = searchParams.getAll("tags");
     const sortBy = searchParams.get("sort_by") || "title";
     const order = searchParams.get("order") || "asc";
 
@@ -237,7 +231,7 @@ const PostsPage: React.FC = () => {
 
     // Allow the user to adjust how many results per page.
     const updatePageSize = (newSize: string) => {
-        updateQueryParams({page_size: newSize, page: "1"}); // reset page to 1 when page size changes
+        updateQueryParams({page_size: newSize, page: "1"});
     };
 
     const availableStatuses = useMemo(() => {
@@ -300,7 +294,6 @@ const PostsPage: React.FC = () => {
 
     const saveEdit = async (id: string) => {
         try {
-            // Use our custom fetchWithCSRF for state-changing requests.
             const res = await fetchWithCSRF(
                 `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts/${id}`,
                 {
@@ -356,107 +349,151 @@ const PostsPage: React.FC = () => {
 
     return (
         <div className="px-4 py-4 sm:px-6 lg:px-8">
-            {/* Top Controls */}
-            <div className="mb-6 sm:flex sm:items-center sm:justify-between">
-                <div className="sm:flex-auto">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        Posts
-                    </h1>
-                    <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
-                        A list of your posts with inline editing, filtering,
-                        sorting and pagination.
-                    </p>
-                </div>
-                <div className="mt-4 flex items-center space-x-4 sm:mt-0">
-                    {/* Results per Page Control */}
-                    <select
-                        value={page_size}
-                        onChange={(e) => updatePageSize(e.target.value)}
-                        className="rounded-md border bg-white px-3 py-2 text-sm text-gray-900 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                    >
-                        <option value="10">10 per page</option>
-                        <option value="25">25 per page</option>
-                        <option value="50">50 per page</option>
-                        <option value="100">100 per page</option>
-                    </select>
-                    <button
-                        onClick={() => router.push("/dashboard/posts/new")}
-                        className="rounded-md bg-sky-300 px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-sky-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
-                    >
-                        Add New
-                    </button>
-                    <button
-                        onClick={toggleFilters}
-                        className="rounded-md bg-gray-200 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600"
-                    >
-                        {showFilters ? "Hide Filters" : "Show Filters"}
-                    </button>
-                </div>
-            </div>
-
-            {/* Filter Section */}
-            {showFilters && (
-                <div className="mt-2 pb-3 font-normal">
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                        <select
-                            value={publishedFilter}
-                            onChange={(e) =>
-                                updateQueryParams({published: e.target.value})
-                            }
-                            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                        >
-                            <option value="">All Posts</option>
-                            {availableStatuses.map((status) => (
-                                <option key={status.id} value={status.id}>
-                                    {status.name}
-                                </option>
-                            ))}
-                        </select>
-                        <select
-                            value={categoryFilter}
-                            onChange={(e) =>
-                                updateQueryParams({category: e.target.value})
-                            }
-                            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                        >
-                            <option value="">All Categories</option>
-                            {availableCategories.map((cat) => (
-                                <option key={cat.id} value={cat.id}>
-                                    {cat.name}
-                                </option>
-                            ))}
-                        </select>
-                        <select
-                            value={authorFilter}
-                            onChange={(e) =>
-                                updateQueryParams({author: e.target.value})
-                            }
-                            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                        >
-                            <option value="">All Authors</option>
-                            {availableAuthors.map((a) => (
-                                <option key={a.id} value={a.id}>
-                                    {a.full_name}
-                                </option>
-                            ))}
-                        </select>
-                        <MultiSelectDropdown
-                            options={availableTags}
-                            selected={tagFilters}
-                            onChange={handleTagsChange}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* Posts Table */}
-            <div className="overflow-x-auto ring-1 shadow ring-black/5 sm:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-300">
-                    <thead className="bg-gray-50 dark:bg-slate-700">
-                        <tr>
+            <div className="max-h-[80vh] overflow-x-auto overflow-y-auto">
+                <table className="min-w-full  divide-y divide-gray-300">
+                    <thead className="sticky top-0 z-20 ">
+                        {/* Top Controls & Filters */}
+                        <tr className="bg-gray-50 dark:bg-slate-900">
+                            <th colSpan={9} className=" py-4">
+                                <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="text-left">
+                                        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                            Posts
+                                        </h1>
+                                        <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                                            A list of your posts with inline
+                                            editing, filtering, sorting and
+                                            pagination.
+                                        </p>
+                                    </div>
+                                    <div className="mt-4 flex items-center space-x-4 sm:mt-0">
+                                        <select
+                                            value={page_size}
+                                            onChange={(e) =>
+                                                updatePageSize(e.target.value)
+                                            }
+                                            className="rounded-md border bg-white px-3 py-2 text-sm text-gray-900 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                                        >
+                                            <option value="10">
+                                                10 per page
+                                            </option>
+                                            <option value="25">
+                                                25 per page
+                                            </option>
+                                            <option value="50">
+                                                50 per page
+                                            </option>
+                                            <option value="100">
+                                                100 per page
+                                            </option>
+                                        </select>
+                                        <button
+                                            onClick={() =>
+                                                router.push(
+                                                    "/dashboard/posts/new",
+                                                )
+                                            }
+                                            className="rounded-md bg-sky-300 px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-sky-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
+                                        >
+                                            Add New
+                                        </button>
+                                        <button
+                                            onClick={toggleFilters}
+                                            className="rounded-md bg-gray-200 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600"
+                                        >
+                                            {showFilters
+                                                ? "Hide Filters"
+                                                : "Show Filters"}
+                                        </button>
+                                    </div>
+                                </div>
+                                {showFilters && (
+                                    <div className="pb-3 font-normal">
+                                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                                            <select
+                                                value={publishedFilter}
+                                                onChange={(e) =>
+                                                    updateQueryParams({
+                                                        published:
+                                                            e.target.value,
+                                                    })
+                                                }
+                                                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                                            >
+                                                <option value="">
+                                                    All Posts
+                                                </option>
+                                                {availableStatuses.map(
+                                                    (status) => (
+                                                        <option
+                                                            key={status.id}
+                                                            value={status.id}
+                                                        >
+                                                            {status.name}
+                                                        </option>
+                                                    ),
+                                                )}
+                                            </select>
+                                            <select
+                                                value={categoryFilter}
+                                                onChange={(e) =>
+                                                    updateQueryParams({
+                                                        category:
+                                                            e.target.value,
+                                                    })
+                                                }
+                                                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                                            >
+                                                <option value="">
+                                                    All Categories
+                                                </option>
+                                                {availableCategories.map(
+                                                    (cat) => (
+                                                        <option
+                                                            key={cat.id}
+                                                            value={cat.id}
+                                                        >
+                                                            {cat.name}
+                                                        </option>
+                                                    ),
+                                                )}
+                                            </select>
+                                            <select
+                                                value={authorFilter}
+                                                onChange={(e) =>
+                                                    updateQueryParams({
+                                                        author: e.target.value,
+                                                    })
+                                                }
+                                                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                                            >
+                                                <option value="">
+                                                    All Authors
+                                                </option>
+                                                {availableAuthors.map((a) => (
+                                                    <option
+                                                        key={a.id}
+                                                        value={a.id}
+                                                    >
+                                                        {a.full_name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <MultiSelectDropdown
+                                                options={availableTags}
+                                                selected={tagFilters}
+                                                onChange={handleTagsChange}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </th>
+                        </tr>
+                        {/* Column Headers */}
+                        <tr className="bg-gray-50 ring-1 shadow ring-black/5 dark:bg-slate-700">
                             <th
                                 scope="col"
-                                className="cursor-pointer py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6 dark:text-gray-100"
+                                className="cursor-pointer rounded-tl-lg py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6 dark:text-gray-100"
                                 onClick={() => updateSorting("title")}
                             >
                                 Title{" "}
@@ -505,7 +542,6 @@ const PostsPage: React.FC = () => {
                             >
                                 Tags
                             </th>
-                            {/* Read-only Created/Updated Dates */}
                             <th
                                 scope="col"
                                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
@@ -520,7 +556,7 @@ const PostsPage: React.FC = () => {
                             </th>
                             <th
                                 scope="col"
-                                className="sticky right-0 bg-gray-50 py-3.5 pr-4 pl-3 sm:pr-6 dark:bg-slate-700"
+                                className="sticky right-0 rounded-tr-lg bg-gray-50 py-3.5 pr-4 pl-3 sm:pr-6 dark:bg-slate-700"
                             >
                                 <span className="sr-only">Actions</span>
                             </th>
@@ -569,7 +605,6 @@ const PostsPage: React.FC = () => {
                                 <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     {editingPostId === post.id ? (
                                         <label className="relative inline-flex cursor-pointer items-center">
-                                            {/* The hidden checkbox */}
                                             <input
                                                 type="checkbox"
                                                 className="peer sr-only"
@@ -585,9 +620,7 @@ const PostsPage: React.FC = () => {
                                                     }))
                                                 }
                                             />
-                                            {/* The toggle switch */}
                                             <div className="h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-sky-600 peer-focus:ring-2 peer-focus:ring-blue-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white dark:border-gray-600 dark:bg-gray-700" />
-                                            {/* Optionally, you can show text beside the switch */}
                                             <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                                                 {editValues.published
                                                     ? "Yes"
@@ -600,7 +633,6 @@ const PostsPage: React.FC = () => {
                                         "No"
                                     )}
                                 </td>
-
                                 <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     {editingPostId === post.id ? (
                                         <select
@@ -723,7 +755,6 @@ const PostsPage: React.FC = () => {
                                             .join(", ")
                                     )}
                                 </td>
-                                {/* Read-only Created/Updated Dates */}
                                 <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     {new Date(
                                         post.created_at,
@@ -734,7 +765,7 @@ const PostsPage: React.FC = () => {
                                         post.updated_at,
                                     ).toLocaleDateString("en-GB")}
                                 </td>
-                                <td className="ml-2 sticky right-0 px-3 py-4 text-right text-sm font-medium whitespace-nowrap bg-white dark:bg-slate-800">
+                                <td className="sticky right-0 ml-2 bg-white px-3 py-4 text-right text-sm font-medium whitespace-nowrap dark:bg-slate-800">
                                     {editingPostId === post.id ? (
                                         <>
                                             <button

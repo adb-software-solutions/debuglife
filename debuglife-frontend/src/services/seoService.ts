@@ -1,14 +1,14 @@
 // services/seoService.ts
-import { ContentAnalysisResult } from "@/hooks/useSEOAnalysis";
+import { ContentAnalysisResult } from "@/types/contentAnalysis";
 
 export const updateSEOAnalysis = async (
   blogId: string,
   analysis: ContentAnalysisResult
 ): Promise<any> => {
-  // The payload now includes an overall traffic light (green/amber/red) computed from the SEO score.
+  // Compute overall traffic light for SEO.
   const overallTrafficLight =
     analysis.seoScore >= 80 ? "green" : analysis.seoScore >= 50 ? "amber" : "red";
-    
+
   const payload = {
     seo_score: analysis.seoScore,
     seo_analysis: {
@@ -24,7 +24,7 @@ export const updateSEOAnalysis = async (
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include", // include credentials for CSRF if needed
+      credentials: "include",
       body: JSON.stringify(payload),
     }
   );

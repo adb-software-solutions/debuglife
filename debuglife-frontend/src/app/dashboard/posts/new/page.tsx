@@ -161,7 +161,7 @@ const NewPostPage: React.FC = () => {
         {/* Main grid with two columns: Left for form cards, Right for SEO Sidebar */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Left Column: All form cards */}
-          <div className="md:col-span-3 space-y-6">
+          <div className="md:col-span-4 space-y-6">
             {/* Top Row: Post Details and Settings side by side */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Post Details Card */}
@@ -324,7 +324,7 @@ const NewPostPage: React.FC = () => {
               >
                 <MarkdownEditor markdown={content} setMarkdown={handleContentChange} />
               </div>
-            </div>
+            </div><SEOSidebar content={content} title={title} keyphrase={keyphrase} />
             {/* Media Card */}
             <div className="rounded-md bg-white p-6 shadow dark:bg-slate-800">
               <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">
@@ -371,7 +371,7 @@ const NewPostPage: React.FC = () => {
           </div>
           {/* Right Column: SEO Analysis Sidebar */}
           <div className="md:col-span-1">
-            <SEOSidebar content={content} title={title} keyphrase={keyphrase} />
+            
           </div>
         </div>
       </form>

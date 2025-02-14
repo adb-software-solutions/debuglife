@@ -21,7 +21,7 @@ from apps.blog.schema import (
     GalleryImageIn,
     BlogSEOAnalysisIn,
 )
-from authentication.ninja_auth import django_auth_superuser_or_staff
+from authentication.ninja_auth import django_auth_is_staff
 
 logger = logging.getLogger(__name__)
 
@@ -226,7 +226,7 @@ def get_blog(request, post_id: UUID):
     return serialize_blog(blog)
 
 
-@post_router.post("/posts", response=BlogOut, auth=django_auth_superuser_or_staff)
+@post_router.post("/posts", response=BlogOut, auth=django_auth_is_staff)
 def create_blog(request, payload: BlogIn, file: File[UploadedFile]):
     logger.info(f"Blog Payload: {payload}")
 
@@ -272,7 +272,7 @@ def create_blog(request, payload: BlogIn, file: File[UploadedFile]):
     return serialize_blog(blog)
 
 
-@post_router.put("/posts/{post_id}", response=BlogOut, auth=django_auth_superuser_or_staff)
+@post_router.put("/posts/{post_id}", response=BlogOut, auth=django_auth_is_staff)
 def update_blog(request, post_id: UUID, payload: BlogIn):
     logger.info(f"Blog Payload: {payload}")
 
@@ -298,7 +298,7 @@ def update_blog(request, post_id: UUID, payload: BlogIn):
     return serialize_blog(blog)
 
 
-@post_router.patch("/posts/{post_id}", response=BlogOut, auth=django_auth_superuser_or_staff)
+@post_router.patch("/posts/{post_id}", response=BlogOut, auth=django_auth_is_staff)
 def patch_blog(request, post_id: UUID, payload: BlogPatch):
     blog = get_object_or_404(Blog, id=post_id)
 
@@ -333,7 +333,7 @@ def patch_blog(request, post_id: UUID, payload: BlogPatch):
     return serialize_blog(blog)
 
 
-@post_router.post("/posts/{post_id}/seo", response=BlogOut, auth=django_auth_superuser_or_staff)
+@post_router.post("/posts/{post_id}/seo", response=BlogOut, auth=django_auth_is_staff)
 def update_seo_analysis(request, post_id: UUID, payload: BlogSEOAnalysisIn):
     blog = get_object_or_404(Blog, id=post_id)
     blog.seo_score = payload.seo_score
@@ -342,7 +342,7 @@ def update_seo_analysis(request, post_id: UUID, payload: BlogSEOAnalysisIn):
     return serialize_blog(blog)
 
 
-@post_router.delete("/posts/{post_id}", auth=django_auth_superuser_or_staff)
+@post_router.delete("/posts/{post_id}", auth=django_auth_is_staff)
 def delete_blog(request, post_id: UUID):
     blog = get_object_or_404(Blog, id=post_id)
     blog.delete()
@@ -414,14 +414,14 @@ def list_categories(request, page: int = 1, page_size: int = 25):
     return {"results": serialized_items, "pagination": pagination}
 
 
-@category_router.post("/categories", response=CategoryOut, auth=django_auth_superuser_or_staff)
+@category_router.post("/categories", response=CategoryOut, auth=django_auth_is_staff)
 def create_category(request, payload: CategoryIn):
     category = Category.objects.create(name=payload.name)
     return serialize_category(category)
 
 
 @category_router.put(
-    "/categories/{category_id}", response=CategoryOut, auth=django_auth_superuser_or_staff
+    "/categories/{category_id}", response=CategoryOut, auth=django_auth_is_staff
 )
 def update_category(request, category_id: UUID, payload: CategoryIn):
     category = get_object_or_404(Category, id=category_id)
@@ -430,7 +430,7 @@ def update_category(request, category_id: UUID, payload: CategoryIn):
     return serialize_category(category)
 
 
-@category_router.delete("/categories/{category_id}", auth=django_auth_superuser_or_staff)
+@category_router.delete("/categories/{category_id}", auth=django_auth_is_staff)
 def delete_category(request, category_id: UUID):
     category = get_object_or_404(Category, id=category_id)
     category.delete()
@@ -458,13 +458,13 @@ def list_tags(request, page: int = 1, page_size: int = 25):
     return {"results": serialized_items, "pagination": pagination}
 
 
-@tag_router.post("/tags", response=TagOut, auth=django_auth_superuser_or_staff)
+@tag_router.post("/tags", response=TagOut, auth=django_auth_is_staff)
 def create_tag(request, payload: TagIn):
     tag = Tag.objects.create(name=payload.name)
     return serialize_tag(tag)
 
 
-@tag_router.put("/tags/{tag_id}", response=TagOut, auth=django_auth_superuser_or_staff)
+@tag_router.put("/tags/{tag_id}", response=TagOut, auth=django_auth_is_staff)
 def update_tag(request, tag_id: UUID, payload: TagIn):
     tag = get_object_or_404(Tag, id=tag_id)
     tag.name = payload.name
@@ -472,7 +472,7 @@ def update_tag(request, tag_id: UUID, payload: TagIn):
     return serialize_tag(tag)
 
 
-@tag_router.delete("/tags/{tag_id}", auth=django_auth_superuser_or_staff)
+@tag_router.delete("/tags/{tag_id}", auth=django_auth_is_staff)
 def delete_tag(request, tag_id: UUID):
     tag = get_object_or_404(Tag, id=tag_id)
     tag.delete()
@@ -500,7 +500,7 @@ def list_gallery(request, page: int = 1, page_size: int = 25):
     return {"results": serialized_items, "pagination": pagination}
 
 
-@gallery_router.post("/gallery", response=GalleryImageOut, auth=django_auth_superuser_or_staff)
+@gallery_router.post("/gallery", response=GalleryImageOut, auth=django_auth_is_staff)
 def upload_image(request, payload: GalleryImageIn, file: File[UploadedFile]):
     image = GalleryImage.objects.create(
         image=file,
@@ -570,7 +570,7 @@ def get_author(request, author_id: UUID):
 
 
 # Use our custom auth on updates for authors.
-@author_router.put("/authors/{author_id}", response=AuthorOut, auth=django_auth_superuser_or_staff)
+@author_router.put("/authors/{author_id}", response=AuthorOut, auth=django_auth_is_staff)
 def update_author(request, author_id: UUID, payload: AuthorIn):
     author = get_object_or_404(Author, id=author_id)
     if payload.bio is not None:

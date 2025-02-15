@@ -13,8 +13,8 @@ import {Dialog, Transition, Menu} from "@headlessui/react";
 import {useSearchParams, useRouter} from "next/navigation";
 import useSWR from "swr";
 import {fetchWithCSRF} from "@/helpers/common/csrf";
-import { colorForStatus } from "@/helpers/common/colorForStatus";
-import { TrafficLight } from "@/types/contentAnalysis";
+import {colorForStatus} from "@/helpers/common/colorForStatus";
+import {TrafficLight} from "@/types/contentAnalysis";
 
 // --- Updated Type Definitions ---
 interface Category {
@@ -672,7 +672,7 @@ const PostsPage: React.FC = () => {
         if (score >= 80) return "green";
         if (score >= 50) return "amber";
         return "red";
-    }
+    };
 
     if (error) return <div>Error loading posts</div>;
     if (!data) return <div>Loading posts...</div>;
@@ -1058,7 +1058,7 @@ const PostsPage: React.FC = () => {
                         </tr>
                         {/* Column Headers */}
                         <tr className="bg-gray-50 ring-1 shadow ring-black/5 dark:bg-slate-700">
-                            <th className="sticky left-0 rounded-tl-lg pl-2 bg-gray-50 dark:bg-slate-700">
+                            <th className="sticky left-0 rounded-tl-lg bg-gray-50 pl-2 dark:bg-slate-700">
                                 <input
                                     type="checkbox"
                                     checked={selectAll}
@@ -1153,9 +1153,9 @@ const PostsPage: React.FC = () => {
                         {data.results.map((post) => (
                             <tr
                                 key={post.id}
-                                className="hover:bg-gray-50 dark:hover:bg-slate-600"
+                                className="group hover:bg-gray-50 dark:hover:bg-slate-600"
                             >
-                                <td className="pl-3 sticky left-0 bg-white dark:bg-slate-800">
+                                <td className="sticky left-0 bg-white pl-3 group-hover:bg-gray-50 dark:bg-slate-800 dark:group-hover:bg-slate-600">
                                     <input
                                         type="checkbox"
                                         checked={selectedPosts.includes(
@@ -1339,23 +1339,23 @@ const PostsPage: React.FC = () => {
                                             .join(", ")
                                     )}
                                 </td>
-                                {/* For the seo score and readability score we want a round traffic light, coloured green if score is >= 80, amber if score>= 50 else red 
-                                We can use colorForStatus to generate the css based off green, amber, red. It works like this colorForStatus("green")*/}
+                                {/* For the seo score and readability score we want a round traffic light, coloured green if score is >= 80, amber if score>= 50 else red */}
                                 <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     <span
-                                        className={`rounded-full inline-block h-4 w-4 ${colorForStatus(
+                                        className={`inline-block h-4 w-4 rounded-full ${colorForStatus(
                                             getStatusColor(post.seo_score),
                                         )}`}
                                     />
                                 </td>
                                 <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     <span
-                                        className={`rounded-full inline-block h-4 w-4 ${colorForStatus(
-                                            getStatusColor(post.readability_score),
+                                        className={`inline-block h-4 w-4 rounded-full ${colorForStatus(
+                                            getStatusColor(
+                                                post.readability_score,
+                                            ),
                                         )}`}
                                     />
                                 </td>
-
                                 <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     {new Date(
                                         post.created_at,
@@ -1366,7 +1366,7 @@ const PostsPage: React.FC = () => {
                                         post.updated_at,
                                     ).toLocaleDateString("en-GB")}
                                 </td>
-                                <td className="sticky right-0 ml-2 bg-white px-3 py-4 text-right text-sm font-medium whitespace-nowrap dark:bg-slate-800">
+                                <td className="sticky right-0 ml-2 bg-white px-3 py-4 text-right text-sm font-medium whitespace-nowrap group-hover:bg-gray-50 dark:bg-slate-800 dark:group-hover:bg-slate-600">
                                     {editingPostId === post.id ? (
                                         <>
                                             <button

@@ -245,6 +245,12 @@ def create_blog(request, payload: BlogIn, file: File[UploadedFile]):
         content=payload.content,
         category=category,
         published=payload.published,
+        keyphrase=payload.keyphrase,
+        cornerstone_content=payload.cornerstone_content,
+        seo_score=payload.seo_score,
+        seo_analysis=payload.seo_analysis,
+        readability_score=payload.readability_score,
+        readability_analysis=payload.readability_analysis,
     )
 
     # Link the author if available.
@@ -283,6 +289,12 @@ def update_blog(request, post_id: UUID, payload: BlogIn):
     blog.excerpt = payload.excerpt
     blog.content = payload.content
     blog.published = payload.published
+    blog.keyphrase = payload.keyphrase
+    blog.seo_score = payload.seo_score
+    blog.seo_analysis = payload.seo_analysis
+    blog.readability_score = payload.readability_score
+    blog.readability_analysis = payload.readability_analysis
+    blog.cornerstone_content = payload.cornerstone_content
     blog.category = get_object_or_404(Category, id=payload.category_id)
     blog.author = get_object_or_404(Author, id=payload.author_id) if payload.author_id else None
     blog.save()
@@ -313,6 +325,18 @@ def patch_blog(request, post_id: UUID, payload: BlogPatch):
         blog.content = payload.content
     if payload.published is not None:
         blog.published = payload.published
+    if payload.keyphrase is not None:
+        blog.keyphrase = payload.keyphrase
+    if payload.cornerstone_content is not None:
+        blog.cornerstone_content = payload.cornerstone_content
+    if payload.seo_score is not None:
+        blog.seo_score = payload.seo_score
+    if payload.seo_analysis is not None:
+        blog.seo_analysis = payload.seo_analysis
+    if payload.readability_score is not None:
+        blog.readability_score = payload.readability_score
+    if payload.readability_analysis is not None:
+        blog.readability_analysis = payload.readability_analysis
     if payload.category_id is not None:
         blog.category = get_object_or_404(Category, id=payload.category_id)
     if payload.author_id is not None:

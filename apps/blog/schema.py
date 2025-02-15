@@ -91,6 +91,12 @@ class BlogIn(Schema):
     author_id: Optional[UUID] = None
     tag_ids: List[UUID] = []
     published: bool = False
+    keyphrase: str
+    cornerstone_content: bool = False
+    seo_score: int
+    seo_analysis: Optional[Dict] = None
+    readability_score: int
+    readability_analysis: Optional[Dict] = None
 
 class BlogPatch(Schema):
     title: Optional[str] = None
@@ -101,6 +107,12 @@ class BlogPatch(Schema):
     category_id: Optional[UUID] = None
     tag_ids: Optional[List[UUID]] = None
     author_id: Optional[UUID] = None
+    keyphrase: Optional[str] = None
+    cornerstone_content: Optional[bool] = None
+    seo_score: int
+    seo_analysis: Optional[Dict] = None
+    readability_score: int
+    readability_analysis: Optional[Dict] = None
 
 # ------------------------
 # New Schemas for Available Filters

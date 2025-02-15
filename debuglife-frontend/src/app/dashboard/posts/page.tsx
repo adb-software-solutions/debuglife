@@ -1058,7 +1058,7 @@ const PostsPage: React.FC = () => {
                         </tr>
                         {/* Column Headers */}
                         <tr className="bg-gray-50 ring-1 shadow ring-black/5 dark:bg-slate-700">
-                            <th className="rounded-tl-lg pl-2">
+                            <th className="sticky left-0 rounded-tl-lg pl-2 bg-gray-50 dark:bg-slate-700">
                                 <input
                                     type="checkbox"
                                     checked={selectAll}
@@ -1155,7 +1155,7 @@ const PostsPage: React.FC = () => {
                                 key={post.id}
                                 className="hover:bg-gray-50 dark:hover:bg-slate-600"
                             >
-                                <td className="pl-3">
+                                <td className="pl-3 sticky left-0 bg-white dark:bg-slate-800">
                                     <input
                                         type="checkbox"
                                         checked={selectedPosts.includes(

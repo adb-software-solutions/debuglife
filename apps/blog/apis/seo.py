@@ -2,11 +2,13 @@ from ninja import Router
 import spacy
 import re
 import math 
-from apps.blog.schemas.seo import PassivTextCheckInput, PassiveTextCheckOutput, ReadabilityAssessment, SEOAssessment, KeyphraseDistributionCheckOutput, KeyphraseDistributionCheckInput
+from apps.blog.schemas.seo import PassivTextCheckInput, PassiveTextCheckOutput, ReadabilityAssessment, SEOAssessment, KeyphraseDistributionCheckOutput, KeyphraseDistributionCheckInput, SentimentCheckInput, LexicalDiversityCheckInput, SentimentCheckOutput, LexicalDiversityCheckOutput
 from apps.blog.utils.seo import contains_keyphrase_variation
+from spacytextblob.spacytextblob import SpacyTextBlob
 
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe("spacytextblob")
 
 def clean_text(text: str) -> str:
     """
@@ -107,3 +109,66 @@ def analyze_keyphrase_distribution(request, payload: KeyphraseDistributionCheckI
     
     return KeyphraseDistributionCheckOutput(keyphrase_assessment=distribution_assessment)
 
+@seo_nlp_router.post("/seo/analyze-sentiment", response=SentimentCheckOutput)
+def analyze_sentiment(request, payload: SentimentCheckInput):
+    text = clean_text(payload.content)
+    doc = nlp(text)
+    polarity = doc._.blob.polarity
+    subjectivity = doc._.blob.subjectivity
+
+    # Define thresholds for "ideal" sentiment:
+    # Score 9: Polarity between 0 and 0.1 (neutral to slightly positive) and subjectivity ≤ 0.5.
+    # Score 3: Polarity between -0.2 and 0.2 and subjectivity ≤ 0.7.
+    # Score 0: Otherwise (too extreme or highly subjective).
+    if 0 <= polarity <= 0.1 and subjectivity <= 0.5:
+        score = 9
+        feedback = "Content sentiment is balanced and objective."
+    elif -0.2 < polarity < 0.2 and subjectivity <= 0.7:
+        score = 3
+        feedback = (
+            f"Content sentiment is acceptable (polarity: {polarity:.2f}, "
+            f"subjectivity: {subjectivity:.2f}); consider minor adjustments."
+        )
+    else:
+        score = 0
+        feedback = (
+            f"Content sentiment is too extreme (polarity: {polarity:.2f}, "
+            f"subjectivity: {subjectivity:.2f}); consider revising the tone."
+        )
+
+    sentiment_assessment = ReadabilityAssessment(score=score, max=9, feedback=feedback)
+
+    return SentimentCheckOutput(sentiment_assessment=sentiment_assessment)
+
+@seo_nlp_router.post("/seo/analyze-lexical-diversity", response=LexicalDiversityCheckOutput)
+def analyze_lexical_diversity(request, payload: LexicalDiversityCheckInput):
+    text = clean_text(payload.content)
+    doc = nlp(text)
+    # Filter for alphabetic tokens in lowercase
+    tokens = [token.text.lower() for token in doc if token.is_alpha]
+    if tokens:
+        ratio = len(set(tokens)) / len(tokens)
+    else:
+        ratio = 0.0
+
+    # Apply thresholds:
+    # High lexical diversity (>= 0.6): score 9
+    # Moderate diversity (>= 0.4 but < 0.6): score 3
+    # Low diversity (< 0.4): score 0
+    if ratio >= 0.6:
+        score = 9
+        feedback = "High lexical diversity; content uses a rich and varied vocabulary."
+    elif ratio >= 0.4:
+        score = 3
+        feedback = "Moderate lexical diversity; consider using a more varied vocabulary for richer content."
+    else:
+        score = 0
+        feedback = "Low lexical diversity; content appears overly repetitive."
+
+    lexical_diversity_assessment = ReadabilityAssessment(
+        score=score,
+        max=9,
+        feedback=feedback
+    )
+
+    return LexicalDiversityCheckOutput(lexical_diversity_assessment=lexical_diversity_assessment)

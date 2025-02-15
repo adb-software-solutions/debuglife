@@ -21,7 +21,7 @@ export const getPassiveData = async (
   return { passiveAssessment: data.passive_assessment };
 };
 
-// New method: Keyphrase Distribution Analysis
+
 export const getKeyphraseDistributionData = async (
   text: string,
   keyphrase: string
@@ -42,4 +42,46 @@ export const getKeyphraseDistributionData = async (
   const data = await res.json();
   // Return the keyphraseAssessment as a SEOAssessment.
   return { keyphraseAssessment: data.keyphrase_assessment };
+};
+
+export const getLexicalDiversityData = async (
+  text: string,
+): Promise<{ lexicalDiversityAssessment: ReadabilityAssessment }> => {
+  // Clean the Markdown content.
+  const cleanedText = cleanMarkdown(text);
+  
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/blog/seo/analyze-lexical-diversity`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      // Pass both content and keyphrase to the endpoint.
+      body: JSON.stringify({ content: cleanedText }),
+    }
+  );
+  const data = await res.json();
+  // Return the lexicalDiversityAssessment as a SEOAssessment.
+  return { lexicalDiversityAssessment: data.lexical_diversity_assessment };
+};
+
+export const getSentimentData = async (
+  text: string,
+): Promise<{ sentimentAssessment: ReadabilityAssessment }> => {
+  // Clean the Markdown content.
+  const cleanedText = cleanMarkdown(text);
+  
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/blog/seo/analyze-sentiment`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      // Pass both content and keyphrase to the endpoint.
+      body: JSON.stringify({ content: cleanedText }),
+    }
+  );
+  const data = await res.json();
+  // Return the sentimentAssessment as a SEOAssessment.
+  return { sentimentAssessment: data.sentiment_assessment };
 };

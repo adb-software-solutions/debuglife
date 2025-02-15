@@ -3,6 +3,10 @@ from ninja import Schema
 from typing import List, Optional, Dict
 from uuid import UUID
 
+# ------------------------
+# Existing Schemas
+# ------------------------
+
 class AuthorOut(Schema):
     id: UUID
     full_name: Optional[str] = None
@@ -47,11 +51,9 @@ class TagOut(Schema):
 class TagIn(Schema):
     name: str
 
-
 class GalleryImageIn(Schema):
     alt_text: str
     caption: Optional[str] = None
-
 
 class BlogSEOAnalysisIn(Schema):
     seo_score: int
@@ -99,3 +101,57 @@ class BlogPatch(Schema):
     category_id: Optional[UUID] = None
     tag_ids: Optional[List[UUID]] = None
     author_id: Optional[UUID] = None
+
+# ------------------------
+# New Schemas for Available Filters
+# ------------------------
+class CategoryFilter(Schema):
+    id: UUID
+    name: str
+
+class AuthorFilter(Schema):
+    id: UUID
+    full_name: Optional[str] = None
+
+class TagFilter(Schema):
+    id: UUID
+    name: str
+
+class AvailableFilters(Schema):
+    categories: List[CategoryFilter]
+    authors: List[AuthorFilter]
+    tags: List[TagFilter]
+
+# ------------------------
+# Pagination Schemas
+# ------------------------
+class Pagination(Schema):
+    page: int
+    page_size: int
+    total_items: int
+    total_pages: int
+    has_next_page: bool
+    has_previous_page: bool
+    next_page: Optional[int] = None
+    previous_page: Optional[int] = None
+
+class PaginatedBlogResponse(Schema):
+    results: List[BlogOut]
+    pagination: Pagination
+    available_filters: AvailableFilters
+
+class PaginatedCategoryResponse(Schema):
+    results: List[CategoryOut]
+    pagination: Pagination
+
+class PaginatedTagResponse(Schema):
+    results: List[TagOut]
+    pagination: Pagination
+
+class PaginatedGalleryResponse(Schema):
+    results: List[GalleryImageOut]
+    pagination: Pagination
+
+class PaginatedAuthorResponse(Schema):
+    results: List[AuthorOut]
+    pagination: Pagination

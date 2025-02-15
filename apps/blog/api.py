@@ -1,4 +1,5 @@
-from ninja import Router, Query, Schema, Form, File, UploadedFile
+# blog/views.py (or wherever your endpoints are defined)
+from ninja import Router, Query, File, UploadedFile
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
 from uuid import UUID
@@ -20,6 +21,11 @@ from apps.blog.schema import (
     BlogPatch,
     GalleryImageIn,
     BlogSEOAnalysisIn,
+    PaginatedBlogResponse,
+    PaginatedCategoryResponse,
+    PaginatedTagResponse,
+    PaginatedAuthorResponse,
+    PaginatedGalleryResponse,
 )
 from authentication.ninja_auth import django_auth_is_staff
 
@@ -32,46 +38,6 @@ tag_router = Router(tags=["Tag"])
 author_router = Router(tags=["Author"])
 gallery_router = Router(tags=["Gallery"])
 
-
-# ------------------------
-# Pagination Schemas
-# ------------------------
-class Pagination(Schema):
-    page: int
-    page_size: int
-    total_items: int
-    total_pages: int
-    has_next_page: bool
-    has_previous_page: bool
-    next_page: Optional[int] = None
-    previous_page: Optional[int] = None
-
-
-class PaginatedBlogResponse(Schema):
-    results: List[BlogOut]
-    pagination: Pagination
-
-
-class PaginatedCategoryResponse(Schema):
-    results: List[CategoryOut]
-    pagination: Pagination
-
-
-class PaginatedTagResponse(Schema):
-    results: List[TagOut]
-    pagination: Pagination
-
-
-class PaginatedGalleryResponse(Schema):
-    results: List[GalleryImageOut]
-    pagination: Pagination
-
-
-class PaginatedAuthorResponse(Schema):
-    results: List[AuthorOut]
-    pagination: Pagination
-
-
 # ------------------------
 # Helper Pagination Function
 # ------------------------
@@ -82,19 +48,15 @@ def paginate_queryset(qs, page: int, page_size: int):
     end = start + page_size
     return qs[start:end], total_items, total_pages
 
-
 # ------------------------
 # Serialization Helpers
 # ------------------------
-
-
 def serialize_category(category: Category) -> dict:
     return {
         "id": category.id,
         "name": category.name,
         "slug": category.slug,
     }
-
 
 def serialize_tag(tag: Tag) -> dict:
     return {
@@ -103,9 +65,7 @@ def serialize_tag(tag: Tag) -> dict:
         "slug": tag.slug,
     }
 
-
 def serialize_author(author: Author) -> dict:
-    # Here we extract fields from the related user.
     return {
         "id": author.id,
         "full_name": author.user.get_full_name(),
@@ -122,7 +82,6 @@ def serialize_author(author: Author) -> dict:
         "tiktok": author.tiktok,
     }
 
-
 def serialize_gallery_image(request, image: GalleryImage) -> dict:
     return {
         "id": image.id,
@@ -131,7 +90,6 @@ def serialize_gallery_image(request, image: GalleryImage) -> dict:
         "caption": image.caption,
         "uploaded_at": image.uploaded_at.isoformat() if image.uploaded_at else None,
     }
-
 
 def serialize_blog(blog: Blog) -> dict:
     return {
@@ -149,10 +107,6 @@ def serialize_blog(blog: Blog) -> dict:
         "author": serialize_author(blog.author) if blog.author else None,
     }
 
-
-# ------------------------
-# Blog Endpoints (with pagination, filtering, and sorting)
-# ------------------------
 @post_router.get("/posts", response=PaginatedBlogResponse)
 def list_blogs(
     request,
@@ -163,8 +117,8 @@ def list_blogs(
     tags: Optional[List[UUID]] = Query(None),
     page: int = 1,
     page_size: int = 25,
-    sort_by: Optional[str] = "title",  # New: field to sort by
-    order: Optional[str] = "asc",  # New: "asc" or "desc"
+    sort_by: Optional[str] = "title",  # Field to sort by
+    order: Optional[str] = "asc",        # "asc" or "desc"
 ):
     logger.info(
         f"Fetched blogs with filters: published={published}, category={category}, author={author}, tags={tags}"
@@ -186,8 +140,44 @@ def list_blogs(
     if tags:
         qs = qs.filter(tags__id__in=tags).distinct()
 
+    # --- Compute Available Filters on the Filtered Data using field-specific distinct ---
+    # Explicitly order by the same fields as in distinct() to satisfy PostgreSQL requirements.
+    available_categories = qs.filter(category__isnull=False)\
+        .values("category__id", "category__name")\
+        .order_by("category__id", "category__name")\
+        .distinct("category__id", "category__name")
+    available_authors = qs.filter(author__isnull=False)\
+        .values("author__id", "author__user__first_name", "author__user__last_name")\
+        .order_by("author__id", "author__user__first_name", "author__user__last_name")\
+        .distinct("author__id", "author__user__first_name", "author__user__last_name")
+    available_tags = qs.filter(tags__isnull=False)\
+        .values("tags__id", "tags__name")\
+        .order_by("tags__id", "tags__name")\
+        .distinct("tags__id", "tags__name")
+
+    categories_list = [
+        {"id": row["category__id"], "name": row["category__name"]}
+        for row in available_categories
+    ]
+    authors_list = [
+        {
+            "id": row["author__id"],
+            "full_name": f"{row['author__user__first_name']} {row['author__user__last_name']}".strip(),
+        }
+        for row in available_authors
+    ]
+    tags_list = [
+        {"id": row["tags__id"], "name": row["tags__name"]}
+        for row in available_tags
+    ]
+
+    available_filters = {
+        "categories": categories_list,
+        "authors": authors_list,
+        "tags": tags_list,
+    }
+
     # --- Sorting ---
-    # Define allowed sort fields for security.
     allowed_sort_fields = [
         "title",
         "slug",
@@ -217,7 +207,12 @@ def list_blogs(
         "previous_page": page - 1 if page > 1 else None,
     }
 
-    return {"results": serialized_items, "pagination": pagination}
+    return {
+        "results": serialized_items,
+        "pagination": pagination,
+        "available_filters": available_filters,
+    }
+
 
 
 @post_router.get("/posts/{post_id}", response=BlogOut)

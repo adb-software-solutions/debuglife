@@ -106,6 +106,8 @@ def serialize_blog(blog: Blog) -> dict:
         "category": serialize_category(blog.category) if blog.category else None,
         "tags": [serialize_tag(tag) for tag in blog.tags.all()],
         "author": serialize_author(blog.author) if blog.author else None,
+        "seo_score": blog.seo_score,
+        "readability_score": blog.readability_score,
     }
 
 @post_router.get("/posts", response=PaginatedBlogResponse)

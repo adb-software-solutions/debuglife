@@ -81,6 +81,8 @@ class BlogOut(Schema):
     category: CategoryOut
     tags: List[TagOut] = []
     author: Optional[AuthorOut] = None
+    seo_score: int
+    readability_score: int
 
 class BlogIn(Schema):
     title: str

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import debounce from "lodash.debounce";
 import { updateSEOAnalysis } from "../services/seoService";
-import { getPassiveData, getKeyphraseDistributionData } from "../services/nlpService";
+import { getPassiveData, getKeyphraseDistributionData, getSentimentData, getLexicalDiversityData } from "../services/nlpService";
 import { UseContentAnalysisParams, ContentAnalysisResult } from "../types/contentAnalysis";
 
 // Import SEO check functions.
@@ -79,6 +79,12 @@ const useContentAnalysis = (params: ExtendedUseContentAnalysisParams): ContentAn
       params.content,
     );
     readabilityAssessments["passiveVoice"] = passiveAssessment;
+    // // Get sentiment analysis assessment
+    // const { sentimentAssessment } = await getSentimentData(params.content);
+    // readabilityAssessments["sentiment"] = sentimentAssessment;
+    // // Get lexical diversity assessment
+    // const { lexicalDiversityAssessment } = await getLexicalDiversityData(params.content);
+    // readabilityAssessments["lexicalDiversity"] = lexicalDiversityAssessment;
 
     const readabilityKeys = Object.keys(readabilityAssessments);
     const totalReadabilityPoints = readabilityKeys.reduce(

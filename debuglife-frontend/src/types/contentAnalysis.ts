@@ -11,16 +11,14 @@ export interface SEOAnalysisDetails {
   assessments: { [key: string]: SEOAssessment };
 }
 
+export interface ReadabilityAssessment {
+  score: number; // e.g. 9 (green), 3 (amber), or 0 (red)
+  max: number;   // always 9
+  feedback?: string;
+}
+
 export interface ReadabilityAnalysisDetails {
-  longSentences: TrafficLight;
-  passiveVoice: TrafficLight;
-  transitionWords: TrafficLight;
-    paragraphLength: TrafficLight;
-    consecutiveSentences: TrafficLight;
-    fleschReadingEase: TrafficLight;
-    wordComplexity: TrafficLight;
-    subheadingDistribution: TrafficLight;
-    
+  assessments: { [key: string]: ReadabilityAssessment };
 }
 
 export interface ContentAnalysisResult {

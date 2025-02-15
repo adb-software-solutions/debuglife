@@ -1,7 +1,15 @@
 "use client";
 
-import React, {useState, useCallback, useMemo, useRef, useEffect} from "react";
+import React, {
+    Fragment,
+    useState,
+    useCallback,
+    useMemo,
+    useRef,
+    useEffect,
+} from "react";
 import {createPortal} from "react-dom";
+import {Dialog, Transition, Menu} from "@headlessui/react";
 import {useSearchParams, useRouter} from "next/navigation";
 import useSWR from "swr";
 import {fetchWithCSRF} from "@/helpers/common/csrf";
@@ -327,6 +335,56 @@ const PostsPage: React.FC = () => {
         }
     };
 
+    // --- Delete Modal State & Functions ---
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [postToDelete, setPostToDelete] = useState<string | null>(null);
+
+    // Helper to toggle selection of all posts.
+    const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
+    const selectAll = selectedPosts.length === data?.results.length;
+    const toggleSelectAll = () => {
+        if (selectAll) {
+            setSelectedPosts([]);
+        } else {
+            setSelectedPosts(data?.results.map((post) => post.id) || []);
+        }
+    };
+    const togglePostSelection = (postId: string) => {
+        if (selectedPosts.includes(postId)) {
+            setSelectedPosts(selectedPosts.filter((id) => id !== postId));
+        } else {
+            setSelectedPosts([...selectedPosts, postId]);
+        }
+    };
+
+    const openDeleteModal = (postId: string) => {
+        setPostToDelete(postId);
+        setShowDeleteModal(true);
+    };
+
+    const closeDeleteModal = () => {
+        setPostToDelete(null);
+        setShowDeleteModal(false);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!postToDelete) return;
+        try {
+            const res = await fetchWithCSRF(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts/${postToDelete}`,
+                {method: "DELETE"},
+            );
+            if (res.ok) {
+                mutate();
+            } else {
+                console.error("Failed to delete post");
+            }
+        } catch (error) {
+            console.error("Error deleting post", error);
+        }
+        closeDeleteModal();
+    };
+
     // Handle tags changes via our custom MultiSelectDropdown.
     const handleTagsChange = (selected: string[]) => {
         const currentParams = new URLSearchParams(window.location.search);
@@ -350,11 +408,11 @@ const PostsPage: React.FC = () => {
     return (
         <div className="px-4 py-4 sm:px-6 lg:px-8">
             <div className="max-h-[80vh] overflow-x-auto overflow-y-auto">
-                <table className="min-w-full  divide-y divide-gray-300">
-                    <thead className="sticky top-0 z-20 ">
+                <table className="min-w-full divide-y divide-gray-300">
+                    <thead className="sticky top-0 z-20">
                         {/* Top Controls & Filters */}
                         <tr className="bg-gray-50 dark:bg-slate-900">
-                            <th colSpan={9} className=" py-4">
+                            <th colSpan={10} className="py-4">
                                 <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                     <div className="text-left">
                                         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -367,12 +425,160 @@ const PostsPage: React.FC = () => {
                                         </p>
                                     </div>
                                     <div className="mt-4 flex items-center space-x-4 sm:mt-0">
+                                        {/* If one or more are selected, show a bulk actions button which shows a dropdown of bulk actions when clicked
+                                        , use empty onclicks for now. Use headlessui for the dropdown */}
+                                        {selectedPosts.length > 0 && (
+                                            <Menu
+                                                as="div"
+                                                className="relative inline-block text-left"
+                                            >
+                                                <div>
+                                                    <Menu.Button className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                                                        Bulk Actions
+                                                    </Menu.Button>
+                                                </div>
+                                                <Transition
+                                                    as={Fragment}
+                                                    enter="transition ease-out duration-100"
+                                                    enterFrom="transform opacity-0 scale-95"
+                                                    enterTo="transform opacity-100 scale-100"
+                                                    leave="transition ease-in duration-75"
+                                                    leaveFrom="transform opacity-100 scale-100"
+                                                    leaveTo="transform opacity-0 scale-95"
+                                                >
+                                                    <Menu.Items className="ring-opacity-5 absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white ring-1 shadow-lg ring-black focus:outline-none dark:divide-gray-700 dark:bg-gray-800">
+                                                        <div className="px-1 py-1">
+                                                            <Menu.Item>
+                                                                {({active}) => (
+                                                                    <button
+                                                                        onClick={() => {}}
+                                                                        className={`${
+                                                                            active
+                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                : "text-gray-900 dark:text-gray-300"
+                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                    >
+                                                                        Delete
+                                                                    </button>
+                                                                )}
+                                                            </Menu.Item>
+                                                            <Menu.Item>
+                                                                {({active}) => (
+                                                                    <button
+                                                                        onClick={() => {}}
+                                                                        className={`${
+                                                                            active
+                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                : "text-gray-900 dark:text-gray-300"
+                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                    >
+                                                                        Mark as
+                                                                        published
+                                                                    </button>
+                                                                )}
+                                                            </Menu.Item>
+                                                            <Menu.Item>
+                                                                {({active}) => (
+                                                                    <button
+                                                                        onClick={() => {}}
+                                                                        className={`${
+                                                                            active
+                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                : "text-gray-900 dark:text-gray-300"
+                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                    >
+                                                                        Mark as
+                                                                        draft
+                                                                    </button>
+                                                                )}
+                                                            </Menu.Item>
+                                                            <Menu.Item>
+                                                                {({active}) => (
+                                                                    <button
+                                                                        onClick={() => {}}
+                                                                        className={`${
+                                                                            active
+                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                : "text-gray-900 dark:text-gray-300"
+                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                    >
+                                                                        Add
+                                                                        category
+                                                                    </button>
+                                                                )}
+                                                            </Menu.Item>
+                                                            <Menu.Item>
+                                                                {({active}) => (
+                                                                    <button
+                                                                        onClick={() => {}}
+                                                                        className={`${
+                                                                            active
+                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                : "text-gray-900 dark:text-gray-300"
+                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                    >
+                                                                        Add tag
+                                                                    </button>
+                                                                )}
+                                                            </Menu.Item>
+                                                            <Menu.Item>
+                                                                {({active}) => (
+                                                                    <button
+                                                                        onClick={() => {}}
+                                                                        className={`${
+                                                                            active
+                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                : "text-gray-900 dark:text-gray-300"
+                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                    >
+                                                                        Remove
+                                                                        tag
+                                                                    </button>
+                                                                )}
+                                                            </Menu.Item>
+                                                            <Menu.Item>
+                                                                {({active}) => (
+                                                                    <button
+                                                                        onClick={() => {}}
+                                                                        className={`${
+                                                                            active
+                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                : "text-gray-900 dark:text-gray-300"
+                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                    >
+                                                                        Remove
+                                                                        category
+                                                                    </button>
+                                                                )}
+                                                            </Menu.Item>
+                                                            <Menu.Item>
+                                                                {({active}) => (
+                                                                    <button
+                                                                        onClick={() => {}}
+                                                                        className={`${
+                                                                            active
+                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                : "text-gray-900 dark:text-gray-300"
+                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                    >
+                                                                        Mark as
+                                                                        cornerstone
+                                                                        content
+                                                                    </button>
+                                                                )}
+                                                            </Menu.Item>
+                                                        </div>
+                                                    </Menu.Items>
+                                                </Transition>
+                                            </Menu>
+                                        )}
+
                                         <select
                                             value={page_size}
                                             onChange={(e) =>
                                                 updatePageSize(e.target.value)
                                             }
-                                            className="rounded-md border bg-white px-3 py-2 text-sm text-gray-900 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                                            className="rounded-md border bg-white pl-2 pr-8 py-2 text-sm text-gray-900 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
                                         >
                                             <option value="10">
                                                 10 per page
@@ -491,9 +697,19 @@ const PostsPage: React.FC = () => {
                         </tr>
                         {/* Column Headers */}
                         <tr className="bg-gray-50 ring-1 shadow ring-black/5 dark:bg-slate-700">
+                            <th className="pl-2 rounded-tl-lg">
+                                {/* “Select All” checkbox */}
+                                <input
+                                    type="checkbox"
+                                    checked={selectAll}
+                                    onChange={toggleSelectAll}
+                                    className="h-6 w-6 rounded-full border-gray-300 text-sky-600 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-800 dark:checked:bg-sky-600"
+                                />
+                            </th>
+
                             <th
                                 scope="col"
-                                className="cursor-pointer rounded-tl-lg py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6 dark:text-gray-100"
+                                className="cursor-pointer  py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6 dark:text-gray-100"
                                 onClick={() => updateSorting("title")}
                             >
                                 Title{" "}
@@ -568,7 +784,19 @@ const PostsPage: React.FC = () => {
                                 key={post.id}
                                 className="hover:bg-gray-50 dark:hover:bg-slate-600"
                             >
-                                <td className="py-4 pr-3 pl-4 text-sm font-medium text-wrap whitespace-nowrap text-gray-900 sm:pl-6 dark:text-gray-100">
+                                <td className="pl-3">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedPosts.includes(
+                                            post.id,
+                                        )}
+                                        onChange={() =>
+                                            togglePostSelection(post.id)
+                                        }
+                                        className="h-6 w-6 rounded-full border-gray-300 text-sky-600 focus:ring-sky-500 dark:border-gray-700 dark:bg-gray-800 dark:checked:bg-sky-600"
+                                    />
+                                </td>
+                                <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-6 dark:text-gray-100">
                                     {editingPostId === post.id ? (
                                         <input
                                             type="text"
@@ -585,7 +813,7 @@ const PostsPage: React.FC = () => {
                                         post.title
                                     )}
                                 </td>
-                                <td className="px-3 py-4 text-sm text-wrap whitespace-nowrap text-gray-500 dark:text-gray-300">
+                                <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     {editingPostId === post.id ? (
                                         <input
                                             type="text"
@@ -620,7 +848,7 @@ const PostsPage: React.FC = () => {
                                                     }))
                                                 }
                                             />
-                                            <div className="h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-sky-600 peer-focus:ring-2 peer-focus:ring-blue-300 peer-focus:outline-none after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white dark:border-gray-600 dark:bg-gray-700" />
+                                            <div className="h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-sky-600 peer-focus:ring-2 peer-focus:ring-blue-300 peer-focus:outline-none dark:border-gray-600 dark:bg-gray-700" />
                                             <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                                                 {editValues.published
                                                     ? "Yes"
@@ -784,12 +1012,24 @@ const PostsPage: React.FC = () => {
                                             </button>
                                         </>
                                     ) : (
-                                        <button
-                                            onClick={() => startEditing(post)}
-                                            className="rounded bg-gray-300 px-2 py-1 text-sm font-semibold text-gray-900 hover:bg-gray-400"
-                                        >
-                                            Edit
-                                        </button>
+                                        <>
+                                            <button
+                                                onClick={() =>
+                                                    startEditing(post)
+                                                }
+                                                className="rounded bg-gray-300 px-2 py-1 text-sm font-semibold text-gray-900 hover:bg-gray-400"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() =>
+                                                    openDeleteModal(post.id)
+                                                }
+                                                className="ml-2 rounded bg-red-500 px-2 py-1 text-sm font-semibold text-white hover:bg-red-600"
+                                            >
+                                                Delete
+                                            </button>
+                                        </>
                                     )}
                                 </td>
                             </tr>
@@ -825,6 +1065,53 @@ const PostsPage: React.FC = () => {
                     Next
                 </button>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <Transition.Root show={showDeleteModal} as={Fragment}>
+                <Dialog
+                    as="div"
+                    className="fixed inset-0 z-50 flex items-center justify-center"
+                    onClose={closeDeleteModal}
+                >
+                    <Transition.Child
+                        as={Fragment}
+                        enter="transition ease-out duration-300"
+                        enterFrom="opacity-0 scale-95"
+                        enterTo="opacity-100 scale-100"
+                        leave="transition ease-in duration-200"
+                        leaveFrom="opacity-100 scale-100"
+                        leaveTo="opacity-0 scale-95"
+                    >
+                        <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl transition-all dark:bg-gray-800">
+                            <Dialog.Title className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                                Delete Post
+                            </Dialog.Title>
+                            <div className="mt-2">
+                                <p className="text-sm text-gray-500 dark:text-gray-300">
+                                    Are you sure you want to delete this post?
+                                    This action cannot be undone.
+                                </p>
+                            </div>
+                            <div className="mt-4 flex justify-end space-x-3">
+                                <button
+                                    type="button"
+                                    className="rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+                                    onClick={closeDeleteModal}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    className="rounded-md bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
+                                    onClick={handleDeleteConfirm}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                </Dialog>
+            </Transition.Root>
         </div>
     );
 };

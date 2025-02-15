@@ -82,6 +82,7 @@ class Blog(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # New SEO fields:
+    keyphrase = models.CharField(max_length=255, blank=True, null=True)
     seo_score = models.IntegerField(default=0)
     seo_analysis = models.JSONField(blank=True, null=True)
     readability_score = models.IntegerField(default=0)

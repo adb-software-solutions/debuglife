@@ -2,9 +2,8 @@
 import { useState, useEffect } from "react";
 import debounce from "lodash.debounce";
 import { updateSEOAnalysis } from "../services/seoService";
-import { getSentences, countWords } from "@/utils/textUtils";
-import { getPassiveData } from "../services/nlpService";
-import { UseContentAnalysisParams, ContentAnalysisResult, TrafficLight } from "../types/contentAnalysis";
+import { getPassiveData, getKeyphraseDistributionData } from "../services/nlpService";
+import { UseContentAnalysisParams, ContentAnalysisResult } from "../types/contentAnalysis";
 
 // Import SEO check functions.
 import { checkKeyphraseProvided } from "../checks/seo/keyphraseProvided";
@@ -20,7 +19,7 @@ import { checkSeoTitleWidth } from "../checks/seo/seoTitleWidth";
 import { checkKeyphraseInSlug } from "../checks/seo/keyphraseInSlug";
 import { checkKeyphraseInMetaDescription } from "../checks/seo/keyphraseInMetaDescription";
 
-// Import readability check functions.
+// Import readability check functions (which now return an object { score, max, feedback }).
 import { checkLongSentences } from "../checks/readability/longSentences";
 import { checkTransitionWords } from "../checks/readability/transitionWords";
 import { checkParagraphLength } from "../checks/readability/paragraphLength";
@@ -32,20 +31,12 @@ import { checkSubheadingDistribution } from "../checks/readability/subheadingDis
 interface ExtendedUseContentAnalysisParams extends UseContentAnalysisParams {}
 
 const useContentAnalysis = (params: ExtendedUseContentAnalysisParams): ContentAnalysisResult => {
+  // Both SEO and readability details use the same structure.
   const [analysis, setAnalysis] = useState<ContentAnalysisResult>({
     seoScore: 0,
     readabilityScore: 0,
     seoDetails: { assessments: {} },
-    readabilityDetails: {
-      longSentences: "red",
-      transitionWords: "red",
-      paragraphLength: "red",
-      consecutiveSentences: "red",
-      fleschReadingEase: "red",
-      wordComplexity: "red",
-      subheadingDistribution: "red",
-      passiveVoice: "red",
-    },
+    readabilityDetails: { assessments: {} },
   });
 
   const performAnalysis = async () => {
@@ -60,6 +51,8 @@ const useContentAnalysis = (params: ExtendedUseContentAnalysisParams): ContentAn
     seoAssessments["keyphraseInSubheadings"] = checkKeyphraseInSubheadings(params, params.content);
     seoAssessments["linkFocusKeyphrase"] = checkLinkFocusKeyphrase(params, params.content);
     seoAssessments["keyphraseInImageAlt"] = checkKeyphraseInImageAlt(params, params.content);
+    const {keyphraseAssessment}  = await getKeyphraseDistributionData(params.content, params.keyphrase);
+    seoAssessments["keyphraseDistribution"] = keyphraseAssessment;
     const slugAssessment = checkKeyphraseInSlug(params);
     if (slugAssessment) seoAssessments["keyphraseInSlug"] = slugAssessment;
     const metaAssessment = checkKeyphraseInMetaDescription(params);
@@ -68,41 +61,38 @@ const useContentAnalysis = (params: ExtendedUseContentAnalysisParams): ContentAn
 
     const seoKeys = Object.keys(seoAssessments);
     const totalSeoPoints = seoKeys.reduce((sum, key) => sum + seoAssessments[key].score, 0);
+    // Assuming each SEO check has a maximum score of 9.
     const overallSEOScore = Math.round((totalSeoPoints / (seoKeys.length * 9)) * 100);
 
     // --- Readability Assessments ---
-    // Each readability check returns a TrafficLight ("green", "amber", or "red")
-    const longSentencesStatus = checkLongSentences(params.content);
-    const transitionStatus = checkTransitionWords(params.content);
-    const paragraphLengthStatus = checkParagraphLength(params.content);
-    const consecutiveStatus = checkConsecutiveSentences(params.content);
-    const fleschStatus = checkFleschReadingEase(params.content);
-    const wordComplexityStatus = checkWordComplexity(params.content, params.cornerstone || false);
-    const subheadingDistributionStatus = checkSubheadingDistribution(params.content);
-    // Get passive voice status from the backend.
-    const { passiveStatus } = await getPassiveData(params.content, params.title, params.keyphrase, params.cornerstone || false);
+    // Assign readability checks in the same style as SEO.
+    const readabilityAssessments: { [key: string]: any } = {};
+    readabilityAssessments["longSentences"] = checkLongSentences(params.content);
+    readabilityAssessments["transitionWords"] = checkTransitionWords(params.content);
+    readabilityAssessments["paragraphLength"] = checkParagraphLength(params.content);
+    readabilityAssessments["consecutiveSentences"] = checkConsecutiveSentences(params.content);
+    readabilityAssessments["fleschReadingEase"] = checkFleschReadingEase(params.content);
+    readabilityAssessments["wordComplexity"] = checkWordComplexity(params.content, params.cornerstone || false);
+    readabilityAssessments["subheadingDistribution"] = checkSubheadingDistribution(params.content);
+    // Get passive voice assessment from the backend (assumed to return an object with { score, max, feedback }).
+    const { passiveAssessment } = await getPassiveData(
+      params.content,
+    );
+    readabilityAssessments["passiveVoice"] = passiveAssessment;
 
-    // Map statuses to numeric values: green=100, amber=50, red=0.
-    const mapping: Record<TrafficLight, number> = { green: 100, amber: 50, red: 0 };
-    const readabilityChecks = {
-      longSentences: longSentencesStatus,
-      transitionWords: transitionStatus,
-      paragraphLength: paragraphLengthStatus,
-      consecutiveSentences: consecutiveStatus,
-      fleschReadingEase: fleschStatus,
-      wordComplexity: wordComplexityStatus,
-      subheadingDistribution: subheadingDistributionStatus,
-      passiveVoice: passiveStatus,
-    };
-    const checkValues = Object.values(readabilityChecks);
-    const totalReadabilityPoints = checkValues.reduce((sum, status) => sum + mapping[status], 0);
-    const overallReadabilityScore = Math.round(totalReadabilityPoints / checkValues.length);
+    const readabilityKeys = Object.keys(readabilityAssessments);
+    const totalReadabilityPoints = readabilityKeys.reduce(
+      (sum, key) => sum + readabilityAssessments[key].score,
+      0
+    );
+    // Assuming each readability check has a maximum score of 9.
+    const overallReadabilityScore = Math.round((totalReadabilityPoints / (readabilityKeys.length * 9)) * 100);
 
     setAnalysis({
       seoScore: overallSEOScore,
       readabilityScore: overallReadabilityScore,
       seoDetails: { assessments: seoAssessments },
-      readabilityDetails: readabilityChecks,
+      readabilityDetails: { assessments: readabilityAssessments },
     });
 
     if (params.blogId) {
@@ -111,7 +101,7 @@ const useContentAnalysis = (params: ExtendedUseContentAnalysisParams): ContentAn
           seoScore: overallSEOScore,
           readabilityScore: overallReadabilityScore,
           seoDetails: { assessments: seoAssessments },
-          readabilityDetails: readabilityChecks,
+          readabilityDetails: { assessments: readabilityAssessments },
         });
       } catch (error) {
         console.error("Failed to update SEO analysis on backend:", error);

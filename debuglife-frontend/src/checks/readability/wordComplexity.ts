@@ -1,5 +1,5 @@
 // src/checks/readability/wordComplexity.ts
-import { TrafficLight } from "../../types/contentAnalysis";
+import { ReadabilityAssessment } from "../../types/contentAnalysis";
 import { countWords, cleanMarkdown } from "@/utils/textUtils";
 import { commonWords } from "@/data/commonWords";
 
@@ -14,17 +14,23 @@ const commonWordsSet = new Set(commonWords.map(word => word.toLowerCase()));
  * - It does not appear in the top 5000 most frequent words,
  * - It does not start with a capital letter.
  *
- * Returns "green" if less than 10% of words are complex, "amber" otherwise for regular content,
- * and "red" for cornerstone content if 10% or more of words are complex.
+ * Returns a ReadabilityAssessment object with:
+ *  - score: 9 (green) if less than 10% of words are complex,
+ *           3 (amber) for regular content if 10% or more are complex,
+ *           0 (red) for cornerstone content if 10% or more are complex.
+ *  - max: always 9.
+ *  - feedback: A dynamic message including the percentage of complex words.
  *
  * @param text - The raw Markdown content.
  * @param cornerstone - Indicates if the content is cornerstone (more strict).
- * @returns A TrafficLight value ("green", "amber", or "red").
+ * @returns A ReadabilityAssessment object.
  */
-export const checkWordComplexity = (text: string, cornerstone: boolean = false): TrafficLight => {
+export const checkWordComplexity = (text: string, cornerstone: boolean = false): ReadabilityAssessment => {
   const cleaned = cleanMarkdown(text);
   const words = cleaned.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return "red";
+  if (words.length === 0) {
+    return { score: 0, max: 9, feedback: "No words found to evaluate complexity." };
+  }
   
   const complexCount = words.filter(word => {
     // Exclude words that start with a capital letter.
@@ -34,5 +40,25 @@ export const checkWordComplexity = (text: string, cornerstone: boolean = false):
   }).length;
   
   const ratio = complexCount / words.length;
-  return ratio < 0.10 ? "green" : cornerstone ? "red" : "amber";
+  const percentage = (ratio * 100).toFixed(2);
+  
+  if (ratio < 0.10) {
+    return {
+      score: 9,
+      max: 9,
+      feedback: `Few complex words detected (${percentage}% of words are complex); text is easy to understand.`
+    };
+  } else if (cornerstone) {
+    return {
+      score: 0,
+      max: 9,
+      feedback: `Too many complex words for cornerstone content (${percentage}% of words are complex); consider simplifying the language.`
+    };
+  } else {
+    return {
+      score: 3,
+      max: 9,
+      feedback: `Some complex words detected (${percentage}% of words are complex); consider using simpler language.`
+    };
+  }
 };

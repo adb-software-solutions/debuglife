@@ -11,59 +11,6 @@ const colorForStatus = (status: TrafficLight) => {
   return "bg-red-500";
 };
 
-const readabilityFeedback: Record<
-  | "longSentences"
-  | "passiveVoice"
-  | "transitionWords"
-  | "paragraphLength"
-  | "consecutiveSentences"
-  | "fleschReadingEase"
-  | "wordComplexity"
-  | "subheadingDistribution",
-  Record<TrafficLight, string>
-> = {
-  longSentences: {
-    green: "Few long sentences; text is well-structured.",
-    amber: "Some long sentences; consider breaking them up.",
-    red: "Too many long sentences; text may be hard to read.",
-  },
-  passiveVoice: {
-    green: "Very little passive voice detected.",
-    amber: "Some passive voice detected; try to use more active constructions.",
-    red: "Excessive passive voice; consider revising.",
-  },
-  transitionWords: {
-    green: "Good usage of transition words.",
-    amber: "Moderate usage of transition words; consider adding more for better flow.",
-    red: "Insufficient transition words; text may lack flow.",
-  },
-  paragraphLength: {
-    green: "Paragraphs are short and easy to read.",
-    amber: "Some paragraphs are a bit long; consider breaking them up.",
-    red: "Paragraphs are too long; readability is affected.",
-  },
-  consecutiveSentences: {
-    green: "No issues with consecutive sentences.",
-    amber: "A few consecutive sentences start the same; vary your sentence starters.",
-    red: "Too many consecutive sentences with the same start; disrupts flow.",
-  },
-  fleschReadingEase: {
-    green: "Text is very readable.",
-    amber: "Text is moderately readable; consider simplifying complex sentences.",
-    red: "Text is hard to read; revise for clarity.",
-  },
-  wordComplexity: {
-    green: "Few complex words; text is easy to understand.",
-    amber: "Some complex words detected; consider using simpler language.",
-    red: "Too many complex words; text may be difficult for readers.",
-  },
-  subheadingDistribution: {
-    green: "Subheadings are well distributed.",
-    amber: "Subheading distribution is suboptimal; consider adjusting.",
-    red: "Poor subheading distribution; text may be hard to scan.",
-  },
-};
-
 const SEOSidebar: React.FC<{
   content: string;
   title: string;
@@ -74,14 +21,14 @@ const SEOSidebar: React.FC<{
   const analysis: ContentAnalysisResult = useContentAnalysis({ content, title, keyphrase, blogId, cornerstone });
   const overallTrafficLight: TrafficLight =
     analysis.seoScore >= 80 ? "green" : analysis.seoScore >= 50 ? "amber" : "red";
-
-  // Using similar thresholds for readability
   const readabilityTrafficLight: TrafficLight =
     analysis.readabilityScore >= 80 ? "green" : analysis.readabilityScore >= 50 ? "amber" : "red";
 
   // Common header cell classes for consistent widths
-  const assessmentHeaderClass = "py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 w-1/3";
-  const feedbackHeaderClass = "py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 w-2/3";
+  const assessmentHeaderClass =
+    "py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 w-1/3";
+  const feedbackHeaderClass =
+    "py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 w-2/3";
 
   return (
     <aside className="p-4 border rounded shadow bg-white dark:bg-slate-800">
@@ -124,11 +71,10 @@ const SEOSidebar: React.FC<{
                   </thead>
                   <tbody className="bg-white dark:bg-slate-800">
                     {Object.entries(analysis.seoDetails.assessments).map(([key, assess]) => {
-                      const status: TrafficLight =
-                        assess.score === 9 ? "green" : assess.score === 3 ? "amber" : "red";
+                      const status: TrafficLight = assess.score === 9 ? "green" : assess.score === 3 ? "amber" : "red";
                       return (
                         <tr key={key} className="border-t border-gray-300">
-                          <td className={`py-2 pl-4 pr-3 flex items-center text-sm text-gray-900 dark:text-gray-100`}>
+                          <td className="py-2 pl-4 pr-3 flex items-center text-sm text-gray-900 dark:text-gray-100">
                             <div className={`w-3 h-3 rounded-full ${colorForStatus(status)} mr-2`} />
                             <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
                           </td>
@@ -168,13 +114,12 @@ const SEOSidebar: React.FC<{
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-slate-800">
-                    {Object.entries(analysis.readabilityDetails).map(([checkName, status]) => {
-                      const keyName = checkName as keyof typeof readabilityFeedback;
-                      const trafficStatus = status as TrafficLight;
+                    {Object.entries(analysis.readabilityDetails.assessments).map(([checkName, assessment]) => {
+                      const status: TrafficLight = assessment.score === 9 ? "green" : assessment.score === 3 ? "amber" : "red";
                       return (
                         <tr key={checkName} className="border-t border-gray-300">
                           <td className="py-2 pl-4 pr-3 flex items-center text-sm text-gray-900 dark:text-gray-100">
-                            <div className={`w-3 h-3 rounded-full ${colorForStatus(trafficStatus)} mr-2`} />
+                            <div className={`w-3 h-3 rounded-full ${colorForStatus(status)} mr-2`} />
                             <span className="capitalize">
                               {checkName
                                 .replace(/([A-Z])/g, " $1")
@@ -188,7 +133,7 @@ const SEOSidebar: React.FC<{
                             </span>
                           </td>
                           <td className="py-2 pl-4 pr-3 text-sm text-gray-500 dark:text-gray-300">
-                            {readabilityFeedback[keyName][trafficStatus]}
+                            {assessment.feedback}
                           </td>
                         </tr>
                       );

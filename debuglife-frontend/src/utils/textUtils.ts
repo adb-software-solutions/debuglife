@@ -51,7 +51,6 @@ export const extractImageAlts = (text: string): string[] => {
  *  - Headings (lines starting with one or more '#' characters)
  */
 export const cleanMarkdown = (text: string): string => {
-    console.log('Text to clean:', text);
     if (!text) return "";
     let cleaned = text;
     // Remove code blocks.

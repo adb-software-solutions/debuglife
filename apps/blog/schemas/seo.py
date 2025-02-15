@@ -3,6 +3,12 @@ from ninja import Schema
 class PassivTextCheckInput(Schema):
     content: str
 
+class SentimentCheckInput(Schema):
+    content: str
+
+class LexicalDiversityCheckInput(Schema):
+    content: str
+
 class KeyphraseDistributionCheckInput(Schema):
     content: str
     keyphrase: str
@@ -24,3 +30,9 @@ class PassiveTextCheckOutput(Schema):
 
 class KeyphraseDistributionCheckOutput(Schema):
     keyphrase_assessment: SEOAssessment
+
+class SentimentCheckOutput(Schema):
+    sentiment_assessment: ReadabilityAssessment
+
+class LexicalDiversityCheckOutput(Schema):
+    lexical_diversity_assessment: ReadabilityAssessment

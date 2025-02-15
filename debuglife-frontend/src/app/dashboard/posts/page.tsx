@@ -14,23 +14,23 @@ import {useSearchParams, useRouter} from "next/navigation";
 import useSWR from "swr";
 import {fetchWithCSRF} from "@/helpers/common/csrf";
 
-// --- Type Definitions ---
+// --- Updated Type Definitions ---
 interface Category {
     id: string;
     name: string;
-}
-
-interface Author {
+  }
+  
+  interface Author {
     id: string;
     full_name: string;
-}
-
-interface Tag {
+  }
+  
+  interface Tag {
     id: string;
     name: string;
-}
-
-interface Post {
+  }
+  
+  interface Post {
     id: string;
     title: string;
     slug: string;
@@ -40,9 +40,9 @@ interface Post {
     tags: Tag[];
     created_at: string; // ISO date string
     updated_at: string; // ISO date string
-}
-
-interface Pagination {
+  }
+  
+  interface Pagination {
     page: number;
     page_size: number;
     total_items: number;
@@ -51,12 +51,19 @@ interface Pagination {
     has_previous_page: boolean;
     next_page?: number;
     previous_page?: number;
-}
-
-interface PaginatedPostResponse {
+  }
+  
+  interface AvailableFilters {
+    categories: Category[];
+    authors: Author[];
+    tags: Tag[];
+  }
+  
+  interface PaginatedPostResponse {
     results: Post[];
     pagination: Pagination;
-}
+    available_filters: AvailableFilters;
+  }
 
 // --- SWR Fetcher ---
 const fetcher = (url: string) => fetchWithCSRF(url).then((res) => res.json());
@@ -249,42 +256,37 @@ const PostsPage: React.FC = () => {
         ];
     }, []);
 
-    // Compute available filters from posts data.
-    const availableCategories = useMemo(() => {
-        if (!data) return [];
-        const map = new Map<string, string>();
-        data.results.forEach((post) => {
-            if (post.category) {
-                map.set(post.category.id, post.category.name);
-            }
-        });
-        return Array.from(map.entries()).map(([id, name]) => ({id, name}));
-    }, [data]);
 
-    const availableAuthors = useMemo(() => {
-        if (!data) return [];
-        const map = new Map<string, string>();
-        data.results.forEach((post) => {
-            if (post.author) {
-                map.set(post.author.id, post.author.full_name);
-            }
-        });
-        return Array.from(map.entries()).map(([id, full_name]) => ({
-            id,
-            full_name,
-        }));
-    }, [data]);
+const availableCategories = useMemo(() => {
+  if (!data) return [];
+  // Deduplicate by using a Map keyed by the category ID
+  const map = new Map<string, Category>();
+  data.available_filters.categories.forEach((cat: Category) => {
+    map.set(cat.id, cat);
+  });
+  return Array.from(map.values());
+}, [data]);
 
-    const availableTags = useMemo(() => {
-        if (!data) return [];
-        const map = new Map<string, string>();
-        data.results.forEach((post) => {
-            post.tags.forEach((tag) => {
-                map.set(tag.id, tag.name);
-            });
-        });
-        return Array.from(map.entries()).map(([id, name]) => ({id, name}));
-    }, [data]);
+const availableAuthors = useMemo(() => {
+  if (!data) return [];
+  // Deduplicate by using a Map keyed by the author ID
+  const map = new Map<string, Author>();
+  data.available_filters.authors.forEach((author: Author) => {
+    map.set(author.id, author);
+  });
+  return Array.from(map.values());
+}, [data]);
+
+const availableTags = useMemo(() => {
+  if (!data) return [];
+  // Deduplicate by using a Map keyed by the tag ID
+  const map = new Map<string, Tag>();
+  data.available_filters.tags.forEach((tag: Tag) => {
+    map.set(tag.id, tag);
+  });
+  return Array.from(map.values());
+}, [data]);
+
 
     // --- Inline Editing State ---
     const [editingPostId, setEditingPostId] = useState<string | null>(null);
@@ -340,6 +342,7 @@ const PostsPage: React.FC = () => {
     const [postToDelete, setPostToDelete] = useState<string | null>(null);
 
     // Helper to toggle selection of all posts.
+    const [allItemsSelected, setAllItemsSelected] = useState(false);
     const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
     const selectAll = selectedPosts.length === data?.results.length;
     const toggleSelectAll = () => {
@@ -355,6 +358,45 @@ const PostsPage: React.FC = () => {
         } else {
             setSelectedPosts([...selectedPosts, postId]);
         }
+    };
+
+    // Update markAllSelected to set allItemsSelected flag
+    const markAllSelected = async () => {
+        try {
+            const queryParamsAll = new URLSearchParams();
+            queryParamsAll.set("page", "1");
+            queryParamsAll.set(
+                "page_size",
+                String(data?.pagination.total_items),
+            );
+            queryParamsAll.set("sort_by", sortBy);
+            queryParamsAll.set("order", order);
+            if (publishedFilter)
+                queryParamsAll.set("published", publishedFilter);
+            if (categoryFilter) queryParamsAll.set("category", categoryFilter);
+            if (authorFilter) queryParamsAll.set("author", authorFilter);
+            tagFilters.forEach((tag) => queryParamsAll.append("tags", tag));
+
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts?${queryParamsAll.toString()}`;
+            const res = await fetchWithCSRF(url);
+            if (!res.ok) {
+                console.error("Error fetching all posts");
+                return;
+            }
+            const allData: PaginatedPostResponse = await res.json();
+            // Update selectedPosts with IDs from all posts returned.
+            setSelectedPosts(allData.results.map((post) => post.id));
+            setAllItemsSelected(true);
+        } catch (error) {
+            console.error("Error fetching all posts", error);
+        }
+    };
+
+    // Handler to cancel the full selection
+    const cancelAllSelection = () => {
+        // Clear the selected posts or reset to the current page's posts as needed.
+        setSelectedPosts([]);
+        setAllItemsSelected(false);
     };
 
     const openDeleteModal = (postId: string) => {
@@ -428,149 +470,191 @@ const PostsPage: React.FC = () => {
                                         {/* If one or more are selected, show a bulk actions button which shows a dropdown of bulk actions when clicked
                                         , use empty onclicks for now. Use headlessui for the dropdown */}
                                         {selectedPosts.length > 0 && (
-                                            <Menu
-                                                as="div"
-                                                className="relative inline-block text-left"
-                                            >
-                                                <div>
-                                                    <Menu.Button className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                                                        Bulk Actions
-                                                    </Menu.Button>
-                                                </div>
-                                                <Transition
-                                                    as={Fragment}
-                                                    enter="transition ease-out duration-100"
-                                                    enterFrom="transform opacity-0 scale-95"
-                                                    enterTo="transform opacity-100 scale-100"
-                                                    leave="transition ease-in duration-75"
-                                                    leaveFrom="transform opacity-100 scale-100"
-                                                    leaveTo="transform opacity-0 scale-95"
+                                            <div>
+                                                {!allItemsSelected &&
+                                                    selectAll &&
+                                                    data.pagination
+                                                        .total_items >
+                                                        data.results.length && (
+                                                        <button
+                                                            className="mr-4 ml-2 inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                                                            onClick={
+                                                                markAllSelected
+                                                            }
+                                                        >
+                                                            Mark all (
+                                                            {
+                                                                data.pagination
+                                                                    .total_items
+                                                            }
+                                                            ) as selected.
+                                                        </button>
+                                                    )}
+
+                                                <Menu
+                                                    as="div"
+                                                    className="relative inline-block text-left"
                                                 >
-                                                    <Menu.Items className="ring-opacity-5 absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white ring-1 shadow-lg ring-black focus:outline-none dark:divide-gray-700 dark:bg-gray-800">
-                                                        <div className="px-1 py-1">
-                                                            <Menu.Item>
-                                                                {({active}) => (
-                                                                    <button
-                                                                        onClick={() => {}}
-                                                                        className={`${
-                                                                            active
-                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                : "text-gray-900 dark:text-gray-300"
-                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                    >
-                                                                        Delete
-                                                                    </button>
-                                                                )}
-                                                            </Menu.Item>
-                                                            <Menu.Item>
-                                                                {({active}) => (
-                                                                    <button
-                                                                        onClick={() => {}}
-                                                                        className={`${
-                                                                            active
-                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                : "text-gray-900 dark:text-gray-300"
-                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                    >
-                                                                        Mark as
-                                                                        published
-                                                                    </button>
-                                                                )}
-                                                            </Menu.Item>
-                                                            <Menu.Item>
-                                                                {({active}) => (
-                                                                    <button
-                                                                        onClick={() => {}}
-                                                                        className={`${
-                                                                            active
-                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                : "text-gray-900 dark:text-gray-300"
-                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                    >
-                                                                        Mark as
-                                                                        draft
-                                                                    </button>
-                                                                )}
-                                                            </Menu.Item>
-                                                            <Menu.Item>
-                                                                {({active}) => (
-                                                                    <button
-                                                                        onClick={() => {}}
-                                                                        className={`${
-                                                                            active
-                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                : "text-gray-900 dark:text-gray-300"
-                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                    >
-                                                                        Add
-                                                                        category
-                                                                    </button>
-                                                                )}
-                                                            </Menu.Item>
-                                                            <Menu.Item>
-                                                                {({active}) => (
-                                                                    <button
-                                                                        onClick={() => {}}
-                                                                        className={`${
-                                                                            active
-                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                : "text-gray-900 dark:text-gray-300"
-                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                    >
-                                                                        Add tag
-                                                                    </button>
-                                                                )}
-                                                            </Menu.Item>
-                                                            <Menu.Item>
-                                                                {({active}) => (
-                                                                    <button
-                                                                        onClick={() => {}}
-                                                                        className={`${
-                                                                            active
-                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                : "text-gray-900 dark:text-gray-300"
-                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                    >
-                                                                        Remove
-                                                                        tag
-                                                                    </button>
-                                                                )}
-                                                            </Menu.Item>
-                                                            <Menu.Item>
-                                                                {({active}) => (
-                                                                    <button
-                                                                        onClick={() => {}}
-                                                                        className={`${
-                                                                            active
-                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                : "text-gray-900 dark:text-gray-300"
-                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                    >
-                                                                        Remove
-                                                                        category
-                                                                    </button>
-                                                                )}
-                                                            </Menu.Item>
-                                                            <Menu.Item>
-                                                                {({active}) => (
-                                                                    <button
-                                                                        onClick={() => {}}
-                                                                        className={`${
-                                                                            active
-                                                                                ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                : "text-gray-900 dark:text-gray-300"
-                                                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                    >
-                                                                        Mark as
-                                                                        cornerstone
-                                                                        content
-                                                                    </button>
-                                                                )}
-                                                            </Menu.Item>
-                                                        </div>
-                                                    </Menu.Items>
-                                                </Transition>
-                                            </Menu>
+                                                    <div>
+                                                        <Menu.Button className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                                                            Bulk Actions
+                                                        </Menu.Button>
+                                                    </div>
+                                                    <Transition
+                                                        as={Fragment}
+                                                        enter="transition ease-out duration-100"
+                                                        enterFrom="transform opacity-0 scale-95"
+                                                        enterTo="transform opacity-100 scale-100"
+                                                        leave="transition ease-in duration-75"
+                                                        leaveFrom="transform opacity-100 scale-100"
+                                                        leaveTo="transform opacity-0 scale-95"
+                                                    >
+                                                        <Menu.Items className="ring-opacity-5 absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white ring-1 shadow-lg ring-black focus:outline-none dark:divide-gray-700 dark:bg-gray-800">
+                                                            <div className="px-1 py-1">
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={() => {}}
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                        >
+                                                                            Delete
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={() => {}}
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                        >
+                                                                            Mark
+                                                                            as
+                                                                            published
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={() => {}}
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                        >
+                                                                            Mark
+                                                                            as
+                                                                            draft
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={() => {}}
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                        >
+                                                                            Add
+                                                                            category
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={() => {}}
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                        >
+                                                                            Add
+                                                                            tag
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={() => {}}
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                        >
+                                                                            Remove
+                                                                            tag
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={() => {}}
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                        >
+                                                                            Remove
+                                                                            category
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={() => {}}
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                        >
+                                                                            Mark
+                                                                            as
+                                                                            cornerstone
+                                                                            content
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                            </div>
+                                                        </Menu.Items>
+                                                    </Transition>
+                                                </Menu>
+                                            </div>
                                         )}
 
                                         <select
@@ -578,7 +662,7 @@ const PostsPage: React.FC = () => {
                                             onChange={(e) =>
                                                 updatePageSize(e.target.value)
                                             }
-                                            className="rounded-md border bg-white pl-2 pr-8 py-2 text-sm text-gray-900 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                                            className="rounded-md border bg-white py-2 pr-8 pl-2 text-sm text-gray-900 hover:bg-gray-50 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
                                         >
                                             <option value="10">
                                                 10 per page
@@ -693,11 +777,24 @@ const PostsPage: React.FC = () => {
                                         </div>
                                     </div>
                                 )}
+                                {/* Conditionally render a banner indicating full selection with cancel option */}
+                                {allItemsSelected && (
+                                    <div className="mb-4 rounded bg-green-100 p-2 text-green-800">
+                                        All {data.pagination.total_items} items
+                                        are selected.
+                                        <button
+                                            onClick={cancelAllSelection}
+                                            className="ml-2 underline"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                )}
                             </th>
                         </tr>
                         {/* Column Headers */}
                         <tr className="bg-gray-50 ring-1 shadow ring-black/5 dark:bg-slate-700">
-                            <th className="pl-2 rounded-tl-lg">
+                            <th className="rounded-tl-lg pl-2">
                                 {/* “Select All” checkbox */}
                                 <input
                                     type="checkbox"
@@ -709,7 +806,7 @@ const PostsPage: React.FC = () => {
 
                             <th
                                 scope="col"
-                                className="cursor-pointer  py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6 dark:text-gray-100"
+                                className="cursor-pointer py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6 dark:text-gray-100"
                                 onClick={() => updateSorting("title")}
                             >
                                 Title{" "}

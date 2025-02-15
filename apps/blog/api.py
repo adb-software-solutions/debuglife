@@ -27,6 +27,7 @@ from apps.blog.schema import (
     PaginatedAuthorResponse,
     PaginatedGalleryResponse,
 )
+from apps.blog.schemas.bulk import BulkPostIDs, BulkPostCategory, BulkPostTag
 from authentication.ninja_auth import django_auth_is_staff
 
 logger = logging.getLogger(__name__)
@@ -215,7 +216,7 @@ def list_blogs(
 
 
 
-@post_router.get("/posts/{post_id}", response=BlogOut)
+@post_router.get("/posts/{uuid:post_id}", response=BlogOut)
 def get_blog(request, post_id: UUID):
     blog = get_object_or_404(Blog, id=post_id)
     return serialize_blog(blog)
@@ -267,7 +268,7 @@ def create_blog(request, payload: BlogIn, file: File[UploadedFile]):
     return serialize_blog(blog)
 
 
-@post_router.put("/posts/{post_id}", response=BlogOut, auth=django_auth_is_staff)
+@post_router.put("/posts/{uuid:post_id}", response=BlogOut, auth=django_auth_is_staff)
 def update_blog(request, post_id: UUID, payload: BlogIn):
     logger.info(f"Blog Payload: {payload}")
 
@@ -293,7 +294,7 @@ def update_blog(request, post_id: UUID, payload: BlogIn):
     return serialize_blog(blog)
 
 
-@post_router.patch("/posts/{post_id}", response=BlogOut, auth=django_auth_is_staff)
+@post_router.patch("/posts/{uuid:post_id}", response=BlogOut, auth=django_auth_is_staff)
 def patch_blog(request, post_id: UUID, payload: BlogPatch):
     blog = get_object_or_404(Blog, id=post_id)
 
@@ -339,7 +340,7 @@ def update_seo_analysis(request, post_id: UUID, payload: BlogSEOAnalysisIn):
     return serialize_blog(blog)
 
 
-@post_router.delete("/posts/{post_id}", auth=django_auth_is_staff)
+@post_router.delete("/posts/{uuid:post_id}", auth=django_auth_is_staff)
 def delete_blog(request, post_id: UUID):
     blog = get_object_or_404(Blog, id=post_id)
     blog.delete()
@@ -388,6 +389,83 @@ def blogs_by_tag(request, tag_id: UUID, page: int = 1, page_size: int = 25):
         "previous_page": page - 1 if page > 1 else None,
     }
     return {"results": serialized_items, "pagination": pagination}
+
+
+# ------------------------
+# Bulk Post Endpoints
+# ------------------------
+
+@post_router.delete("/posts/bulk-delete", auth=django_auth_is_staff)
+def bulk_delete_posts(request, payload: BulkPostIDs):
+    qs = Blog.objects.filter(id__in=payload.post_ids)
+    count = qs.count()
+    qs.delete()
+    return {"detail": f"Deleted {count} posts successfully."}
+
+
+@post_router.patch("/posts/bulk-publish", auth=django_auth_is_staff)
+def bulk_publish_posts(request, payload: BulkPostIDs):
+    qs = Blog.objects.filter(id__in=payload.post_ids)
+    updated = qs.update(published=True)
+    return {"detail": f"Published {updated} posts successfully."}
+
+
+@post_router.patch("/posts/bulk-draft", auth=django_auth_is_staff)
+def bulk_draft_posts(request, payload: BulkPostIDs):
+    qs = Blog.objects.filter(id__in=payload.post_ids)
+    updated = qs.update(published=False)
+    return {"detail": f"Set {updated} posts to draft successfully."}
+
+
+@post_router.patch("/posts/bulk-cornerstone", auth=django_auth_is_staff)
+def bulk_cornerstone_posts(request, payload: BulkPostIDs):
+    qs = Blog.objects.filter(id__in=payload.post_ids)
+    updated = qs.update(cornerstone_content=True)
+    return {"detail": f"Marked {updated} posts as cornerstone successfully."}
+
+
+@post_router.patch("/posts/bulk-not-cornerstone", auth=django_auth_is_staff)
+def bulk_not_cornerstone_posts(request, payload: BulkPostIDs):
+    qs = Blog.objects.filter(id__in=payload.post_ids)
+    updated = qs.update(cornerstone_content=False)
+    return {"detail": f"Marked {updated} posts as not cornerstone successfully."}
+
+
+@post_router.patch("/posts/bulk-add-category", auth=django_auth_is_staff)
+def bulk_add_category(request, payload: BulkPostCategory):
+    category = get_object_or_404(Category, id=payload.category_id)
+    qs = Blog.objects.filter(id__in=payload.post_ids)
+    updated = qs.update(category=category)
+    return {"detail": f"Assigned category to {updated} posts successfully."}
+
+
+@post_router.patch("/posts/bulk-remove-category", auth=django_auth_is_staff)
+def bulk_remove_category(request, payload: BulkPostCategory):
+    qs = Blog.objects.filter(id__in=payload.post_ids, category_id=payload.category_id)
+    updated = qs.update(category=None)
+    return {"detail": f"Removed category from {updated} posts successfully."}
+
+
+@post_router.patch("/posts/bulk-add-tag", auth=django_auth_is_staff)
+def bulk_add_tag(request, payload: BulkPostTag):
+    qs = Blog.objects.filter(id__in=payload.post_ids)
+    tags = list(Tag.objects.filter(id__in=payload.tag_ids))
+    count = 0
+    for blog in qs:
+        blog.tags.add(*tags)
+        count += 1
+    return {"detail": f"Added tags to {count} posts successfully."}
+
+
+@post_router.patch("/posts/bulk-remove-tag", auth=django_auth_is_staff)
+def bulk_remove_tag(request, payload: BulkPostTag):
+    qs = Blog.objects.filter(id__in=payload.post_ids)
+    count = 0
+    for blog in qs:
+        blog.tags.remove(*payload.tag_ids)
+        count += 1
+    return {"detail": f"Removed tags from {count} posts successfully."}
+
 
 
 # ------------------------

@@ -20,6 +20,7 @@ api = NinjaAPI(
     title="DebugLife Blog API",
     version="1.0",
     description="API for the DebugLife Blog",
+    csrf=True,
 )
 
 @api.exception_handler(ValidationError)

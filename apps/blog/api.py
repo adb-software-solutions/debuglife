@@ -338,6 +338,8 @@ def update_seo_analysis(request, post_id: UUID, payload: BlogSEOAnalysisIn):
     blog = get_object_or_404(Blog, id=post_id)
     blog.seo_score = payload.seo_score
     blog.seo_analysis = payload.seo_analysis
+    blog.readability_score = payload.readability_score
+    blog.readability_analysis = payload.readability_analysis
     blog.save()
     return serialize_blog(blog)
 

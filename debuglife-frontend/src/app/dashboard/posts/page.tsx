@@ -13,6 +13,8 @@ import {Dialog, Transition, Menu} from "@headlessui/react";
 import {useSearchParams, useRouter} from "next/navigation";
 import useSWR from "swr";
 import {fetchWithCSRF} from "@/helpers/common/csrf";
+import { colorForStatus } from "@/helpers/common/colorForStatus";
+import { TrafficLight } from "@/types/contentAnalysis";
 
 // --- Updated Type Definitions ---
 interface Category {
@@ -40,6 +42,8 @@ interface Post {
     tags: Tag[];
     created_at: string; // ISO date string
     updated_at: string; // ISO date string
+    seo_score: number;
+    readability_score: number;
 }
 
 interface Pagination {
@@ -664,6 +668,12 @@ const PostsPage: React.FC = () => {
         setShowFilters(!showFilters);
     };
 
+    const getStatusColor = (score: number): TrafficLight => {
+        if (score >= 80) return "green";
+        if (score >= 50) return "amber";
+        return "red";
+    }
+
     if (error) return <div>Error loading posts</div>;
     if (!data) return <div>Loading posts...</div>;
 
@@ -674,9 +684,9 @@ const PostsPage: React.FC = () => {
                     <thead className="sticky top-0 z-20">
                         {/* Top Controls & Filters */}
                         <tr className="bg-gray-50 dark:bg-slate-900">
-                            <th colSpan={10} className="py-4">
+                            <th colSpan={12} className="py-4">
                                 <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                    <div className="text-left">
+                                    <div className="sticky left-0 text-left">
                                         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                                             Posts
                                         </h1>
@@ -686,7 +696,7 @@ const PostsPage: React.FC = () => {
                                             pagination.
                                         </p>
                                     </div>
-                                    <div className="mt-4 flex items-center space-x-4 sm:mt-0">
+                                    <div className="sticky right-0 mt-4 flex items-center space-x-4 sm:mt-0">
                                         {/* Bulk Actions */}
                                         {selectedPosts.length > 0 && (
                                             <div>
@@ -1111,6 +1121,18 @@ const PostsPage: React.FC = () => {
                                 scope="col"
                                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
                             >
+                                SEO Score
+                            </th>
+                            <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
+                                Readability Score
+                            </th>
+                            <th
+                                scope="col"
+                                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                            >
                                 Created
                             </th>
                             <th
@@ -1317,6 +1339,23 @@ const PostsPage: React.FC = () => {
                                             .join(", ")
                                     )}
                                 </td>
+                                {/* For the seo score and readability score we want a round traffic light, coloured green if score is >= 80, amber if score>= 50 else red 
+                                We can use colorForStatus to generate the css based off green, amber, red. It works like this colorForStatus("green")*/}
+                                <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
+                                    <span
+                                        className={`rounded-full inline-block h-4 w-4 ${colorForStatus(
+                                            getStatusColor(post.seo_score),
+                                        )}`}
+                                    />
+                                </td>
+                                <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
+                                    <span
+                                        className={`rounded-full inline-block h-4 w-4 ${colorForStatus(
+                                            getStatusColor(post.readability_score),
+                                        )}`}
+                                    />
+                                </td>
+
                                 <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">
                                     {new Date(
                                         post.created_at,

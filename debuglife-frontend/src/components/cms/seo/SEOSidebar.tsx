@@ -4,12 +4,7 @@ import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import useContentAnalysis from "@/hooks/useContentAnalysis";
 import { ContentAnalysisResult, TrafficLight } from "@/types/contentAnalysis";
-
-const colorForStatus = (status: TrafficLight) => {
-  if (status === "green") return "bg-green-500";
-  if (status === "amber") return "bg-yellow-500";
-  return "bg-red-500";
-};
+import { colorForStatus } from "../../../helpers/common/colorForStatus";
 
 const SEOSidebar: React.FC<{
   content: string;

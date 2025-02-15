@@ -33,6 +33,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY ./requirements/dev.txt /requirements.txt
 RUN pip install -r requirements.txt
 
+RUN python3.12 -m textblob.download_corpora
 RUN python3.12 -m spacy download en_core_web_sm
 
 # Copy project files

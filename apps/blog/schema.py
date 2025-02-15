@@ -56,6 +56,8 @@ class GalleryImageIn(Schema):
 class BlogSEOAnalysisIn(Schema):
     seo_score: int
     seo_analysis: Optional[Dict] = None
+    readability_score: int
+    readability_analysis: Optional[Dict] = None
 
 class GalleryImageOut(Schema):
     id: UUID

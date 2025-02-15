@@ -239,7 +239,6 @@ const PostsPage: React.FC = () => {
 
     const filterAuthors = useMemo(() => {
         if (!data) return [];
-        // Deduplicate if needed.
         const map = new Map<string, Author>();
         data.available_filters.authors.forEach((author: Author) => {
             map.set(author.id, author);
@@ -330,7 +329,6 @@ const PostsPage: React.FC = () => {
                         title: editValues.title,
                         slug: editValues.slug,
                         published: editValues.published,
-                        // Use the "all" data for inline editing:
                         category_id: editValues.category
                             ? editValues.category.id
                             : null,
@@ -358,63 +356,6 @@ const PostsPage: React.FC = () => {
     // ----- Delete Modal State & Functions -----
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [postToDelete, setPostToDelete] = useState<string | null>(null);
-
-    // Helper to toggle selection of all posts.
-    const [allItemsSelected, setAllItemsSelected] = useState(false);
-    const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
-    const selectAll = selectedPosts.length === data?.results.length;
-    const toggleSelectAll = () => {
-        if (selectAll) {
-            setSelectedPosts([]);
-        } else {
-            setSelectedPosts(data?.results.map((post) => post.id) || []);
-        }
-    };
-    const togglePostSelection = (postId: string) => {
-        if (selectedPosts.includes(postId)) {
-            setSelectedPosts(selectedPosts.filter((id) => id !== postId));
-        } else {
-            setSelectedPosts([...selectedPosts, postId]);
-        }
-    };
-
-    // Update markAllSelected to set allItemsSelected flag
-    const markAllSelected = async () => {
-        try {
-            const queryParamsAll = new URLSearchParams();
-            queryParamsAll.set("page", "1");
-            queryParamsAll.set(
-                "page_size",
-                String(data?.pagination.total_items),
-            );
-            queryParamsAll.set("sort_by", sortBy);
-            queryParamsAll.set("order", order);
-            if (publishedFilter)
-                queryParamsAll.set("published", publishedFilter);
-            if (categoryFilter) queryParamsAll.set("category", categoryFilter);
-            if (authorFilter) queryParamsAll.set("author", authorFilter);
-            tagFilters.forEach((tag) => queryParamsAll.append("tags", tag));
-
-            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts?${queryParamsAll.toString()}`;
-            const res = await fetchWithCSRF(url);
-            if (!res.ok) {
-                console.error("Error fetching all posts");
-                return;
-            }
-            const allData: PaginatedPostResponse = await res.json();
-            // Update selectedPosts with IDs from all posts returned.
-            setSelectedPosts(allData.results.map((post) => post.id));
-            setAllItemsSelected(true);
-        } catch (error) {
-            console.error("Error fetching all posts", error);
-        }
-    };
-
-    // Handler to cancel the full selection
-    const cancelAllSelection = () => {
-        setSelectedPosts([]);
-        setAllItemsSelected(false);
-    };
 
     const openDeleteModal = (postId: string) => {
         setPostToDelete(postId);
@@ -444,144 +385,172 @@ const PostsPage: React.FC = () => {
         closeDeleteModal();
     };
 
-    // Handle tags changes via our custom MultiSelectDropdown.
-    const handleTagsChange = (selected: string[]) => {
-        const currentParams = new URLSearchParams(window.location.search);
-        currentParams.delete("tags");
-        selected.forEach((val) => currentParams.append("tags", val));
-        router.push(`?${currentParams.toString()}`);
-    };
-
-    // ----- State to toggle filters visibility -----
-    const [showFilters, setShowFilters] = useState<boolean>(false);
-    const toggleFilters = () => {
-        if (showFilters) {
-            updateQueryParams({category: "", author: "", tags: null});
+    // ----- Selection Helpers -----
+    const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
+    const selectAll = selectedPosts.length === data?.results.length;
+    const toggleSelectAll = () => {
+        if (selectAll) {
+            setSelectedPosts([]);
+        } else {
+            setSelectedPosts(data?.results.map((post) => post.id) || []);
         }
-        setShowFilters(!showFilters);
+    };
+    const togglePostSelection = (postId: string) => {
+        if (selectedPosts.includes(postId)) {
+            setSelectedPosts(selectedPosts.filter((id) => id !== postId));
+        } else {
+            setSelectedPosts([...selectedPosts, postId]);
+        }
     };
 
-    // ----- Bulk Actions Handlers -----
-    const handleBulkDelete = async () => {
+    const [allItemsSelected, setAllItemsSelected] = useState(false);
+    const markAllSelected = async () => {
+        try {
+            const queryParamsAll = new URLSearchParams();
+            queryParamsAll.set("page", "1");
+            queryParamsAll.set(
+                "page_size",
+                String(data?.pagination.total_items),
+            );
+            queryParamsAll.set("sort_by", sortBy);
+            queryParamsAll.set("order", order);
+            if (publishedFilter)
+                queryParamsAll.set("published", publishedFilter);
+            if (categoryFilter) queryParamsAll.set("category", categoryFilter);
+            if (authorFilter) queryParamsAll.set("author", authorFilter);
+            tagFilters.forEach((tag) => queryParamsAll.append("tags", tag));
+
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts?${queryParamsAll.toString()}`;
+            const res = await fetchWithCSRF(url);
+            if (!res.ok) {
+                console.error("Error fetching all posts");
+                return;
+            }
+            const allData: PaginatedPostResponse = await res.json();
+            setSelectedPosts(allData.results.map((post) => post.id));
+            setAllItemsSelected(true);
+        } catch (error) {
+            console.error("Error fetching all posts", error);
+        }
+    };
+
+    const cancelAllSelection = () => {
+        setSelectedPosts([]);
+        setAllItemsSelected(false);
+    };
+
+    // ----- New Bulk Action Confirmation for delete, publish, draft & cornerstone -----
+    type BulkActionType =
+        | "delete"
+        | "publish"
+        | "draft"
+        | "cornerstone"
+        | "not-cornerstone"
+        | null;
+    const [bulkAction, setBulkAction] = useState<BulkActionType>(null);
+    const [showBulkActionModal, setShowBulkActionModal] = useState(false);
+
+    const handleBulkDelete = () => {
         if (selectedPosts.length === 0) return;
+        setBulkAction("delete");
+        setShowBulkActionModal(true);
+    };
+
+    const handleBulkPublish = () => {
+        if (selectedPosts.length === 0) return;
+        setBulkAction("publish");
+        setShowBulkActionModal(true);
+    };
+
+    const handleBulkDraft = () => {
+        if (selectedPosts.length === 0) return;
+        setBulkAction("draft");
+        setShowBulkActionModal(true);
+    };
+
+    const handleBulkCornerstone = () => {
+        if (selectedPosts.length === 0) return;
+        setBulkAction("cornerstone");
+        setShowBulkActionModal(true);
+    };
+
+    const handleBulkNotCornerstone = () => {
+        if (selectedPosts.length === 0) return;
+        setBulkAction("not-cornerstone");
+        setShowBulkActionModal(true);
+    };
+
+    const confirmBulkAction = async () => {
+        if (!bulkAction) return;
+
+        let endpoint = "";
+        let method = "PATCH";
+
+        switch (bulkAction) {
+            case "delete":
+                endpoint = "bulk-delete";
+                method = "DELETE";
+                break;
+            case "publish":
+                endpoint = "bulk-publish";
+                break;
+            case "draft":
+                endpoint = "bulk-draft";
+                break;
+            case "cornerstone":
+                endpoint = "bulk-cornerstone";
+                break;
+            case "not-cornerstone":
+                endpoint = "bulk-not-cornerstone";
+                break;
+            default:
+                return;
+        }
+
         try {
             const res = await fetchWithCSRF(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts/bulk-delete`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts/${endpoint}`,
                 {
-                    method: "POST",
+                    method,
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({post_ids: selectedPosts}),
                 },
             );
+
             if (res.ok) {
                 setSelectedPosts([]);
                 setAllItemsSelected(false);
                 mutate();
             } else {
-                console.error("Error deleting selected posts");
+                console.error(`Error performing bulk ${bulkAction}`);
             }
         } catch (error) {
-            console.error("Error deleting selected posts", error);
+            console.error(`Error performing bulk ${bulkAction}`, error);
         }
+
+        setShowBulkActionModal(false);
+        setBulkAction(null);
     };
 
-    const handleBulkPublish = async () => {
-        if (selectedPosts.length === 0) return;
-        try {
-            const res = await fetchWithCSRF(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts/bulk-publish`,
-                {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({post_ids: selectedPosts}),
-                },
-            );
-            if (res.ok) {
-                setSelectedPosts([]);
-                setAllItemsSelected(false);
-                mutate();
-            } else {
-                console.error("Error publishing selected posts");
-            }
-        } catch (error) {
-            console.error("Error publishing selected posts", error);
-        }
-    };
-
-    const handleBulkDraft = async () => {
-        if (selectedPosts.length === 0) return;
-        try {
-            const res = await fetchWithCSRF(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts/bulk-draft`,
-                {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({post_ids: selectedPosts}),
-                },
-            );
-            if (res.ok) {
-                setSelectedPosts([]);
-                setAllItemsSelected(false);
-                mutate();
-            } else {
-                console.error("Error drafting selected posts");
-            }
-        } catch (error) {
-            console.error("Error drafting selected posts", error);
-        }
-    };
-
-    const handleBulkCornerstone = async () => {
-        if (selectedPosts.length === 0) return;
-        try {
-            const res = await fetchWithCSRF(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts/bulk-cornerstone`,
-                {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({post_ids: selectedPosts}),
-                },
-            );
-            if (res.ok) {
-                setSelectedPosts([]);
-                setAllItemsSelected(false);
-                mutate();
-            } else {
-                console.error(
-                    "Error marking selected posts as cornerstone content",
-                );
-            }
-        } catch (error) {
-            console.error(
-                "Error marking selected posts as cornerstone content",
-                error,
-            );
-        }
-    };
-
-    // ----- Bulk Category Modal State & Handlers -----
+    // ----- Existing Bulk Category Modal State & Handlers -----
     const [showBulkCategoryModal, setShowBulkCategoryModal] = useState(false);
-    // "add" or "remove" action
     const [bulkCategoryAction, setBulkCategoryAction] = useState<
         "add" | "remove" | null
     >(null);
     const [bulkCategory, setBulkCategory] = useState<string>("");
 
-    // Open modal for adding category
     const handleBulkAddCategory = async () => {
         setBulkCategoryAction("add");
         setBulkCategory(""); // reset selection
         setShowBulkCategoryModal(true);
     };
 
-    // Open modal for removing category
     const handleBulkRemoveCategory = async () => {
         setBulkCategoryAction("remove");
         setBulkCategory("");
         setShowBulkCategoryModal(true);
     };
 
-    // Confirm category action in modal (uses allCategories)
     const handleBulkCategoryConfirm = async () => {
         if (
             !bulkCategory ||
@@ -624,30 +593,31 @@ const PostsPage: React.FC = () => {
         setShowBulkCategoryModal(false);
     };
 
-    // ----- Bulk Tag Modal State & Handlers -----
+    // ----- Existing Bulk Tag Modal State & Handlers -----
     const [showBulkTagModal, setShowBulkTagModal] = useState(false);
     const [bulkTagAction, setBulkTagAction] = useState<"add" | "remove" | null>(
         null,
     );
-    const [bulkTag, setBulkTag] = useState<string>("");
+    const [bulkTags, setBulkTags] = useState<string[]>([]);
 
-    // Open modal for adding tag
     const handleBulkAddTag = async () => {
         setBulkTagAction("add");
-        setBulkTag("");
+        setBulkTags([]); // reset the multi-select state
         setShowBulkTagModal(true);
     };
 
-    // Open modal for removing tag
     const handleBulkRemoveTag = async () => {
         setBulkTagAction("remove");
-        setBulkTag("");
+        setBulkTags([]); // reset the multi-select state
         setShowBulkTagModal(true);
     };
 
-    // Confirm tag action in modal (uses allTags)
     const handleBulkTagConfirm = async () => {
-        if (!bulkTag || selectedPosts.length === 0 || !bulkTagAction) {
+        if (
+            bulkTags.length === 0 ||
+            selectedPosts.length === 0 ||
+            !bulkTagAction
+        ) {
             return;
         }
         try {
@@ -660,7 +630,7 @@ const PostsPage: React.FC = () => {
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({
                         post_ids: selectedPosts,
-                        tag_id: bulkTag,
+                        tag_ids: bulkTags, // send an array of tag IDs
                     }),
                 },
             );
@@ -675,6 +645,23 @@ const PostsPage: React.FC = () => {
             console.error(`Error performing bulk ${bulkTagAction} tag`, error);
         }
         setShowBulkTagModal(false);
+    };
+
+    // ----- Handle tag filter changes via our custom MultiSelectDropdown -----
+    const handleTagsChange = (selected: string[]) => {
+        const currentParams = new URLSearchParams(window.location.search);
+        currentParams.delete("tags");
+        selected.forEach((val) => currentParams.append("tags", val));
+        router.push(`?${currentParams.toString()}`);
+    };
+
+    // ----- State to toggle filters visibility -----
+    const [showFilters, setShowFilters] = useState<boolean>(false);
+    const toggleFilters = () => {
+        if (showFilters) {
+            updateQueryParams({category: "", author: "", tags: null});
+        }
+        setShowFilters(!showFilters);
     };
 
     if (error) return <div>Error loading posts</div>;
@@ -738,7 +725,7 @@ const PostsPage: React.FC = () => {
                                                         enterTo="transform opacity-100 scale-100"
                                                         leave="transition ease-in duration-75"
                                                         leaveFrom="transform opacity-100 scale-100"
-                                                        leaveTo="transform opacity-0 scale-95"
+                                                        leaveTo="opacity-0 scale-95"
                                                     >
                                                         <Menu.Items className="ring-opacity-5 absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white ring-1 shadow-lg ring-black focus:outline-none dark:divide-gray-700 dark:bg-gray-800">
                                                             <div className="px-1 py-1">
@@ -754,7 +741,7 @@ const PostsPage: React.FC = () => {
                                                                                 active
                                                                                     ? "bg-sky-500 text-white dark:bg-sky-600"
                                                                                     : "text-gray-900 dark:text-gray-300"
-                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-left text-sm`}
                                                                         >
                                                                             Delete
                                                                         </button>
@@ -772,7 +759,7 @@ const PostsPage: React.FC = () => {
                                                                                 active
                                                                                     ? "bg-sky-500 text-white dark:bg-sky-600"
                                                                                     : "text-gray-900 dark:text-gray-300"
-                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-left text-sm`}
                                                                         >
                                                                             Mark
                                                                             as
@@ -792,87 +779,11 @@ const PostsPage: React.FC = () => {
                                                                                 active
                                                                                     ? "bg-sky-500 text-white dark:bg-sky-600"
                                                                                     : "text-gray-900 dark:text-gray-300"
-                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-left text-sm`}
                                                                         >
                                                                             Mark
                                                                             as
                                                                             draft
-                                                                        </button>
-                                                                    )}
-                                                                </Menu.Item>
-                                                                <Menu.Item>
-                                                                    {({
-                                                                        active,
-                                                                    }) => (
-                                                                        <button
-                                                                            onClick={
-                                                                                handleBulkAddCategory
-                                                                            }
-                                                                            className={`${
-                                                                                active
-                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                    : "text-gray-900 dark:text-gray-300"
-                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                        >
-                                                                            Add
-                                                                            category
-                                                                        </button>
-                                                                    )}
-                                                                </Menu.Item>
-                                                                <Menu.Item>
-                                                                    {({
-                                                                        active,
-                                                                    }) => (
-                                                                        <button
-                                                                            onClick={
-                                                                                handleBulkRemoveCategory
-                                                                            }
-                                                                            className={`${
-                                                                                active
-                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                    : "text-gray-900 dark:text-gray-300"
-                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                        >
-                                                                            Remove
-                                                                            category
-                                                                        </button>
-                                                                    )}
-                                                                </Menu.Item>
-                                                                <Menu.Item>
-                                                                    {({
-                                                                        active,
-                                                                    }) => (
-                                                                        <button
-                                                                            onClick={
-                                                                                handleBulkAddTag
-                                                                            }
-                                                                            className={`${
-                                                                                active
-                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                    : "text-gray-900 dark:text-gray-300"
-                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                        >
-                                                                            Add
-                                                                            tag
-                                                                        </button>
-                                                                    )}
-                                                                </Menu.Item>
-                                                                <Menu.Item>
-                                                                    {({
-                                                                        active,
-                                                                    }) => (
-                                                                        <button
-                                                                            onClick={
-                                                                                handleBulkRemoveTag
-                                                                            }
-                                                                            className={`${
-                                                                                active
-                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
-                                                                                    : "text-gray-900 dark:text-gray-300"
-                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                                                        >
-                                                                            Remove
-                                                                            tag
                                                                         </button>
                                                                     )}
                                                                 </Menu.Item>
@@ -888,12 +799,111 @@ const PostsPage: React.FC = () => {
                                                                                 active
                                                                                     ? "bg-sky-500 text-white dark:bg-sky-600"
                                                                                     : "text-gray-900 dark:text-gray-300"
-                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-left text-sm`}
                                                                         >
                                                                             Mark
                                                                             as
                                                                             cornerstone
                                                                             content
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                {/* Need opposite to maek as cornerstone */}
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={
+                                                                                handleBulkNotCornerstone
+                                                                            }
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-left text-sm`}
+                                                                        >
+                                                                            Mark
+                                                                            as
+                                                                            not
+                                                                            cornerstone
+                                                                            content
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={
+                                                                                handleBulkAddCategory
+                                                                            }
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-left text-sm`}
+                                                                        >
+                                                                            Add
+                                                                            Category
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={
+                                                                                handleBulkRemoveCategory
+                                                                            }
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-left text-sm`}
+                                                                        >
+                                                                            Remove
+                                                                            Category
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={
+                                                                                handleBulkAddTag
+                                                                            }
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-left text-sm`}
+                                                                        >
+                                                                            Add
+                                                                            Tag
+                                                                        </button>
+                                                                    )}
+                                                                </Menu.Item>
+                                                                <Menu.Item>
+                                                                    {({
+                                                                        active,
+                                                                    }) => (
+                                                                        <button
+                                                                            onClick={
+                                                                                handleBulkRemoveTag
+                                                                            }
+                                                                            className={`${
+                                                                                active
+                                                                                    ? "bg-sky-500 text-white dark:bg-sky-600"
+                                                                                    : "text-gray-900 dark:text-gray-300"
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-left text-sm`}
+                                                                        >
+                                                                            Remove
+                                                                            Tag
                                                                         </button>
                                                                     )}
                                                                 </Menu.Item>
@@ -1022,7 +1032,6 @@ const PostsPage: React.FC = () => {
                                         </div>
                                     </div>
                                 )}
-                                {/* Conditionally render a banner indicating full selection with cancel option */}
                                 {allItemsSelected && (
                                     <div className="mb-4 rounded bg-green-100 p-2 text-green-800">
                                         All {data.pagination.total_items} items
@@ -1438,7 +1447,75 @@ const PostsPage: React.FC = () => {
                 </Dialog>
             </Transition.Root>
 
-            {/* Bulk Category Modal */}
+            {/* Bulk Action Confirmation Modal for delete, publish, draft & cornerstone */}
+            <Transition.Root show={showBulkActionModal} as={Fragment}>
+                <Dialog
+                    as="div"
+                    className="fixed inset-0 z-50 flex items-center justify-center"
+                    onClose={() => setShowBulkActionModal(false)}
+                >
+                    <Transition.Child
+                        as={Fragment}
+                        enter="transition ease-out duration-300"
+                        enterFrom="opacity-0 scale-95"
+                        enterTo="opacity-100 scale-100"
+                        leave="transition ease-in duration-200"
+                        leaveFrom="opacity-100 scale-100"
+                        leaveTo="opacity-0 scale-95"
+                    >
+                        <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl transition-all dark:bg-gray-800">
+                            <Dialog.Title className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                                Confirm Bulk{" "}
+                                {bulkAction === "delete"
+                                    ? "Delete"
+                                    : bulkAction === "publish"
+                                      ? "Publish"
+                                      : bulkAction === "draft"
+                                        ? "Draft"
+                                        : bulkAction === "cornerstone"
+                                          ? "Cornerstone"
+                                          : ""}{" "}
+                                Action
+                            </Dialog.Title>
+                            <div className="mt-2">
+                                <p className="text-sm text-gray-500 dark:text-gray-300">
+                                    Are you sure you want to perform the bulk{" "}
+                                    {bulkAction === "delete"
+                                        ? "delete"
+                                        : bulkAction === "publish"
+                                          ? "publish"
+                                          : bulkAction === "draft"
+                                            ? "draft"
+                                            : bulkAction === "cornerstone"
+                                              ? "cornerstone"
+                                              : ""}{" "}
+                                    action on the selected posts?
+                                </p>
+                            </div>
+                            <div className="mt-4 flex justify-end space-x-3">
+                                <button
+                                    type="button"
+                                    className="rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+                                    onClick={() =>
+                                        setShowBulkActionModal(false)
+                                    }
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    className="rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700"
+                                    onClick={confirmBulkAction}
+                                >
+                                    Confirm
+                                </button>
+                            </div>
+                        </Dialog.Panel>
+                    </Transition.Child>
+                </Dialog>
+            </Transition.Root>
+
+            {/* Existing Bulk Category Modal */}
             <Transition.Root show={showBulkCategoryModal} as={Fragment}>
                 <Dialog
                     as="div"
@@ -1509,7 +1586,7 @@ const PostsPage: React.FC = () => {
                 </Dialog>
             </Transition.Root>
 
-            {/* Bulk Tag Modal */}
+            {/* Existing Bulk Tag Modal */}
             <Transition.Root show={showBulkTagModal} as={Fragment}>
                 <Dialog
                     as="div"
@@ -1532,29 +1609,18 @@ const PostsPage: React.FC = () => {
                                     className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100"
                                 >
                                     {bulkTagAction === "add"
-                                        ? "Add Tag to Selected Posts"
-                                        : "Remove Tag from Selected Posts"}
+                                        ? "Add Tags to Selected Posts"
+                                        : "Remove Tags from Selected Posts"}
                                 </Dialog.Title>
                                 <div className="mt-4">
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Select Tag:
+                                        Select Tags:
                                     </label>
-                                    <select
-                                        value={bulkTag}
-                                        onChange={(e) =>
-                                            setBulkTag(e.target.value)
-                                        }
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm dark:bg-gray-700 dark:text-gray-300"
-                                    >
-                                        <option value="">
-                                            -- Select a Tag --
-                                        </option>
-                                        {allTags.map((tag) => (
-                                            <option key={tag.id} value={tag.id}>
-                                                {tag.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <MultiSelectDropdown
+                                        options={allTags}
+                                        selected={bulkTags}
+                                        onChange={setBulkTags}
+                                    />
                                 </div>
                                 <div className="mt-6 flex justify-end space-x-3">
                                     <button

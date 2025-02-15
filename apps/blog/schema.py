@@ -111,9 +111,9 @@ class BlogPatch(Schema):
     author_id: Optional[UUID] = None
     keyphrase: Optional[str] = None
     cornerstone_content: Optional[bool] = None
-    seo_score: int
+    seo_score: Optional[int] = None
     seo_analysis: Optional[Dict] = None
-    readability_score: int
+    readability_score: Optional[int] = None
     readability_analysis: Optional[Dict] = None
 
 # ------------------------

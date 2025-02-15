@@ -678,7 +678,7 @@ const PostsPage: React.FC = () => {
     if (!data) return <div>Loading posts...</div>;
 
     return (
-        <div className="px-4 py-4 sm:px-6 lg:px-8">
+        <div className="px-4 sm:px-6 lg:px-8">
             <div className="max-h-[80vh] overflow-x-auto overflow-y-auto">
                 <table className="min-w-full divide-y divide-gray-300">
                     <thead className="sticky top-0 z-20">

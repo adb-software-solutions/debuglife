@@ -17,12 +17,13 @@ const SEOSidebar: React.FC<{
   keyphrase: string;
   blogId?: string;
   cornerstone?: boolean;
-}> = ({ content, title, keyphrase, blogId, cornerstone }) => {
-  const analysis: ContentAnalysisResult = useContentAnalysis({ content, title, keyphrase, blogId, cornerstone });
+  analysis?: ContentAnalysisResult;
+}> = ({ content, title, keyphrase, blogId, cornerstone, analysis }) => {
+  const computedAnalysis = analysis || useContentAnalysis({ content, title, keyphrase, blogId, cornerstone });
   const overallTrafficLight: TrafficLight =
-    analysis.seoScore >= 80 ? "green" : analysis.seoScore >= 50 ? "amber" : "red";
+  computedAnalysis.seoScore >= 80 ? "green" : computedAnalysis.seoScore >= 50 ? "amber" : "red";
   const readabilityTrafficLight: TrafficLight =
-    analysis.readabilityScore >= 80 ? "green" : analysis.readabilityScore >= 50 ? "amber" : "red";
+  computedAnalysis.readabilityScore >= 80 ? "green" : computedAnalysis.readabilityScore >= 50 ? "amber" : "red";
 
   // Common header cell classes for consistent widths
   const assessmentHeaderClass =
@@ -39,12 +40,12 @@ const SEOSidebar: React.FC<{
         <div className="flex items-center mb-2 sm:mb-0">
           <div className={`w-4 h-4 rounded-full ${colorForStatus(overallTrafficLight)} mr-2`} />
           <span className="font-medium">Overall SEO Score:</span>
-          <span className="ml-2">{analysis.seoScore} / 100</span>
+          <span className="ml-2">{computedAnalysis.seoScore} / 100</span>
         </div>
         <div className="flex items-center">
           <div className={`w-4 h-4 rounded-full ${colorForStatus(readabilityTrafficLight)} mr-2`} />
           <span className="font-medium">Readability Score:</span>
-          <span className="ml-2">{analysis.readabilityScore} / 100</span>
+          <span className="ml-2">{computedAnalysis.readabilityScore} / 100</span>
         </div>
       </div>
 
@@ -70,7 +71,7 @@ const SEOSidebar: React.FC<{
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-slate-800">
-                    {Object.entries(analysis.seoDetails.assessments).map(([key, assess]) => {
+                    {Object.entries(computedAnalysis.seoDetails.assessments).map(([key, assess]) => {
                       const status: TrafficLight = assess.score === 9 ? "green" : assess.score === 3 ? "amber" : "red";
                       return (
                         <tr key={key} className="border-t border-gray-300">
@@ -114,7 +115,7 @@ const SEOSidebar: React.FC<{
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-slate-800">
-                    {Object.entries(analysis.readabilityDetails.assessments).map(([checkName, assessment]) => {
+                    {Object.entries(computedAnalysis.readabilityDetails.assessments).map(([checkName, assessment]) => {
                       const status: TrafficLight = assessment.score === 9 ? "green" : assessment.score === 3 ? "amber" : "red";
                       return (
                         <tr key={checkName} className="border-t border-gray-300">

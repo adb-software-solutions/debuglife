@@ -8,6 +8,8 @@ import { MilkdownEditor as MarkdownEditor } from "@/components/cms/ui/markdown/M
 import { MultiSelectDropdown } from "@/components/cms/ui/dropdowns/MultiSelectDropdown";
 import { fetchWithCSRF } from "@/helpers/common/csrf";
 import SEOSidebar from "@/components/cms/seo/SEOSidebar";
+import useContentAnalysis from "@/hooks/useContentAnalysis";
+import { ContentAnalysisResult } from "@/types/contentAnalysis";
 
 // ----- Helper: slugify -----
 function slugify(text: string): string {
@@ -122,6 +124,16 @@ const NewPostPage: React.FC = () => {
       published,
       category_id: category,
       tag_ids: tags,
+      keyphrase,
+      cornerstone: cornerstoneContent,
+      seo_score: analysis.seoScore,
+      readability_score: analysis.readabilityScore,
+      seo_analysis: {
+        details: analysis.seoDetails.assessments,
+      },
+      readability_analysis: {
+        details: analysis.readabilityDetails.assessments,
+      },
     };
 
     // Create FormData and append payload and file.
@@ -152,6 +164,8 @@ const NewPostPage: React.FC = () => {
       setErrorMessage("An unexpected error occurred. Please try again later.");
     }
   };
+
+  const analysis: ContentAnalysisResult = useContentAnalysis({ content, title, keyphrase, blogId: undefined, cornerstone: cornerstoneContent });
 
   return (
     <div className="mx-auto px-4 py-6 sm:px-6 lg:px-8">
@@ -370,7 +384,7 @@ const NewPostPage: React.FC = () => {
               >
                 <MarkdownEditor markdown={content} setMarkdown={handleContentChange} />
               </div>
-            </div><SEOSidebar content={content} title={title} keyphrase={keyphrase} cornerstone={cornerstoneContent} />
+            </div><SEOSidebar content={content} title={title} keyphrase={keyphrase} cornerstone={cornerstoneContent} analysis={analysis}/>
             {/* Media Card */}
             <div className="rounded-md bg-white p-6 shadow dark:bg-slate-800">
               <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">

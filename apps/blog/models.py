@@ -86,6 +86,7 @@ class Blog(models.Model):
     seo_analysis = models.JSONField(blank=True, null=True)
     readability_score = models.IntegerField(default=0)
     readability_analysis = models.JSONField(blank=True, null=True)
+    cornerstone_content = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created_at']

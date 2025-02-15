@@ -6,7 +6,7 @@
 -r mypy.in
 
 # For sorting imports
-isort==5.13.2
+isort==6.0.0
 
 # for pep8 linter
 pycodestyle==2.12.1

@@ -1133,14 +1133,20 @@ const PostsPage: React.FC = () => {
                             <th
                                 scope="col"
                                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                onClick={() => updateSorting("created_at")}
                             >
-                                Created
+                                Created{" "}
+                                {sortBy === fieldMapping["created_at"] &&
+                                    (order === "asc" ? "↑" : "↓")}
                             </th>
                             <th
                                 scope="col"
                                 className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                                onClick={() => updateSorting("updated_at")}
                             >
-                                Updated
+                                Updated{" "}
+                                {sortBy === fieldMapping["updated_at"] &&
+                                    (order === "asc" ? "↑" : "↓")}
                             </th>
                             <th
                                 scope="col"

@@ -18,7 +18,7 @@ export const updateSEOAnalysis = async (
   };
 
   const res = await fetchWithCSRF(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${blogId}/seo`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts/${blogId}/seo`,
     {
       method: "POST",
       headers: {

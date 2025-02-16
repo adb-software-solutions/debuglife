@@ -15,6 +15,7 @@ import useSWR from "swr";
 import {fetchWithCSRF} from "@/helpers/common/csrf";
 import {colorForStatus} from "@/helpers/common/colorForStatus";
 import {TrafficLight} from "@/types/contentAnalysis";
+import Link from "next/link";
 
 // --- Updated Type Definitions ---
 interface Category {
@@ -1181,7 +1182,12 @@ const PostsPage: React.FC = () => {
                                             className="w-full rounded border bg-white p-1 text-sm dark:bg-gray-800 dark:text-gray-300"
                                         />
                                     ) : (
-                                        post.title
+                                        <Link
+                                            href={`/dashboard/posts/${post.id}`}
+                                            passHref
+                                        >
+                                        {post.title}
+                                        </Link>
                                     )}
                                 </td>
                                 <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">

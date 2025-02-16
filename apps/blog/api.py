@@ -1,5 +1,5 @@
 # blog/views.py (or wherever your endpoints are defined)
-from ninja import Router, Query, File, UploadedFile
+from ninja import Form, Router, Query, File, UploadedFile
 from typing import List, Optional
 from django.shortcuts import get_object_or_404
 from uuid import UUID
@@ -92,20 +92,22 @@ def serialize_gallery_image(request, image: GalleryImage) -> dict:
         "uploaded_at": image.uploaded_at.isoformat() if image.uploaded_at else None,
     }
 
-def serialize_blog(blog: Blog) -> dict:
+def serialize_blog(request, blog: Blog) -> dict:
     return {
         "id": blog.id,
         "title": blog.title,
         "slug": blog.slug,
         "excerpt": blog.excerpt,
         "content": blog.content,
-        "featured_image": blog.featured_image.url if blog.featured_image else None,
+        "featured_image": request.build_absolute_uri(blog.featured_image.url) if blog.featured_image else None,
         "published": blog.published,
         "created_at": blog.created_at.isoformat() if blog.created_at else None,
         "updated_at": blog.updated_at.isoformat() if blog.updated_at else None,
         "category": serialize_category(blog.category) if blog.category else None,
         "tags": [serialize_tag(tag) for tag in blog.tags.all()],
         "author": serialize_author(blog.author) if blog.author else None,
+        "keyphrase": blog.keyphrase,
+        "cornerstone_content": blog.cornerstone_content,
         "seo_score": blog.seo_score,
         "readability_score": blog.readability_score,
     }
@@ -198,7 +200,7 @@ def list_blogs(
 
     # --- Pagination ---
     items, total_items, total_pages = paginate_queryset(qs, page, page_size)
-    serialized_items = [serialize_blog(item) for item in items]
+    serialized_items = [serialize_blog(request, item) for item in items]
     pagination = {
         "page": page,
         "page_size": page_size,
@@ -221,12 +223,11 @@ def list_blogs(
 @post_router.get("/posts/{uuid:post_id}", response=BlogOut)
 def get_blog(request, post_id: UUID):
     blog = get_object_or_404(Blog, id=post_id)
-    return serialize_blog(blog)
+    return serialize_blog(request, blog)
 
 
 @post_router.post("/posts", response=BlogOut, auth=django_auth_is_staff)
 def create_blog(request, payload: BlogIn, file: File[UploadedFile]):
-    logger.info(f"Blog Payload: {payload}")
 
     # Look up the category using the UUID from the payload.
     category = get_object_or_404(Category, id=payload.category_id)
@@ -273,12 +274,11 @@ def create_blog(request, payload: BlogIn, file: File[UploadedFile]):
         blog.featured_image = file
         blog.save()
 
-    return serialize_blog(blog)
+    return serialize_blog(request,blog)
 
 
 @post_router.put("/posts/{uuid:post_id}", response=BlogOut, auth=django_auth_is_staff)
 def update_blog(request, post_id: UUID, payload: BlogIn):
-    logger.info(f"Blog Payload: {payload}")
 
     blog = get_object_or_404(Blog, id=post_id)
     if payload.slug:
@@ -298,14 +298,26 @@ def update_blog(request, post_id: UUID, payload: BlogIn):
     blog.readability_analysis = payload.readability_analysis
     blog.cornerstone_content = payload.cornerstone_content
     blog.category = get_object_or_404(Category, id=payload.category_id)
-    blog.author = get_object_or_404(Author, id=payload.author_id) if payload.author_id else None
-    blog.save()
     if payload.tag_ids:
         tags = Tag.objects.filter(id__in=payload.tag_ids)
         blog.tags.set(tags)
     else:
         blog.tags.clear()
-    return serialize_blog(blog)
+    
+    blog.save()
+    
+    return serialize_blog(request,blog)
+
+@post_router.post("/posts/{post_id}/featured-image", response=BlogOut, auth=django_auth_is_staff)
+def update_featured_image(
+    request,
+    post_id: UUID,
+    file: UploadedFile = File(...),
+):
+    blog = get_object_or_404(Blog, id=post_id)
+    blog.featured_image = file
+    blog.save()
+    return serialize_blog(request, blog)
 
 
 @post_router.patch("/posts/{uuid:post_id}", response=BlogOut, auth=django_auth_is_staff)
@@ -352,7 +364,7 @@ def patch_blog(request, post_id: UUID, payload: BlogPatch):
 
     # Save the blog after applying partial updates.
     blog.save()
-    return serialize_blog(blog)
+    return serialize_blog(request,blog)
 
 
 @post_router.post("/posts/{post_id}/seo", response=BlogOut, auth=django_auth_is_staff)
@@ -363,7 +375,7 @@ def update_seo_analysis(request, post_id: UUID, payload: BlogSEOAnalysisIn):
     blog.readability_score = payload.readability_score
     blog.readability_analysis = payload.readability_analysis
     blog.save()
-    return serialize_blog(blog)
+    return serialize_blog(request,blog)
 
 
 @post_router.delete("/posts/{uuid:post_id}", auth=django_auth_is_staff)
@@ -377,7 +389,7 @@ def delete_blog(request, post_id: UUID):
 def related_blogs(request, post_id: UUID):
     blog = get_object_or_404(Blog, id=post_id)
     related = blog.get_related_posts()
-    return [serialize_blog(item) for item in related]
+    return [serialize_blog(request,item) for item in related]
 
 
 # Dedicated endpoints for filtering by category or tag (with pagination)
@@ -385,7 +397,7 @@ def related_blogs(request, post_id: UUID):
 def blogs_by_category(request, category_id: UUID, page: int = 1, page_size: int = 25):
     qs = Blog.objects.filter(category_id=category_id)
     items, total_items, total_pages = paginate_queryset(qs, page, page_size)
-    serialized_items = [serialize_blog(item) for item in items]
+    serialized_items = [serialize_blog(request,item) for item in items]
     pagination = {
         "page": page,
         "page_size": page_size,
@@ -403,7 +415,7 @@ def blogs_by_category(request, category_id: UUID, page: int = 1, page_size: int 
 def blogs_by_tag(request, tag_id: UUID, page: int = 1, page_size: int = 25):
     qs = Blog.objects.filter(tags__id=tag_id).distinct()
     items, total_items, total_pages = paginate_queryset(qs, page, page_size)
-    serialized_items = [serialize_blog(item) for item in items]
+    serialized_items = [serialize_blog(request,item) for item in items]
     pagination = {
         "page": page,
         "page_size": page_size,

@@ -1,32 +1,39 @@
-// src/app/dashboard/layout.tsx
 "use client";
 
-import {ReactNode} from "react";
-import AuthGuard from "@/guards/AuthGuard";
+// DashboardLayout.tsx
+import React, {useRef, useState, useEffect, ReactNode} from "react";
 import Navbar from "@/components/cms/navigation/NavBar";
 import Sidebar from "@/components/cms/navigation/Sidebar";
+import AuthGuard from "@/guards/AuthGuard";
 import {MilkdownProvider} from "@milkdown/react";
 import {ProsemirrorAdapterProvider} from "@prosemirror-adapter/react";
 
-interface DashboardLayoutProps {
-    children: ReactNode;
-}
+const DashboardLayout = ({children}: {children: ReactNode}) => {
+    const [navbarHeight, setNavbarHeight] = useState(0);
 
-const DashboardLayout = ({children}: DashboardLayoutProps) => {
+    const handleNavbarRef = (node: HTMLDivElement | null) => {
+        if (node) {
+            const {height} = node.getBoundingClientRect();
+            setNavbarHeight(height);
+        }
+    };
+
     return (
         <AuthGuard>
             <MilkdownProvider>
                 <ProsemirrorAdapterProvider>
-                    <div className="flex h-screen">
+                    <div
+                        className="flex h-screen"
+                        style={
+                            {
+                                "--total-subtraction": `${navbarHeight}px`,
+                            } as React.CSSProperties
+                        }
+                    >
                         <Sidebar />
                         <div className="flex min-w-0 flex-1 flex-col">
-                            <Navbar />
-                            <main className="overflow-auto p-4">
-                                {/* Wrap table in an overflow container */}
-                                <div className="overflow-x-auto">
-                                    {children}
-                                </div>
-                            </main>
+                            <Navbar ref={handleNavbarRef} />
+                            <main className="overflow-auto">{children}</main>
                         </div>
                     </div>
                 </ProsemirrorAdapterProvider>

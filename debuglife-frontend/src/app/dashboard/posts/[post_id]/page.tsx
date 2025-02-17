@@ -4,12 +4,18 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import useSWR from "swr";
 import { Switch } from "@headlessui/react";
-import { MilkdownEditor as MarkdownEditor } from "@/components/cms/ui/markdown/MarkdownEditor";
 import { MultiSelectDropdown } from "@/components/cms/ui/dropdowns/MultiSelectDropdown";
 import { fetchWithCSRF } from "@/helpers/common/csrf";
 import SEOSidebar from "@/components/cms/seo/SEOSidebar";
 import useContentAnalysis from "@/hooks/useContentAnalysis";
 import { ContentAnalysisResult } from "@/types/contentAnalysis";
+
+import dynamic from 'next/dynamic';
+
+const MilkdownEditor = dynamic(() => import('@/components/cms/ui/markdown/MarkdownEditor'), {
+  ssr: false,
+});
+
 
 // ----- Helper: slugify -----
 function slugify(text: string): string {
@@ -501,7 +507,7 @@ const EditPostPage: React.FC = () => {
                 className="rounded-md border border-gray-300 shadow-sm focus-within:border-sky-300 focus-within:ring focus-within:ring-sky-200 dark:bg-slate-700"
               >
                 {content ? (
-                  <MarkdownEditor
+                  <MilkdownEditor
                     markdown={content}
                     setMarkdown={handleContentChange}
                   />

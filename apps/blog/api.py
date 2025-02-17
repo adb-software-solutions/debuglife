@@ -167,7 +167,7 @@ def list_blogs(
     authors_list = [
         {
             "id": row["author__id"],
-            "full_name": f"{row['author__user__first_name']} {row['author__user__last_name']}".strip(),
+            "name": f"{row['author__user__first_name']} {row['author__user__last_name']}".strip(),
         }
         for row in available_authors
     ]
@@ -308,7 +308,7 @@ def update_blog(request, post_id: UUID, payload: BlogIn):
     
     return serialize_blog(request,blog)
 
-@post_router.post("/posts/{post_id}/featured-image", response=BlogOut, auth=django_auth_is_staff)
+@post_router.post("/posts/{uuid:post_id}/featured-image", response=BlogOut, auth=django_auth_is_staff)
 def update_featured_image(
     request,
     post_id: UUID,
@@ -367,7 +367,7 @@ def patch_blog(request, post_id: UUID, payload: BlogPatch):
     return serialize_blog(request,blog)
 
 
-@post_router.post("/posts/{post_id}/seo", response=BlogOut, auth=django_auth_is_staff)
+@post_router.post("/posts/{uuid:post_id}/seo", response=BlogOut, auth=django_auth_is_staff)
 def update_seo_analysis(request, post_id: UUID, payload: BlogSEOAnalysisIn):
     blog = get_object_or_404(Blog, id=post_id)
     blog.seo_score = payload.seo_score
@@ -385,7 +385,7 @@ def delete_blog(request, post_id: UUID):
     return {"detail": "Deleted successfully."}
 
 
-@post_router.get("/posts/{post_id}/related", response=List[BlogOut])
+@post_router.get("/posts/{uuid:post_id}/related", response=List[BlogOut])
 def related_blogs(request, post_id: UUID):
     blog = get_object_or_404(Blog, id=post_id)
     related = blog.get_related_posts()

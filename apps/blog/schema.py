@@ -127,7 +127,7 @@ class CategoryFilter(Schema):
 
 class AuthorFilter(Schema):
     id: UUID
-    full_name: Optional[str] = None
+    name: Optional[str] = None
 
 class TagFilter(Schema):
     id: UUID

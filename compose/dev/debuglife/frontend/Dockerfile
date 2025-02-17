@@ -21,7 +21,7 @@ COPY ./debuglife-frontend/package.json ./package.json
 COPY ./debuglife-frontend/package-lock.json ./package-lock.json
 
 # Install dependencies
-RUN npm ci --include=optional
+RUN npm install
 
 # Expose port
 EXPOSE 3000

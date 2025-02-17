@@ -26,6 +26,7 @@ services:
     image: debuglife-frontend
     volumes:
       - .:/opt/debuglife
+      - /opt/debuglife/debuglife-frontend/node_modules
     ports:
       - "3000:3000"
     depends_on:

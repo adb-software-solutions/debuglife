@@ -54,7 +54,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
             <head>
                 <meta httpEquiv="Permissions-Policy" content="picture-in-picture '*'"/>
                 <link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
-                <GoogleAdsenseComponent />
+                {/* <GoogleAdsenseComponent /> */}
             </head>
             <body className="h-full bg-white dark:bg-slate-900">
                 <Providers>

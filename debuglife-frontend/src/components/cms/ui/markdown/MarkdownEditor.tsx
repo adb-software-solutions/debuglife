@@ -3,7 +3,6 @@ import {Milkdown, useEditor} from "@milkdown/react";
 import {emoji} from "@milkdown/plugin-emoji";
 import {Crepe} from "@milkdown/crepe";
 import {fetchWithCSRF} from "@/helpers/common/csrf";
-import {useRef, useEffect} from "react";
 
 interface MilkdownEditorProps {
     markdown: string;
@@ -14,9 +13,6 @@ export const MilkdownEditor: FC<MilkdownEditorProps> = ({
     markdown,
     setMarkdown,
 }) => {
-    // Store the Crepe instance so we can manually destroy it later.
-    const editorInstance = useRef<Crepe | null>(null);
-
     useEditor((root) => {
         const crepe = new Crepe({
             root,
@@ -70,19 +66,7 @@ export const MilkdownEditor: FC<MilkdownEditorProps> = ({
             });
         });
 
-        // Save the instance for cleanup.
-        editorInstance.current = crepe;
         return crepe;
-    }, []);
-
-    // When the component unmounts, manually destroy the Crepe instance.
-    useEffect(() => {
-        return () => {
-            if (editorInstance.current) {
-                editorInstance.current.destroy();
-                editorInstance.current = null;
-            }
-        };
     }, []);
 
     return <Milkdown />;

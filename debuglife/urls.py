@@ -11,7 +11,7 @@ from apps.blog.api import author_router as author_router
 from apps.blog.api import gallery_router as gallery_router
 from apps.blog.apis.seo import seo_nlp_router as seo_nlp_router
 from authentication.api import auth_router as auth_router
-from pydantic import ValidationError
+from ninja.errors import HttpError, ValidationError
 import logging
 
 logger = logging.getLogger(__name__)
@@ -36,6 +36,21 @@ def custom_validation_errors(request, exc):
         {"detail": exc.errors},
         status=422,
     )
+
+@api.exception_handler(HttpError)
+def custom_http_errors(request, exc):
+    # Log detailed information
+    logger.info(f"HTTP error on {request.method} {request.path}")
+    logger.info(f"Request body: {request.body.decode('utf-8')}")
+    logger.info(f"HTTP error: {exc}")
+
+    # Return the standard response
+    return api.create_response(
+        request,
+        {"detail": str(exc)},
+        status=exc.status_code,
+    )
+
 
 
 blog_router = Router(tags=["Blog"])

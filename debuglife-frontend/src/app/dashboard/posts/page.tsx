@@ -3,7 +3,8 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import useSWR from "swr";
-import { DataTable } from "@/packages/nextjs-tailwind-table/src";
+// import { DataTable } from "@/packages/nextjs-tailwind-table/src/next";
+import { DataTable } from "tablewind/next";
 import { fetchWithCSRF } from "@/helpers/common/csrf";
 import { colorForStatus } from "@/helpers/common/colorForStatus";
 import { Dialog, Transition } from "@headlessui/react";
@@ -529,6 +530,7 @@ const PostsPage: React.FC = () => {
   return (
     <>
       <DataTable<Post>
+        router={router}
         pageTitle="Posts"
         pageSubtitle="Manage your blog posts."
         key={refreshKey}

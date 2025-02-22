@@ -10,8 +10,15 @@ interface AuthGuardProps {
 }
 
 const AuthGuard = ({children}: AuthGuardProps) => {
-    const {user, loading} = useAuth();
+    const {user, loading, refreshUser} = useAuth();
     const router = useRouter();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await refreshUser();
+        };
+        fetchData();
+    }, []);
 
     useEffect(() => {
         if (!loading && !user) {

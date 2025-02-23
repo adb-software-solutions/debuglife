@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 @source '../../node_modules/tablewind';
+@import 'tablewind/tablewind.css';
+
+/* :root {
+  --default-dark-tablewind-accent: theme('colors.sky.300');
+} */
 
 /* Wrap Milkdown’s styles in the base layer */
 @layer base {

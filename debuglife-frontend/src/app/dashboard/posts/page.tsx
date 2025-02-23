@@ -3,7 +3,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import useSWR from "swr";
-// import { DataTable } from "@/packages/nextjs-tailwind-table/src/next";
 import { DataTable } from "tablewind/next";
 import { fetchWithCSRF } from "@/helpers/common/csrf";
 import { colorForStatus } from "@/helpers/common/colorForStatus";

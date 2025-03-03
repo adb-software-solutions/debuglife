@@ -25,7 +25,7 @@ asgiref==3.8.1 \
 async-timeout==5.0.1 \
     --hash=sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c \
     --hash=sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 billiard==4.2.0 \
     --hash=sha256:07aa978b308f334ff8282bd4a746e681b3513db5c9a514cbdd810cbbdc19714d \
     --hash=sha256:9a3c3184cb275aa17a732f93f65b20c525d3d9f253722d26a82194803ade5a2c
@@ -72,13 +72,13 @@ celery==5.4.0 \
     --hash=sha256:369631eb580cf8c51a82721ec538684994f8277637edde2dfc0dacd73ed97f64 \
     --hash=sha256:504a19140e8d3029d5acad88330c541d4c3f64c789d85f94756762d8bca7e706
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   flower
 certifi==2025.1.31 \
     --hash=sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651 \
     --hash=sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   requests
 cffi==1.15.1 \
     --hash=sha256:00a9ed42e88df81ffae7a8ab6d9356b371399b91dbdf0c3cb1e84c03a13aceb5 \
@@ -256,35 +256,43 @@ confection==0.1.5 \
     # via
     #   thinc
     #   weasel
-cryptography==44.0.0 \
-    --hash=sha256:1923cb251c04be85eec9fda837661c67c1049063305d6be5721643c22dd4e2b7 \
-    --hash=sha256:37d76e6863da3774cd9db5b409a9ecfd2c71c981c38788d3fcfaf177f447b731 \
-    --hash=sha256:3c672a53c0fb4725a29c303be906d3c1fa99c32f58abe008a82705f9ee96f40b \
-    --hash=sha256:404fdc66ee5f83a1388be54300ae978b2efd538018de18556dde92575e05defc \
-    --hash=sha256:4ac4c9f37eba52cb6fbeaf5b59c152ea976726b865bd4cf87883a7e7006cc543 \
-    --hash=sha256:62901fb618f74d7d81bf408c8719e9ec14d863086efe4185afd07c352aee1d2c \
-    --hash=sha256:660cb7312a08bc38be15b696462fa7cc7cd85c3ed9c576e81f4dc4d8b2b31591 \
-    --hash=sha256:708ee5f1bafe76d041b53a4f95eb28cdeb8d18da17e597d46d7833ee59b97ede \
-    --hash=sha256:761817a3377ef15ac23cd7834715081791d4ec77f9297ee694ca1ee9c2c7e5eb \
-    --hash=sha256:831c3c4d0774e488fdc83a1923b49b9957d33287de923d58ebd3cec47a0ae43f \
-    --hash=sha256:84111ad4ff3f6253820e6d3e58be2cc2a00adb29335d4cacb5ab4d4d34f2a123 \
-    --hash=sha256:8b3e6eae66cf54701ee7d9c83c30ac0a1e3fa17be486033000f2a73a12ab507c \
-    --hash=sha256:9e6fc8a08e116fb7c7dd1f040074c9d7b51d74a8ea40d4df2fc7aa08b76b9e6c \
-    --hash=sha256:a01956ddfa0a6790d594f5b34fc1bfa6098aca434696a03cfdbe469b8ed79285 \
-    --hash=sha256:abc998e0c0eee3c8a1904221d3f67dcfa76422b23620173e28c11d3e626c21bd \
-    --hash=sha256:b15492a11f9e1b62ba9d73c210e2416724633167de94607ec6069ef724fad092 \
-    --hash=sha256:be4ce505894d15d5c5037167ffb7f0ae90b7be6f2a98f9a5c3442395501c32fa \
-    --hash=sha256:c5eb858beed7835e5ad1faba59e865109f3e52b3783b9ac21e7e47dc5554e289 \
-    --hash=sha256:cd4e834f340b4293430701e772ec543b0fbe6c2dea510a5286fe0acabe153a02 \
-    --hash=sha256:d2436114e46b36d00f8b72ff57e598978b37399d2786fd39793c36c6d5cb1c64 \
-    --hash=sha256:eb33480f1bad5b78233b0ad3e1b0be21e8ef1da745d8d2aecbb20671658b9053 \
-    --hash=sha256:eca27345e1214d1b9f9490d200f9db5a874479be914199194e746c893788d417 \
-    --hash=sha256:ed3534eb1090483c96178fcb0f8893719d96d5274dfde98aa6add34614e97c8e \
-    --hash=sha256:f3f6fdfa89ee2d9d496e2c087cebef9d4fcbb0ad63c40e821b39f74bf48d9c5e \
-    --hash=sha256:f53c2c87e0fb4b0c00fa9571082a057e37690a8f12233306161c8f4b819960b7 \
-    --hash=sha256:f5e7cb1e5e56ca0933b4873c0220a78b773b24d40d186b6738080b73d3d0a756 \
-    --hash=sha256:f677e1268c4e23420c3acade68fac427fffcb8d19d7df95ed7ad17cdef8404f4
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+cryptography==44.0.2 \
+    --hash=sha256:04abd71114848aa25edb28e225ab5f268096f44cf0127f3d36975bdf1bdf3390 \
+    --hash=sha256:0529b1d5a0105dd3731fa65680b45ce49da4d8115ea76e9da77a875396727b41 \
+    --hash=sha256:1bc312dfb7a6e5d66082c87c34c8a62176e684b6fe3d90fcfe1568de675e6688 \
+    --hash=sha256:268e4e9b177c76d569e8a145a6939eca9a5fec658c932348598818acf31ae9a5 \
+    --hash=sha256:29ecec49f3ba3f3849362854b7253a9f59799e3763b0c9d0826259a88efa02f1 \
+    --hash=sha256:2bf7bf75f7df9715f810d1b038870309342bff3069c5bd8c6b96128cb158668d \
+    --hash=sha256:3b721b8b4d948b218c88cb8c45a01793483821e709afe5f622861fc6182b20a7 \
+    --hash=sha256:3c00b6b757b32ce0f62c574b78b939afab9eecaf597c4d624caca4f9e71e7843 \
+    --hash=sha256:3dc62975e31617badc19a906481deacdeb80b4bb454394b4098e3f2525a488c5 \
+    --hash=sha256:4973da6ca3db4405c54cd0b26d328be54c7747e89e284fcff166132eb7bccc9c \
+    --hash=sha256:4e389622b6927d8133f314949a9812972711a111d577a5d1f4bee5e58736b80a \
+    --hash=sha256:51e4de3af4ec3899d6d178a8c005226491c27c4ba84101bfb59c901e10ca9f79 \
+    --hash=sha256:5f6f90b72d8ccadb9c6e311c775c8305381db88374c65fa1a68250aa8a9cb3a6 \
+    --hash=sha256:6210c05941994290f3f7f175a4a57dbbb2afd9273657614c506d5976db061181 \
+    --hash=sha256:6f101b1f780f7fc613d040ca4bdf835c6ef3b00e9bd7125a4255ec574c7916e4 \
+    --hash=sha256:7bdcd82189759aba3816d1f729ce42ffded1ac304c151d0a8e89b9996ab863d5 \
+    --hash=sha256:7ca25849404be2f8e4b3c59483d9d3c51298a22c1c61a0e84415104dacaf5562 \
+    --hash=sha256:81276f0ea79a208d961c433a947029e1a15948966658cf6710bbabb60fcc2639 \
+    --hash=sha256:8cadc6e3b5a1f144a039ea08a0bdb03a2a92e19c46be3285123d32029f40a922 \
+    --hash=sha256:8e0ddd63e6bf1161800592c71ac794d3fb8001f2caebe0966e77c5234fa9efc3 \
+    --hash=sha256:909c97ab43a9c0c0b0ada7a1281430e4e5ec0458e6d9244c0e821bbf152f061d \
+    --hash=sha256:96e7a5e9d6e71f9f4fca8eebfd603f8e86c5225bb18eb621b2c1e50b290a9471 \
+    --hash=sha256:9a1e657c0f4ea2a23304ee3f964db058c9e9e635cc7019c4aa21c330755ef6fd \
+    --hash=sha256:9eb9d22b0a5d8fd9925a7764a054dca914000607dff201a24c791ff5c799e1fa \
+    --hash=sha256:af4ff3e388f2fa7bff9f7f2b31b87d5651c45731d3e8cfa0944be43dff5cfbdb \
+    --hash=sha256:b042d2a275c8cee83a4b7ae30c45a15e6a4baa65a179a0ec2d78ebb90e4f6699 \
+    --hash=sha256:bc821e161ae88bfe8088d11bb39caf2916562e0a2dc7b6d56714a48b784ef0bb \
+    --hash=sha256:c505d61b6176aaf982c5717ce04e87da5abc9a36a5b39ac03905c4aafe8de7aa \
+    --hash=sha256:c63454aa261a0cf0c5b4718349629793e9e634993538db841165b3df74f37ec0 \
+    --hash=sha256:c7362add18b416b69d58c910caa217f980c5ef39b23a38a0880dfd87bdf8cd23 \
+    --hash=sha256:d03806036b4f89e3b13b6218fefea8d5312e450935b1a2d55f0524e2ed7c59d9 \
+    --hash=sha256:d1b3031093a366ac767b3feb8bcddb596671b3aaff82d4050f984da0c248b615 \
+    --hash=sha256:d1c3572526997b36f245a96a2b1713bf79ce99b271bbcf084beb6b9b075f29ea \
+    --hash=sha256:efcfe97d1b3c79e486554efddeb8f6f53a4cdd4cf6086642784fa31fc384e1d7 \
+    --hash=sha256:f514ef4cd14bb6fb484b4a60203e912cfcb64f2ab139e88c2274511514bf7308
+    # via -r requirements/common.in
 cymem==2.0.11 \
     --hash=sha256:02ed92bead896cca36abad00502b14fa651bdf5d8319461126a2d5ac8c9674c5 \
     --hash=sha256:04ee6b4041ddec24512d6e969ed6445e57917f01e73b9dabbe17b7e6b27fef05 \
@@ -330,7 +338,7 @@ django==5.1.6 \
     --hash=sha256:1e39eafdd1b185e761d9fab7a9f0b9fa00af1b37b25ad980a8aa0dac13535690 \
     --hash=sha256:8d203400bc2952fbfb287c2bbda630297d654920c72a73cc82a9ad7926feaad5
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   django-cors-headers
     #   django-debug-toolbar
     #   django-ninja
@@ -339,31 +347,31 @@ django==5.1.6 \
 django-cors-headers==4.7.0 \
     --hash=sha256:6fdf31bf9c6d6448ba09ef57157db2268d515d94fc5c89a0a1028e1fc03ee52b \
     --hash=sha256:f1c125dcd58479fe7a67fe2499c16ee38b81b397463cf025f0e2c42937421070
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 django-debug-toolbar==5.0.1 \
     --hash=sha256:296f6f18a80710e84fbb8361538ae5ec522a75ebe9ab67db34bcf1026cbeb420 \
     --hash=sha256:7456cc2e951db37dab335686db7803c4a0ecb6736d120705f6668db9548bf49f
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 django-ninja==1.3.0 \
     --hash=sha256:5b320e2dc0f41a6032bfa7e1ebc33559ae1e911a426f0c6be6674a50b20819be \
     --hash=sha256:f58096b6c767d1403dfd6c49743f82d780d7b9688d9302ecab316ac1fa6131bb
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 django-redis==5.4.0 \
     --hash=sha256:6a02abaa34b0fea8bf9b707d2c363ab6adc7409950b2db93602e6cb292818c42 \
     --hash=sha256:ebc88df7da810732e2af9987f7f426c96204bf89319df4c6da6ca9a2942edd5b
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 django-unfold==0.47.0 \
     --hash=sha256:a3f0ea719dff98c6a3cafb0d8d9de4e514b9fbabe76497bb219982806ac1a2ad \
     --hash=sha256:b6b0c22b2d97249aed1ff81299c255f202892923ad7fed9c9f77676b29d35f3b
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 exceptiongroup==1.0.2 \
     --hash=sha256:a31cd183c3dea02e617aab5153588d5f7258a77b51f0ef41b3815ae8a0d0f695 \
     --hash=sha256:c22f11ec6a10d2b453871c5c5fe887436c4d1961324ce9090f2ca6ddc4180c27
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 flower==2.0.1 \
     --hash=sha256:5ab717b979530770c16afb48b50d2a98d23c3e9fe39851dcf6bc4d01845a02a0 \
     --hash=sha256:9db2c621eeefbc844c8dd88be64aef61e84e2deb29b271e02ab2b5b9f01068e2
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 h11==0.14.0 \
     --hash=sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d \
     --hash=sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761
@@ -421,7 +429,7 @@ idna==3.10 \
     --hash=sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9 \
     --hash=sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   anyio
     #   requests
 jinja2==3.1.5 \
@@ -525,7 +533,7 @@ marisa-trie==1.2.1 \
 markdown==3.7 \
     --hash=sha256:2ae2471477cfd02dbbf038d5d9bc226d40def84b4fe2986e49b59b6b472bbed2 \
     --hash=sha256:7eb6df5690b81a1d7942992c97fad2938e956e79df20cbc6186e9c3a77b1c803
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 markdown-it-py==3.0.0 \
     --hash=sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1 \
     --hash=sha256:e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb
@@ -785,7 +793,7 @@ pillow==11.0.0 \
     --hash=sha256:fba162b8872d30fea8c52b258a542c5dfd7b235fb5cb352240c8d63b414013eb \
     --hash=sha256:fbbcb7b57dc9c794843e3d1258c0fbf0f48656d46ffe9e09b63bbd6e8cd5d0a2 \
     --hash=sha256:fcb4621042ac4b7865c179bb972ed0da0218a076dc1820ffc48b1d74c1e37fe9
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 preshed==3.0.9 \
     --hash=sha256:0de63a560f10107a3f0a9e252cc3183b8fdedcb5f81a86938fd9f1dcf8a64adf \
     --hash=sha256:182138033c0730c683a6d97e567ceb8a3e83f3bff5704f300d582238dbd384b3 \
@@ -845,7 +853,7 @@ psycopg2==2.9.9 \
     --hash=sha256:d735786acc7dd25815e89cc4ad529a43af779db2e25aa7c626de864127e5a024 \
     --hash=sha256:de80739447af31525feddeb8effd640782cf5998e1a4e9192ebdf829717e3913 \
     --hash=sha256:ff432630e510709564c01dafdbe996cb552e0b9f3f065eb89bdce5bd31fabf4c
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 pycparser==2.21 \
     --hash=sha256:8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9 \
     --hash=sha256:e644fdec12f7872f86c58ff790da456218b10f863970249516d60a5eaca77206
@@ -973,7 +981,7 @@ python-dotenv==1.0.1 \
     --hash=sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca \
     --hash=sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   uvicorn
 pytz==2022.1 \
     --hash=sha256:1e760e2fe6a8163bc0b3d9a19c4f84342afa0a2affebfaa84b01b978a02ecaa7 \
@@ -1038,7 +1046,7 @@ redis==5.2.1 \
     --hash=sha256:16f2e22dff21d5125e8481515e386711a34cbec50f0e44413dd7d9c060a54e0f \
     --hash=sha256:ee7e1056b9aea0f04c6c2ed59452947f34c4940ee025f5dd83e6a6418b6989e4
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   django-redis
 regex==2024.11.6 \
     --hash=sha256:02a02d2bb04fec86ad61f3ea7f49c015a0681bf76abb9857f945d26159d2968c \
@@ -1140,7 +1148,7 @@ requests==2.32.3 \
     --hash=sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760 \
     --hash=sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   spacy
     #   weasel
 rich==13.9.4 \
@@ -1188,7 +1196,7 @@ spacy==3.8.3 \
     --hash=sha256:e3630ea33608a6db8045fad7e0ba22f864c61ea351445488a89af1734e434a37 \
     --hash=sha256:f62e45a2259acc51cd8eb185f978848928f2f698ba174b283253485fb7691b04
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   spacytextblob
 spacy-legacy==3.0.12 \
     --hash=sha256:476e3bd0d05f8c339ed60f40986c07387c0a71479245d6d0f4298dbd52cda55f \
@@ -1201,12 +1209,12 @@ spacy-loggers==1.0.5 \
 spacytextblob==5.0.0 \
     --hash=sha256:1c1a76bc4d6888093495a85df073c7f243c47265801acff92151b0749e086e0c \
     --hash=sha256:4bd0a7c65a0144dd286d88fae4ee3ebf9a82c0502e39449afcfb79b03c88ffbe
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 sqlparse==0.5.3 \
     --hash=sha256:09f67787f56a0b16ecdbde1bfc7f5d9c3371ca683cfeaa8e6ff60b4807ec9272 \
     --hash=sha256:cf2196ed3418f3ba5de6af7e82c694a9fbdbfecccdfc72e281548517081f16ca
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   django
     #   django-debug-toolbar
 srsly==2.5.1 \
@@ -1281,7 +1289,7 @@ thinc==8.3.4 \
 tomli==1.1.0 \
     --hash=sha256:33d7984738f8bb699c9b0a816eb646a8178a69eaa792d258486776a5d21b8ca5 \
     --hash=sha256:f4a182048010e89cbec0ae4686b21f550a7f2903f665e34a6de58ec15424f919
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 tornado==6.4.2 \
     --hash=sha256:072ce12ada169c5b00b7d92a99ba089447ccc993ea2143c9ede887e0937aa803 \
     --hash=sha256:1a017d239bd1bb0919f72af256a970624241f070496635784d9bf0db640d3fec \
@@ -1295,7 +1303,7 @@ tornado==6.4.2 \
     --hash=sha256:c82c46813ba483a385ab2a99caeaedf92585a1f90defb5693351fa7e4ea0bf73 \
     --hash=sha256:e828cce1123e9e44ae2a50a9de3055497ab1d0aeb440c5ac23064d9e44880da1
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   flower
 tqdm==4.67.1 \
     --hash=sha256:26445eca388f82e72884e0d580d5464cd801a3ea01e63e5601bdff9ba6a48de2 \
@@ -1313,7 +1321,7 @@ typing-extensions==4.12.2 \
     --hash=sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d \
     --hash=sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   anyio
     #   pydantic
     #   pydantic-core
@@ -1322,18 +1330,18 @@ tzdata==2025.1 \
     --hash=sha256:24894909e88cdb28bd1636c6887801df64cb485bd593f2fd83ef29075a81d694 \
     --hash=sha256:7e127113816800496f027041c570f50bcd464a020098a3b6b199517772303639
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   celery
 urllib3==2.3.0 \
     --hash=sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df \
     --hash=sha256:f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d
     # via
-    #   -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    #   -r requirements/common.in
     #   requests
 uvicorn[standard]==0.34.0 \
     --hash=sha256:023dc038422502fa28a09c7a30bf2b6991512da7dcdb8fd35fe57cfc154126f4 \
     --hash=sha256:404051050cd7e905de2c9a7e61790943440b3416f49cb409f965d9dcd0fa73e9
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 uvloop==0.21.0 \
     --hash=sha256:0878c2640cf341b269b7e128b1a5fed890adc4455513ca710d77d5e93aa6d6a0 \
     --hash=sha256:10d66943def5fcb6e7b37310eb6b5639fd2ccbc38df1177262b0640c3ca68c1f \
@@ -1542,7 +1550,7 @@ websockets==14.2 \
 whitenoise==6.9.0 \
     --hash=sha256:8c4a7c9d384694990c26f3047e118c691557481d624f069b7f7752a2f735d609 \
     --hash=sha256:c8a489049b7ee9889617bb4c274a153f3d979e8f51d2efd0f5b403caf41c57df
-    # via -r /Users/adam.birds/Development/ADBSoftwareSolutions/debuglife/requirements/common.in
+    # via -r requirements/common.in
 wrapt==1.17.2 \
     --hash=sha256:08e7ce672e35efa54c5024936e559469436f8b8096253404faeb54d2a878416f \
     --hash=sha256:0a6e821770cf99cc586d33833b2ff32faebdbe886bd6322395606cf55153246c \

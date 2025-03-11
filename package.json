@@ -26,7 +26,7 @@
     "homepage": "https://github.com/adb-software-solutions/debuglife#readme",
     "devDependencies": {
         "@babel/eslint-parser": "^7.26.8",
-        "@typescript-eslint/eslint-plugin": "^8.24.1",
+        "@typescript-eslint/eslint-plugin": "^8.26.1",
         "autoprefixer": "^10.4.20",
         "eslint-config-prettier": "^10.0.1",
         "eslint-plugin-formatjs": "^5.2.14",

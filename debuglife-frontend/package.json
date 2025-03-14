@@ -17,7 +17,7 @@
         "@icons-pack/react-simple-icons": "^11.2.0",
         "@milkdown/crepe": "^7.6.3",
         "@milkdown/kit": "^7.6.3",
-        "@milkdown/plugin-emoji": "^7.6.3",
+        "@milkdown/plugin-emoji": "^7.6.4",
         "@milkdown/react": "^7.6.3",
         "@milkdown/theme-nord": "^7.6.3",
         "@prosemirror-adapter/react": "^0.4.0",

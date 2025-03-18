@@ -4,7 +4,7 @@
 # See requirements/README.md for more detail.
 mypy==1.15.0
 
-types-psycopg2==2.9.21.20250121
+types-psycopg2==2.9.21.20250318
 types-requests==2.32.0.20241016
 
 django-stubs==5.1.3

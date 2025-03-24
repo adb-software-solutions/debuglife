@@ -22,7 +22,7 @@ flower==2.0.1
 django-redis==5.4.0
 
 # Other Dependencies
-tzdata==2025.1
+tzdata==2025.2
 typing_extensions==4.12.2
 requests==2.32.3
 cryptography==44.0.0

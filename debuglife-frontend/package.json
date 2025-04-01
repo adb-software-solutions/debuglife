@@ -21,7 +21,7 @@
         "@milkdown/react": "^7.6.3",
         "@milkdown/theme-nord": "^7.6.3",
         "@prosemirror-adapter/react": "^0.4.0",
-        "@types/node": "^22.13.4",
+        "@types/node": "^22.13.16",
         "@types/react-dom": "^19.0.4",
         "compromise": "^14.14.4",
         "cookies-next": "^5.1.0",

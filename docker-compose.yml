@@ -10,7 +10,7 @@ services:
     env_file:
       - ./.env/.dev
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       - debuglife-db
       - debuglife-redis-celery
@@ -28,7 +28,7 @@ services:
       - .:/opt/debuglife
       - /opt/debuglife/debuglife-frontend/node_modules
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - debuglife-backend
     networks:
@@ -41,7 +41,7 @@ services:
     env_file:
       - ./.env/.dev
     ports:
-      - "5433:5432"
+      - "5434:5432"
     networks:
       - debuglife-network
   debuglife-redis-celery:
@@ -107,7 +107,7 @@ services:
     env_file:
       - ./.env/.dev
     ports:
-      - "5557:5555"
+      - "5558:5555"
     depends_on:
       - debuglife-db
       - debuglife-redis-celery

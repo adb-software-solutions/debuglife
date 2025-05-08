@@ -15,7 +15,7 @@
         "@headlessui/tailwindcss": "^0.2.2",
         "@heroicons/react": "^2.2.0",
         "@icons-pack/react-simple-icons": "^11.2.0",
-        "@milkdown/crepe": "^7.6.3",
+        "@milkdown/crepe": "^7.10.1",
         "@milkdown/kit": "^7.6.3",
         "@milkdown/plugin-emoji": "^7.6.3",
         "@milkdown/react": "^7.6.3",

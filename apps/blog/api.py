@@ -353,8 +353,12 @@ def patch_blog(request, post_id: UUID, payload: BlogPatch):
         blog.readability_analysis = payload.readability_analysis
     if payload.category_id is not None:
         blog.category = get_object_or_404(Category, id=payload.category_id)
+    else:
+        blog.category = None
     if payload.author_id is not None:
         blog.author = get_object_or_404(Author, id=payload.author_id)
+    else:
+        blog.author = None
     if payload.tag_ids is not None:
         if payload.tag_ids:
             tags = Tag.objects.filter(id__in=payload.tag_ids)

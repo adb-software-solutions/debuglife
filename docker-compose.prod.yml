@@ -8,7 +8,7 @@ services:
     volumes:
       - .:/opt/debuglife
     env_file:
-      - ./.env/.prod
+      - ./.envs/.prod
     ports:
       - "8001:8000"
     depends_on:
@@ -16,25 +16,12 @@ services:
       - debuglife-redis
     networks:
       - debuglife-network
-  
-  debuglife-frontend:
-    build:
-      context: .
-      dockerfile: ./compose/production/debuglife/frontend/Dockerfile
-    image: debuglife-frontend
-    ports:
-      - "3001:3000"
-    depends_on:
-      - debuglife-backend
-    networks:
-      - debuglife-network
-
   debuglife-db:
     image: postgres:14.4
     volumes:
       - debuglife_postgres_data:/var/lib/postgresql/data
     env_file:
-      - ./.env/.prod
+      - ./.envs/.prod
     ports:
       - "5435:5432"
     networks:
@@ -54,7 +41,7 @@ services:
     volumes:
       - .:/opt/debuglife
     env_file:
-      - ./.env/.prod
+      - ./.envs/.prod
     environment:
       - CELERY_QUEUE=initialise_ebay
     depends_on:
@@ -72,7 +59,7 @@ services:
     volumes:
       - .:/opt/debuglife
     env_file:
-      - ./.env/.prod
+      - ./.envs/.prod
     environment:
       - CELERY_QUEUE=ebay
     depends_on:
@@ -90,7 +77,7 @@ services:
     volumes:
       - .:/opt/debuglife
     env_file:
-      - ./.env/.prod
+      - ./.envs/.prod
     environment:
       - CELERY_QUEUE=email
     depends_on:
@@ -108,7 +95,7 @@ services:
     volumes:
       - .:/opt/debuglife
     env_file:
-      - ./.env/.prod
+      - ./.envs/.prod
     depends_on:
       - debuglife-db
       - debuglife-redis
@@ -124,7 +111,7 @@ services:
     volumes:
       - .:/opt/debuglife
     env_file:
-      - ./.env/.prod
+      - ./.envs/.prod
     ports:
       - "5559:5555"
     depends_on:

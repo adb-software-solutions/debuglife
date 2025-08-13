@@ -26,18 +26,6 @@ services:
     depends_on:
       - debuglife-db
       - debuglife-redis
-  debuglife-frontend:
-    build:
-      context: .
-      dockerfile: ./compose/dev/debuglife/frontend/Dockerfile
-    image: debuglife-frontend
-    volumes:
-      - .:/opt/debuglife
-    environment:
-      - REACT_APP_debuglife_API_URL=${REACT_APP_debuglife_API_URL}
-      - REACT_APP_MAIN_DOMAIN=${REACT_APP_MAIN_DOMAIN}
-    depends_on:
-      - debuglife-backend
   debuglife-db:
     image: postgres:14.4
     volumes:

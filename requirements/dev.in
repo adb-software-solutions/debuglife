@@ -4,34 +4,25 @@
 -r pip.in
 -r prod.in
 -r mypy.in
-
 # For sorting imports
 isort==6.0.1
-
 # for pep8 linter
-pycodestyle==2.13.0
-
+pycodestyle==2.14.0
 # Python reformatter
 black==25.1.0
-
 # Needed to run pyflakes linter
-pyflakes==3.3.2
-
+pyflakes==3.4.0
 # For linting Git commit messages
 gitlint-core==0.19.1
-
 # Needed for updating the locked pip dependencies
-pip-tools==7.4.1
-
+pip-tools==7.5.0
+# For updating dependecies
+pypi-package-updater==0.2.23
 # Linting framework
 adamlint==1.0.0
-
 # For spell check linter
 codespell==2.4.1
-
 # For code coverage
-
-coverage==7.9.0
-django-coverage-plugin==3.1.0
-
-flake8==7.2.0
+coverage==7.10.4
+django-coverage-plugin==3.1.1
+flake8==7.3.0
